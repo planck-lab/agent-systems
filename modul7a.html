@@ -100,7 +100,12 @@
 <!-- Skills in Practice -->
 <h2><span class="de">Skills in der Praxis: ClawHub</span><span class="en">Skills in Practice: ClawHub</span></h2>
 
-<p style="color:var(--muted);font-size:.9rem"><span class="de">Skills sind wiederverwendbare Fähigkeits-Definitionen: Eine <code>SKILL.md</code>-Datei mit Instruktionen + optionale Scripts. Der Agent liest die Datei und weiß, was zu tun ist. <strong>ClawHub</strong> ist der Marktplatz dafür.</span><span class="en">Skills are reusable capability definitions: A <code>SKILL.md</code> file with instructions + optional scripts. The agent reads the file and knows what to do. <strong>ClawHub</strong> is the marketplace for them.</span></p>
+<p style="color:var(--muted);font-size:.9rem"><span class="de">Skills sind wiederverwendbare Fähigkeits-Definitionen: Eine <code>SKILL.md</code>-Datei mit Instruktionen + optionale Scripts. Der Agent liest die Datei und weiß, was zu tun ist. <strong>ClawHub</strong> ist ein Verzeichnis dafür — nutze es als <strong>Ideengeber und Referenz</strong>, nicht als blinden Installer.</span><span class="en">Skills are reusable capability definitions: A <code>SKILL.md</code> file with instructions + optional scripts. The agent reads the file and knows what to do. <strong>ClawHub</strong> is a directory for them — use it as an <strong>inspiration and reference</strong>, not as a blind installer.</span></p>
+
+<div class="troubleshooting" style="border-color:#f85149">
+<strong>⚠️ <span class="de">Sicherheitshinweis zu externen Skills</span><span class="en">Security notice about external skills</span></strong>
+<p><span class="de">Skills von Drittanbietern können <strong>beliebigen Code ausführen</strong> (Shell-Scripts, API-Calls). Bevor du einen externen Skill installierst: <strong>Lies den Quellcode.</strong> Verstehe was die SKILL.md und die Scripts tun. Besser: Baue Skills selbst nach (→ <a href="modul7b.html">Modul 7b</a>). Ein Skill den du verstehst ist sicherer als einer den du nur installierst. Externe Skills können auch <strong>Prompt Injection</strong> enthalten — manipulierte Instruktionen die dein Agent-Verhalten ändern (→ <a href="modul11.html">Modul 11: Security</a>).</span><span class="en">Third-party skills can <strong>execute arbitrary code</strong> (shell scripts, API calls). Before installing an external skill: <strong>Read the source code.</strong> Understand what the SKILL.md and scripts do. Better: Build skills yourself (→ <a href="modul7b.html">Module 7b</a>). A skill you understand is safer than one you just install. External skills can also contain <strong>prompt injection</strong> — manipulated instructions that change your agent's behavior (→ <a href="modul11.html">Module 11: Security</a>).</span></p>
+</div>
 
 <h3><span class="de">Beispiel-Skills</span><span class="en">Example Skills</span></h3>
 
@@ -247,7 +252,7 @@ Agent: [reads deep-research/SKILL.md → executes research steps]</span></div>
 <dl>
 <dt>Skill</dt><dd><span class="de">Wiederverwendbare Fähigkeits-Definition: SKILL.md (Instruktionen) + optionale Scripts.</span><span class="en">Reusable capability definition: SKILL.md (instructions) + optional scripts.</span></dd>
 <dt>Skill-Routing</dt><dd><span class="de">Zuordnung von Nutzer-Absichten zu Skills in AGENTS.md.</span><span class="en">Mapping of user intents to skills in AGENTS.md.</span></dd>
-<dt>ClawHub</dt><dd><span class="de">Marktplatz für OpenClaw-Skills — installieren, teilen, entdecken.</span><span class="en">Marketplace for OpenClaw skills — install, share, discover.</span></dd>
+<dt>ClawHub</dt><dd><span class="de">Verzeichnis für OpenClaw-Skills — als Ideengeber nutzen, Quellcode vor Installation prüfen.</span><span class="en">Directory for OpenClaw skills — use as inspiration, review source code before installing.</span></dd>
 <dt>Tool Learning</dt><dd><span class="de">Systematischer Lebenszyklus: Discovery → Selection → Usage → Creation (Qin et al., 2023).</span><span class="en">Systematic lifecycle: Discovery → Selection → Usage → Creation (Qin et al., 2023).</span></dd>
 </dl>
 </div>

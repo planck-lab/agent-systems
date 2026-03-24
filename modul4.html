@@ -144,6 +144,11 @@
 
 <p style="color:var(--muted);font-size:.85rem"><span class="de"><strong>Best Practice:</strong> Starte immer bei <code>deny</code> und öffne schrittweise. Nicht andersherum. Wie beim Fahren: Erst Schritttempo, dann Autobahn.</span><span class="en"><strong>Best practice:</strong> Always start at <code>deny</code> and open up gradually. Not the other way around. Like driving: Walking speed first, then highway.</span></p>
 
+<div class="tip" style="border-left-color:#f85149;margin-top:1rem">
+<strong>🛡️ <span class="de">Vorwarnung: Prompt Injection</span><span class="en">Heads up: Prompt Injection</span></strong>
+<p style="color:var(--muted);font-size:.85rem;margin:.3rem 0 0"><span class="de">Sobald dein Agent Tools nutzt (Web-Suche, Dateien lesen, APIs), kann er auf <strong>manipulierte Inhalte</strong> stoßen. Eine Webseite könnte z.B. versteckte Instruktionen enthalten, die dein Agent ausführt. Das nennt man <strong>Prompt Injection</strong> — und es ist einer der wichtigsten Angriffsvektoren auf Agent-Systeme. Modul 11 behandelt das im Detail, aber merke dir jetzt schon: <strong>Tool-Zugriff = Angriffsfläche.</strong> Deshalb sind restriktive Policies so wichtig.</span><span class="en">Once your agent uses tools (web search, file reading, APIs), it can encounter <strong>manipulated content</strong>. A website could contain hidden instructions that your agent executes. This is called <strong>prompt injection</strong> — one of the most important attack vectors on agent systems. Module 11 covers this in detail, but remember now: <strong>Tool access = attack surface.</strong> That's why restrictive policies matter so much.</span></p>
+</div>
+
 <!-- Example Configs -->
 <h3><span class="de">Beispiel: Zwei Policy-Profile</span><span class="en">Example: Two Policy Profiles</span></h3>
 
