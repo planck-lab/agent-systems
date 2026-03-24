@@ -177,7 +177,7 @@
 <li><span class="de">Session-Isolation testen: 5 Tests, die nachweisen, dass die Agents sich nicht „sehen"</span><span class="en">Test session isolation: 5 tests that verify agents can't "see" each other</span></li>
 <li><span class="de">Routing-Diagramm zeichnen</span><span class="en">Draw a routing diagram</span></li>
 </ol>
-<p style="color:var(--muted);font-size:.85rem;margin-top:.75rem"><a href="#" class="btn" style="background: var(--orange);">Open in Colab →</a></p>
+<p style="color:var(--muted);font-size:.85rem;margin-top:.75rem"><a href="https://github.com/planck-lab/agent-systems/tree/main/notebooks" target="_blank" class="btn" style="background: var(--orange);">Open in Colab →</a></p>
 </div>
 
 <div class="step">
@@ -194,8 +194,12 @@
 
 <!-- HITL Box -->
 <div style="background:rgba(63,185,80,.08);border:1px solid rgba(63,185,80,.3);border-radius:12px;padding:1.5rem;margin:2rem 0">
-<h3 style="color:var(--green);font-size:1rem;margin-bottom:.5rem">🟢 HITL <span class="de">in diesem Modul</span><span class="en">in this module</span></h3>
-<p style="color:var(--muted);font-size:.9rem"><span class="de">Routing = HITL-Layer. Du bestimmst, welcher Agent welche Channels bedient. <strong>Fahrschüler darf jetzt allein fahren — aber nur auf bekannten Strecken.</strong></span><span class="en">Routing = HITL layer. You determine which agent serves which channels. <strong>Student driver can now drive alone — but only on familiar routes.</strong></span></p>
+<h3 style="color:var(--green);font-size:1rem;margin-bottom:.5rem">🟠 HITL <span class="de">in diesem Modul</span><span class="en">in this module</span></h3>
+<p style="color:var(--muted);font-size:.9rem"><span class="de">Routing = HITL-Layer. <strong>Fährt allein — aber nur auf bekannten Strecken, Spawn braucht OK.</strong></span><span class="en">Routing = HITL layer. <strong>Driving alone — but only on familiar routes, spawning needs OK.</strong></span></p>
+<pre style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:.75rem;font-size:.85rem;overflow-x:auto;margin-top:.75rem"><code># HITL-Config für dieses Modul / HITL config for this module
+multiAgent: { maxConcurrent: 2, approval: "on-spawn" }
+# → Max 2 Agents, Spawn braucht OK / Max 2 agents, spawning needs OK</code></pre>
+<p style="margin-top:.75rem;font-size:.8rem;color:var(--muted)"><span class="de">📍 <strong>Autonomie-Stufe:</strong> 🟠 Fährt allein, App trackt Route — Monitoring + Eskalation bei Anomalien</span><span class="en">📍 <strong>Autonomy level:</strong> 🟠 Driving alone, app tracks route — Monitoring + escalation on anomalies</span></p>
 </div>
 
 <!-- Rubric -->
@@ -224,6 +228,14 @@
 <div class="source">A2A Protocol (Google, 2025): Agent-to-Agent Protocol <span class="tier-badge tier-c" style="font-size:.65rem;padding:.1rem .4rem;border-radius:6px;font-weight:700;background:rgba(210,153,34,.15);color:var(--orange)">Tier C</span></div>
 <div class="source">Ng (2024): "Agentic Design Patterns" <span class="tier-badge tier-c" style="font-size:.65rem;padding:.1rem .4rem;border-radius:6px;font-weight:700;background:rgba(210,153,34,.15);color:var(--orange)">Tier C</span></div>
 <div class="source">Microsoft (2025): Multi-Agent Orchestration Patterns Documentation <span class="tier-badge tier-c" style="font-size:.65rem;padding:.1rem .4rem;border-radius:6px;font-weight:700;background:rgba(210,153,34,.15);color:var(--orange)">Tier C</span></div>
+
+<div class="tip" style="border-left-color: var(--orange);">
+<strong>💰 <span class="de">Geschätzte API-Kosten für dieses Modul</span><span class="en">Estimated API costs for this module</span></strong>
+<p style="margin:.5rem 0;color:var(--muted);font-size:.9rem;">
+<span class="de">Haiku: ~$0.30 · Sonnet: ~$1.50 · GPT-4o: ~$1.80</span>
+<span class="en">Haiku: ~$0.30 · Sonnet: ~$1.50 · GPT-4o: ~$1.80</span>
+</p>
+</div>
 
 <!-- Nav Footer -->
 <div class="nav-footer">

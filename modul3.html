@@ -199,7 +199,7 @@
 <li><span class="de">Zeichne ein Diagramm deiner Architektur (Papier oder Tool)</span><span class="en">Draw a diagram of your architecture (paper or tool)</span></li>
 </ol>
 
-<a href="#" class="btn" style="background: var(--orange);">Open in Colab →</a>
+<a href="https://github.com/planck-lab/agent-systems/tree/main/notebooks" target="_blank" class="btn" style="background: var(--orange);">Open in Colab →</a>
 </div>
 
 <div class="step">
@@ -219,7 +219,11 @@
 <!-- HITL Box -->
 <div style="background:rgba(63,185,80,.08);border:1px solid rgba(63,185,80,.3);border-radius:12px;padding:1.5rem;margin:2rem 0">
 <h3 style="color:var(--green);font-size:1rem;margin-bottom:.5rem">🟢 HITL <span class="de">in diesem Modul</span><span class="en">in this module</span></h3>
-<p style="color:var(--muted);font-size:.9rem"><span class="de"><code>dmPolicy: "pairing"</code> — die erste Kontrollschicht. <strong>Fahrlehrer entscheidet, wer mitfahren darf.</strong> Ohne Pairing antwortet der Agent niemandem.</span><span class="en"><code>dmPolicy: "pairing"</code> — the first control layer. <strong>The instructor decides who can ride along.</strong> Without pairing, the agent doesn't respond to anyone.</span></p>
+<p style="color:var(--muted);font-size:.9rem"><span class="de"><strong>Fahrlehrer entscheidet, wer mitfahren darf.</strong> Nur bekannte Channels, Approval bei Unbekanntem.</span><span class="en"><strong>Instructor decides who can ride along.</strong> Only known channels, approval for unknowns.</span></p>
+<pre style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:.75rem;font-size:.85rem;overflow-x:auto;margin-top:.75rem"><code># HITL-Config für dieses Modul / HITL config for this module
+gateway: { channels: ["telegram"], approval: "on-miss" }
+# → Nur bekannte Channels, Approval bei Unbekanntem / Only known channels, approval for unknowns</code></pre>
+<p style="margin-top:.75rem;font-size:.8rem;color:var(--muted)"><span class="de">📍 <strong>Autonomie-Stufe:</strong> 🟢 Fahrlehrer sitzt daneben, greift ständig ein — Approval für JEDE Aktion</span><span class="en">📍 <strong>Autonomy level:</strong> 🟢 Instructor sitting alongside, intervening constantly — Approval for EVERY action</span></p>
 </div>
 
 <!-- Knowledge Check 1 -->
@@ -257,6 +261,14 @@
 <h2><span class="de">📚 Quellen</span><span class="en">📚 Sources</span></h2>
 <div class="source">Garlan & Shaw (1993): "An Introduction to Software Architecture", <em>Advances in Software Engineering</em> <span class="tier-badge tier-a" style="font-size:.65rem;padding:.1rem .4rem;border-radius:6px;font-weight:700;background:rgba(63,185,80,.2);color:var(--green)">Tier A</span></div>
 <div class="source">OpenClaw Docs (2026): docs.openclaw.ai <span class="tier-badge tier-c" style="font-size:.65rem;padding:.1rem .4rem;border-radius:6px;font-weight:700;background:rgba(210,153,34,.15);color:var(--orange)">Tier C</span></div>
+
+<div class="tip" style="border-left-color: var(--orange);">
+<strong>💰 <span class="de">Geschätzte API-Kosten für dieses Modul</span><span class="en">Estimated API costs for this module</span></strong>
+<p style="margin:.5rem 0;color:var(--muted);font-size:.9rem;">
+<span class="de">Haiku: ~$0.05 · Sonnet: ~$0.25 · GPT-4o: ~$0.30</span>
+<span class="en">Haiku: ~$0.05 · Sonnet: ~$0.25 · GPT-4o: ~$0.30</span>
+</p>
+</div>
 
 <!-- Nav Footer -->
 <div class="nav-footer">

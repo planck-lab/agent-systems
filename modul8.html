@@ -164,7 +164,7 @@
 <li><span class="de"><strong>Loop:</strong> Gib eine unmögliche Aufgabe ("Finde eine Datei, die nicht existiert"). Beobachte Retry-Verhalten.</span><span class="en"><strong>Loop:</strong> Give an impossible task ("Find a file that doesn't exist"). Observe retry behavior.</span></li>
 <li><span class="de"><strong>Ethik:</strong> Erstelle eine Ethik-Checkliste in AGENTS.md (min. 5 Regeln).</span><span class="en"><strong>Ethics:</strong> Create an ethics checklist in AGENTS.md (min. 5 rules).</span></li>
 </ol>
-<p style="color:var(--muted);font-size:.85rem;margin-top:.75rem"><a href="#" class="btn" style="background: var(--orange);">Open in Colab →</a></p>
+<p style="color:var(--muted);font-size:.85rem;margin-top:.75rem"><a href="https://github.com/planck-lab/agent-systems/tree/main/notebooks" target="_blank" class="btn" style="background: var(--orange);">Open in Colab →</a></p>
 </div>
 
 <div class="step">
@@ -181,8 +181,12 @@
 
 <!-- HITL Box -->
 <div style="background:rgba(63,185,80,.08);border:1px solid rgba(63,185,80,.3);border-radius:12px;padding:1.5rem;margin:2rem 0">
-<h3 style="color:var(--green);font-size:1rem;margin-bottom:.5rem">🟢 HITL <span class="de">in diesem Modul</span><span class="en">in this module</span></h3>
-<p style="color:var(--muted);font-size:.9rem"><span class="de">Debugging IST HITL. Ethik-Regeln definieren die Grenzen der Autonomie. <strong>Fahrschüler: „Hier fahre ich nicht weiter."</strong></span><span class="en">Debugging IS HITL. Ethics rules define the boundaries of autonomy. <strong>Student driver: "I'm not driving any further here."</strong></span></p>
+<h3 style="color:var(--green);font-size:1rem;margin-bottom:.5rem">🟠 HITL <span class="de">in diesem Modul</span><span class="en">in this module</span></h3>
+<p style="color:var(--muted);font-size:.9rem"><span class="de">Debugging IST HITL. <strong>Fährt allein, aber bei Fehler sofort stoppen.</strong> Ethik-Regeln definieren die Grenzen.</span><span class="en">Debugging IS HITL. <strong>Driving alone, but stop immediately on error.</strong> Ethics rules define the boundaries.</span></p>
+<pre style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:.75rem;font-size:.85rem;overflow-x:auto;margin-top:.75rem"><code># HITL-Config für dieses Modul / HITL config for this module
+debug: { verbose: true, pauseOnError: true }
+# → Bei Fehler sofort stoppen / Stop immediately on error</code></pre>
+<p style="margin-top:.75rem;font-size:.8rem;color:var(--muted)"><span class="de">📍 <strong>Autonomie-Stufe:</strong> 🟠 Fährt allein, App trackt Route — Monitoring + Eskalation bei Anomalien</span><span class="en">📍 <strong>Autonomy level:</strong> 🟠 Driving alone, app tracks route — Monitoring + escalation on anomalies</span></p>
 </div>
 
 <!-- Knowledge Check 3 -->
@@ -223,6 +227,14 @@
 <div class="source">Greshake et al. (2023): "Not What You've Signed Up For: Compromising Real-World LLM-Integrated Applications with Indirect Prompt Injection", <em>AISec 2023</em> <span class="tier-badge tier-a" style="font-size:.65rem;padding:.1rem .4rem;border-radius:6px;font-weight:700;background:rgba(63,185,80,.2);color:var(--green)">Tier A</span></div>
 <div class="source">Anthropic (2024): "Claude's Character" — Werte und Verhaltensprinzipien <span class="tier-badge tier-c" style="font-size:.65rem;padding:.1rem .4rem;border-radius:6px;font-weight:700;background:rgba(210,153,34,.15);color:var(--orange)">Tier C</span></div>
 <div class="source">Anthropic (2025): "Building Effective Agents" <span class="tier-badge tier-c" style="font-size:.65rem;padding:.1rem .4rem;border-radius:6px;font-weight:700;background:rgba(210,153,34,.15);color:var(--orange)">Tier C</span></div>
+
+<div class="tip" style="border-left-color: var(--orange);">
+<strong>💰 <span class="de">Geschätzte API-Kosten für dieses Modul</span><span class="en">Estimated API costs for this module</span></strong>
+<p style="margin:.5rem 0;color:var(--muted);font-size:.9rem;">
+<span class="de">Haiku: ~$0.20 · Sonnet: ~$1.00 · GPT-4o: ~$1.20</span>
+<span class="en">Haiku: ~$0.20 · Sonnet: ~$1.00 · GPT-4o: ~$1.20</span>
+</p>
+</div>
 
 <!-- Nav Footer -->
 <div class="nav-footer">

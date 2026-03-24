@@ -168,7 +168,7 @@ You respond in English. Technical terms in original language OK.
 <li><span class="de">Passe Persona an bis ≥8/10 konform</span><span class="en">Adjust persona until ≥8/10 compliant</span></li>
 </ol>
 
-<a href="#" class="btn" style="background: var(--orange);">Open in Colab →</a>
+<a href="https://github.com/planck-lab/agent-systems/tree/main/notebooks" target="_blank" class="btn" style="background: var(--orange);">Open in Colab →</a>
 </div>
 
 <div class="step">
@@ -187,8 +187,12 @@ You respond in English. Technical terms in original language OK.
 
 <!-- HITL Box -->
 <div style="background:rgba(63,185,80,.08);border:1px solid rgba(63,185,80,.3);border-radius:12px;padding:1.5rem;margin:2rem 0">
-<h3 style="color:var(--green);font-size:1rem;margin-bottom:.5rem">🟢 HITL <span class="de">in diesem Modul</span><span class="en">in this module</span></h3>
-<p style="color:var(--muted);font-size:.9rem"><span class="de">Persona-Design IST HITL. <strong>Fahrlehrer setzt die Hausordnung auf.</strong> Du bestimmst die Werte, Grenzen und den Stil — der Agent folgt. Ohne deine Persona-Dateien wäre der Agent ein Chameleon ohne Identität.</span><span class="en">Persona design IS HITL. <strong>The instructor sets the house rules.</strong> You define the values, boundaries, and style — the agent follows. Without your persona files, the agent would be a chameleon without identity.</span></p>
+<h3 style="color:var(--green);font-size:1rem;margin-bottom:.5rem">🟡 HITL <span class="de">in diesem Modul</span><span class="en">in this module</span></h3>
+<p style="color:var(--muted);font-size:.9rem"><span class="de">Persona-Design IST HITL. <strong>Beifahrer setzt die Hausordnung auf.</strong> Du bestimmst Werte, Grenzen und Stil — der Agent folgt.</span><span class="en">Persona design IS HITL. <strong>Passenger sets the house rules.</strong> You define values, boundaries, and style — the agent follows.</span></p>
+<pre style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:.75rem;font-size:.85rem;overflow-x:auto;margin-top:.75rem"><code># HITL-Config für dieses Modul / HITL config for this module
+workspace: { protected: ["SOUL.md", "USER.md"], approval: "always" }
+# → Persona-Dateien geschützt / Persona files protected</code></pre>
+<p style="margin-top:.75rem;font-size:.8rem;color:var(--muted)"><span class="de">📍 <strong>Autonomie-Stufe:</strong> 🟡 Beifahrer, greift nur bei Bedarf ein — Allowlist, manche Aktionen auto-approved</span><span class="en">📍 <strong>Autonomy level:</strong> 🟡 Passenger, intervenes only when needed — Allowlist, some actions auto-approved</span></p>
 </div>
 
 <!-- Rubric -->
@@ -214,6 +218,14 @@ You respond in English. Technical terms in original language OK.
 <h2><span class="de">📚 Quellen</span><span class="en">📚 Sources</span></h2>
 <div class="source">Shanahan et al. (2023): "Role-Play with Large Language Models", arXiv:2305.16367 <span class="tier-badge tier-b" style="font-size:.65rem;padding:.1rem .4rem;border-radius:6px;font-weight:700;background:rgba(88,166,255,.15);color:var(--accent)">Tier B</span></div>
 <div class="source">Anthropic (2024): "Claude's Character" <span class="tier-badge tier-c" style="font-size:.65rem;padding:.1rem .4rem;border-radius:6px;font-weight:700;background:rgba(210,153,34,.15);color:var(--orange)">Tier C</span></div>
+
+<div class="tip" style="border-left-color: var(--orange);">
+<strong>💰 <span class="de">Geschätzte API-Kosten für dieses Modul</span><span class="en">Estimated API costs for this module</span></strong>
+<p style="margin:.5rem 0;color:var(--muted);font-size:.9rem;">
+<span class="de">Haiku: ~$0.10 · Sonnet: ~$0.50 · GPT-4o: ~$0.60</span>
+<span class="en">Haiku: ~$0.10 · Sonnet: ~$0.50 · GPT-4o: ~$0.60</span>
+</p>
+</div>
 
 <!-- Nav Footer -->
 <div class="nav-footer">

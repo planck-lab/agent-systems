@@ -184,12 +184,30 @@ openclaw onboard</code></pre>
 <label style="display:block;padding:.4rem 0;color:var(--muted);font-size:.9rem;cursor:pointer"><input type="checkbox" style="margin-right:.5rem"> <span class="de">Agent antwortet auf Telegram</span><span class="en">Agent responds on Telegram</span></label>
 </div>
 
+<!-- HITL Box -->
+<div style="background:rgba(63,185,80,.08);border:1px solid rgba(63,185,80,.3);border-radius:12px;padding:1.5rem;margin:2rem 0">
+<h3 style="color:var(--green);font-size:1rem;margin-bottom:.5rem">🟢 HITL <span class="de">in diesem Modul</span><span class="en">in this module</span></h3>
+<p style="color:var(--muted);font-size:.9rem"><span class="de"><strong>Fahrlehrer-Phase: Motor noch aus.</strong> Beim Setup gibt es nichts zu kontrollieren — aber ab dem nächsten Modul greift HITL bei jeder Aktion.</span><span class="en"><strong>Instructor phase: Engine still off.</strong> During setup there's nothing to control — but starting next module, HITL kicks in for every action.</span></p>
+<pre style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:.75rem;font-size:.85rem;overflow-x:auto;margin-top:.75rem"><code># HITL-Config für dieses Modul / HITL config for this module
+exec: { security: "deny" }
+# → Alles gesperrt bis du es freigibst / Everything locked until you allow it</code></pre>
+<p style="margin-top:.75rem;font-size:.8rem;color:var(--muted)"><span class="de">📍 <strong>Autonomie-Stufe:</strong> 🟢 Fahrlehrer sitzt daneben, greift ständig ein — Approval für JEDE Aktion</span><span class="en">📍 <strong>Autonomy level:</strong> 🟢 Instructor sitting alongside, intervening constantly — Approval for EVERY action</span></p>
+</div>
+
 <!-- Rubric -->
 <h2><span class="de">📊 Rubrik</span><span class="en">📊 Rubric</span></h2>
 <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.5rem">
 <p style="margin-bottom:.5rem"><span style="color:var(--green)">✅ <strong>Basis:</strong></span> <span style="color:var(--muted);font-size:.9rem"><span class="de">OpenClaw installiert, Agent antwortet auf „Hallo", Terminal-Navigation funktioniert</span><span class="en">OpenClaw installed, agent responds to "Hello", terminal navigation works</span></span></p>
 <p style="margin-bottom:.5rem"><span style="color:var(--orange)">⭐ <strong><span class="de">Fortgeschritten:</span><span class="en">Advanced:</span></strong></span> <span style="color:var(--muted);font-size:.9rem"><span class="de">Zusätzlich: 2 Channels konfiguriert (Telegram + WhatsApp), eigene Troubleshooting-Checkliste</span><span class="en">Additionally: 2 channels configured (Telegram + WhatsApp), own troubleshooting checklist</span></span></p>
 <p><span style="color:var(--accent)">🏆 <strong><span class="de">Experte:</span><span class="en">Expert:</span></strong></span> <span style="color:var(--muted);font-size:.9rem"><span class="de">Setup auf anderem OS dokumentiert (z.B. WSL2-Unterschiede) ODER Setup-Fehler reproduziert und gefixt</span><span class="en">Setup documented on different OS (e.g. WSL2 differences) OR setup error reproduced and fixed</span></span></p>
+</div>
+
+<div class="tip" style="border-left-color: var(--orange);">
+<strong>💰 <span class="de">Geschätzte API-Kosten für dieses Modul</span><span class="en">Estimated API costs for this module</span></strong>
+<p style="margin:.5rem 0;color:var(--muted);font-size:.9rem;">
+<span class="de">Haiku: ~$0.00 · Sonnet: ~$0.00 · GPT-4o: ~$0.00 — <em>Reines Setup, keine API-Aufrufe</em></span>
+<span class="en">Haiku: ~$0.00 · Sonnet: ~$0.00 · GPT-4o: ~$0.00 — <em>Pure setup, no API calls</em></span>
+</p>
 </div>
 
 <!-- Nav Footer -->

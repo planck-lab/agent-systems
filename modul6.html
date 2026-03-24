@@ -188,7 +188,7 @@
 <li><span class="de">Wiederhole über 3 Sessions: Funktioniert das Memory?</span><span class="en">Repeat over 3 sessions: Does the memory work?</span></li>
 </ol>
 
-<a href="#" class="btn" style="background: var(--orange);">Open in Colab →</a>
+<a href="https://github.com/planck-lab/agent-systems/tree/main/notebooks" target="_blank" class="btn" style="background: var(--orange);">Open in Colab →</a>
 </div>
 
 <div class="step">
@@ -206,8 +206,12 @@
 
 <!-- HITL Box -->
 <div style="background:rgba(63,185,80,.08);border:1px solid rgba(63,185,80,.3);border-radius:12px;padding:1.5rem;margin:2rem 0">
-<h3 style="color:var(--green);font-size:1rem;margin-bottom:.5rem">🟢 HITL <span class="de">in diesem Modul</span><span class="en">in this module</span></h3>
-<p style="color:var(--muted);font-size:.9rem"><span class="de">Mensch entscheidet was gemerkt wird. <strong>Fahrschüler führt Fahrtenbuch — Fahrlehrer prüft.</strong> Der Agent speichert proaktiv, aber du bestimmst die Kategorien und was in die Langzeit kommt.</span><span class="en">Human decides what gets remembered. <strong>Student keeps the driving log — instructor checks.</strong> The agent saves proactively, but you determine the categories and what goes into long-term memory.</span></p>
+<h3 style="color:var(--green);font-size:1rem;margin-bottom:.5rem">🟡 HITL <span class="de">in diesem Modul</span><span class="en">in this module</span></h3>
+<p style="color:var(--muted);font-size:.9rem"><span class="de">Mensch entscheidet was gemerkt wird. <strong>Beifahrer: Agent führt Fahrtenbuch — du prüfst.</strong></span><span class="en">Human decides what gets remembered. <strong>Passenger: Agent keeps the driving log — you check.</strong></span></p>
+<pre style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:.75rem;font-size:.85rem;overflow-x:auto;margin-top:.75rem"><code># HITL-Config für dieses Modul / HITL config for this module
+memory: { autoSave: true, approval: "on-write" }
+# → Memory auto, aber Schreiben braucht OK / Memory auto, but writing needs OK</code></pre>
+<p style="margin-top:.75rem;font-size:.8rem;color:var(--muted)"><span class="de">📍 <strong>Autonomie-Stufe:</strong> 🟡 Beifahrer, greift nur bei Bedarf ein — Allowlist, manche Aktionen auto-approved</span><span class="en">📍 <strong>Autonomy level:</strong> 🟡 Passenger, intervenes only when needed — Allowlist, some actions auto-approved</span></p>
 </div>
 
 <!-- Knowledge Check 2 -->
@@ -245,6 +249,14 @@
 <h2><span class="de">📚 Quellen</span><span class="en">📚 Sources</span></h2>
 <div class="source">Park et al. (2023): "Generative Agents: Interactive Simulacra of Human Behavior", <em>UIST 2023</em> <span class="tier-badge tier-a" style="font-size:.65rem;padding:.1rem .4rem;border-radius:6px;font-weight:700;background:rgba(63,185,80,.2);color:var(--green)">Tier A</span></div>
 <div class="source">Packer et al. (2023): "MemGPT: Towards LLMs as Operating Systems", arXiv:2310.08560 <span class="tier-badge tier-b" style="font-size:.65rem;padding:.1rem .4rem;border-radius:6px;font-weight:700;background:rgba(88,166,255,.15);color:var(--accent)">Tier B</span></div>
+
+<div class="tip" style="border-left-color: var(--orange);">
+<strong>💰 <span class="de">Geschätzte API-Kosten für dieses Modul</span><span class="en">Estimated API costs for this module</span></strong>
+<p style="margin:.5rem 0;color:var(--muted);font-size:.9rem;">
+<span class="de">Haiku: ~$0.20 · Sonnet: ~$1.00 · GPT-4o: ~$1.20</span>
+<span class="en">Haiku: ~$0.20 · Sonnet: ~$1.00 · GPT-4o: ~$1.20</span>
+</p>
+</div>
 
 <!-- Nav Footer -->
 <div class="nav-footer">

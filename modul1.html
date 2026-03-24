@@ -158,7 +158,11 @@
 <!-- HITL Box -->
 <div style="background:rgba(63,185,80,.08);border:1px solid rgba(63,185,80,.3);border-radius:12px;padding:1.5rem;margin:2rem 0">
 <h3 style="color:var(--green);font-size:1rem;margin-bottom:.5rem">🟢 HITL <span class="de">in diesem Modul</span><span class="en">in this module</span></h3>
-<p style="color:var(--muted);font-size:.9rem"><span class="de">Das Autonomie-Spektrum existiert, weil Vertrauen aufgebaut wird — nicht geschaltet. <strong>Fahrlehrer-Phase: Erstmal zuschauen.</strong> Du lernst das Konzept, bevor du den Agent frei lässt.</span><span class="en">The autonomy spectrum exists because trust is built — not switched. <strong>Instructor phase: First, observe.</strong> You learn the concept before letting the agent loose.</span></p>
+<p style="color:var(--muted);font-size:.9rem"><span class="de">Vertrauen wird aufgebaut, nicht geschaltet. <strong>Fahrlehrer-Phase: Jeder Tool-Aufruf braucht dein OK.</strong></span><span class="en">Trust is built, not switched. <strong>Instructor phase: Every tool call needs your OK.</strong></span></p>
+<pre style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:.75rem;font-size:.85rem;overflow-x:auto;margin-top:.75rem"><code># HITL-Config für dieses Modul / HITL config for this module
+tools: { approval: "always" }
+# → Jeder Tool-Aufruf braucht dein OK / Every tool call needs your OK</code></pre>
+<p style="margin-top:.75rem;font-size:.8rem;color:var(--muted)"><span class="de">📍 <strong>Autonomie-Stufe:</strong> 🟢 Fahrlehrer sitzt daneben, greift ständig ein — Approval für JEDE Aktion</span><span class="en">📍 <strong>Autonomy level:</strong> 🟢 Instructor sitting alongside, intervening constantly — Approval for EVERY action</span></p>
 </div>
 
 <!-- Rubric -->
@@ -187,6 +191,14 @@
 <div class="source">Wang et al. (2024): "Survey on LLM based Autonomous Agents", arXiv:2308.11432 <span class="tier-badge tier-b" style="font-size:.65rem;padding:.1rem .4rem;border-radius:6px;font-weight:700;background:rgba(88,166,255,.15);color:var(--accent)">Tier B</span></div>
 <div class="source">Ng, Andrew (2024): "Agentic Design Patterns" <span class="tier-badge tier-c" style="font-size:.65rem;padding:.1rem .4rem;border-radius:6px;font-weight:700;background:rgba(210,153,34,.15);color:var(--orange)">Tier C</span></div>
 <div class="source">Anthropic (2025): "Building Effective Agents" <span class="tier-badge tier-c" style="font-size:.65rem;padding:.1rem .4rem;border-radius:6px;font-weight:700;background:rgba(210,153,34,.15);color:var(--orange)">Tier C</span></div>
+
+<div class="tip" style="border-left-color: var(--orange);">
+<strong>💰 <span class="de">Geschätzte API-Kosten für dieses Modul</span><span class="en">Estimated API costs for this module</span></strong>
+<p style="margin:.5rem 0;color:var(--muted);font-size:.9rem;">
+<span class="de">Haiku: ~$0.05 · Sonnet: ~$0.25 · GPT-4o: ~$0.30</span>
+<span class="en">Haiku: ~$0.05 · Sonnet: ~$0.25 · GPT-4o: ~$0.30</span>
+</p>
+</div>
 
 <!-- Nav Footer -->
 <div class="nav-footer">

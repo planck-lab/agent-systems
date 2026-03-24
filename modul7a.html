@@ -183,7 +183,7 @@ Agent: [reads deep-research/SKILL.md → executes research steps]</span></div>
 <li><span class="de">Dokumentiere: Wurde der Skill korrekt geroutet? Ergebnis-Qualität?</span><span class="en">Document: Was the skill correctly routed? Result quality?</span></li>
 </ol>
 
-<a href="#" class="btn" style="background: var(--orange);">Open in Colab →</a>
+<a href="https://github.com/planck-lab/agent-systems/tree/main/notebooks" target="_blank" class="btn" style="background: var(--orange);">Open in Colab →</a>
 </div>
 
 <div class="step">
@@ -202,8 +202,12 @@ Agent: [reads deep-research/SKILL.md → executes research steps]</span></div>
 
 <!-- HITL Box -->
 <div style="background:rgba(63,185,80,.08);border:1px solid rgba(63,185,80,.3);border-radius:12px;padding:1.5rem;margin:2rem 0">
-<h3 style="color:var(--green);font-size:1rem;margin-bottom:.5rem">🟢 HITL <span class="de">in diesem Modul</span><span class="en">in this module</span></h3>
-<p style="color:var(--muted);font-size:.9rem"><span class="de">Du bestimmst, welche Skills installiert werden und wie sie geroutet werden. <strong>Führerschein bestanden — aber du entscheidest welche Apps auf dem Navi landen.</strong> Der Agent führt aus, du kuratierst die Fähigkeiten.</span><span class="en">You determine which skills get installed and how they're routed. <strong>License obtained — but you decide which apps go on the GPS.</strong> The agent executes, you curate the capabilities.</span></p>
+<h3 style="color:var(--green);font-size:1rem;margin-bottom:.5rem">🟠 HITL <span class="de">in diesem Modul</span><span class="en">in this module</span></h3>
+<p style="color:var(--muted);font-size:.9rem"><span class="de">Du kuratierst die Fähigkeiten. <strong>Fährt allein — aber du entscheidest welche Apps aufs Navi kommen.</strong></span><span class="en">You curate the capabilities. <strong>Driving alone — but you decide which apps go on the GPS.</strong></span></p>
+<pre style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:.75rem;font-size:.85rem;overflow-x:auto;margin-top:.75rem"><code># HITL-Config für dieses Modul / HITL config for this module
+skills: { autoInstall: false, approval: "on-install" }
+# → Skills nur mit Freigabe / Skills only with approval</code></pre>
+<p style="margin-top:.75rem;font-size:.8rem;color:var(--muted)"><span class="de">📍 <strong>Autonomie-Stufe:</strong> 🟠 Fährt allein, App trackt Route — Monitoring + Eskalation bei Anomalien</span><span class="en">📍 <strong>Autonomy level:</strong> 🟠 Driving alone, app tracks route — Monitoring + escalation on anomalies</span></p>
 </div>
 
 <!-- Rubric -->
@@ -228,6 +232,14 @@ Agent: [reads deep-research/SKILL.md → executes research steps]</span></div>
 <!-- Sources -->
 <h2><span class="de">📚 Quellen</span><span class="en">📚 Sources</span></h2>
 <div class="source">Qin et al. (2023): "Tool Learning with Foundation Models", arXiv:2304.08354 <span class="tier-badge tier-b" style="font-size:.65rem;padding:.1rem .4rem;border-radius:6px;font-weight:700;background:rgba(88,166,255,.15);color:var(--accent)">Tier B</span></div>
+
+<div class="tip" style="border-left-color: var(--orange);">
+<strong>💰 <span class="de">Geschätzte API-Kosten für dieses Modul</span><span class="en">Estimated API costs for this module</span></strong>
+<p style="margin:.5rem 0;color:var(--muted);font-size:.9rem;">
+<span class="de">Haiku: ~$0.10 · Sonnet: ~$0.50 · GPT-4o: ~$0.60</span>
+<span class="en">Haiku: ~$0.10 · Sonnet: ~$0.50 · GPT-4o: ~$0.60</span>
+</p>
+</div>
 
 <!-- Nav Footer -->
 <div class="nav-footer">

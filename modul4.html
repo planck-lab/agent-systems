@@ -196,7 +196,7 @@
 <li><span class="de">Erstelle eine Vergleichstabelle: Anfrage | Paranoid | Balanced</span><span class="en">Create a comparison table: Request | Paranoid | Balanced</span></li>
 </ol>
 
-<a href="#" class="btn" style="background: var(--orange);">Open in Colab →</a>
+<a href="https://github.com/planck-lab/agent-systems/tree/main/notebooks" target="_blank" class="btn" style="background: var(--orange);">Open in Colab →</a>
 </div>
 
 <div class="step">
@@ -214,8 +214,12 @@
 
 <!-- HITL Box -->
 <div style="background:rgba(63,185,80,.08);border:1px solid rgba(63,185,80,.3);border-radius:12px;padding:1.5rem;margin:2rem 0">
-<h3 style="color:var(--green);font-size:1rem;margin-bottom:.5rem">🟢 HITL <span class="de">in diesem Modul</span><span class="en">in this module</span></h3>
-<p style="color:var(--muted);font-size:.9rem"><span class="de">Approval Policies SIND das HITL-Kernstück. <strong>Fahrlehrer: „Blinker darfst du selbst, Überholen fragen!"</strong> Read-only Tools = freie Hand. Side-Effects = Rückfrage.</span><span class="en">Approval policies ARE the core HITL mechanism. <strong>Instructor: "Turn signal is yours, overtaking — ask first!"</strong> Read-only tools = free hand. Side effects = ask first.</span></p>
+<h3 style="color:var(--green);font-size:1rem;margin-bottom:.5rem">🟡 HITL <span class="de">in diesem Modul</span><span class="en">in this module</span></h3>
+<p style="color:var(--muted);font-size:.9rem"><span class="de">Approval Policies sind das HITL-Kernstück. <strong>Beifahrer: „Blinker darfst du selbst, Überholen fragen!"</strong></span><span class="en">Approval policies are the core HITL mechanism. <strong>Passenger: "Turn signal is yours, overtaking — ask first!"</strong></span></p>
+<pre style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:.75rem;font-size:.85rem;overflow-x:auto;margin-top:.75rem"><code># HITL-Config für dieses Modul / HITL config for this module
+tools: { policy: "allowlist", allowed: ["web_search", "read"] }
+# → Nur Lesen + Suche erlaubt / Only reading + search allowed</code></pre>
+<p style="margin-top:.75rem;font-size:.8rem;color:var(--muted)"><span class="de">📍 <strong>Autonomie-Stufe:</strong> 🟡 Beifahrer, greift nur bei Bedarf ein — Allowlist, manche Aktionen auto-approved</span><span class="en">📍 <strong>Autonomy level:</strong> 🟡 Passenger, intervenes only when needed — Allowlist, some actions auto-approved</span></p>
 </div>
 
 <!-- Rubric -->
@@ -242,6 +246,14 @@
 <div class="source">Schick et al. (2023): "Toolformer: Language Models Can Teach Themselves to Use Tools", <em>NeurIPS 2023</em> <span class="tier-badge tier-a" style="font-size:.65rem;padding:.1rem .4rem;border-radius:6px;font-weight:700;background:rgba(63,185,80,.2);color:var(--green)">Tier A</span></div>
 <div class="source">MCP Specification (Anthropic, 2024): modelcontextprotocol.io <span class="tier-badge tier-c" style="font-size:.65rem;padding:.1rem .4rem;border-radius:6px;font-weight:700;background:rgba(210,153,34,.15);color:var(--orange)">Tier C</span></div>
 <div class="source">Anthropic (2025): "Building Effective Agents" <span class="tier-badge tier-c" style="font-size:.65rem;padding:.1rem .4rem;border-radius:6px;font-weight:700;background:rgba(210,153,34,.15);color:var(--orange)">Tier C</span></div>
+
+<div class="tip" style="border-left-color: var(--orange);">
+<strong>💰 <span class="de">Geschätzte API-Kosten für dieses Modul</span><span class="en">Estimated API costs for this module</span></strong>
+<p style="margin:.5rem 0;color:var(--muted);font-size:.9rem;">
+<span class="de">Haiku: ~$0.15 · Sonnet: ~$0.75 · GPT-4o: ~$0.90</span>
+<span class="en">Haiku: ~$0.15 · Sonnet: ~$0.75 · GPT-4o: ~$0.90</span>
+</p>
+</div>
 
 <!-- Nav Footer -->
 <div class="nav-footer">
