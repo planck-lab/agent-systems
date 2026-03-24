@@ -69,16 +69,22 @@ function updateUI() {
 
 // Module completion button (for module pages)
 function initModuleCompletion(moduleId) {
-  const container = document.querySelector('.celebration, .nav-footer');
+  // Find the LAST nav-footer (bottom navigation)
+  const navFooters = document.querySelectorAll('.nav-footer');
+  const container = navFooters.length > 0 ? navFooters[navFooters.length - 1] : null;
   if (!container) return;
 
   const done = isComplete(moduleId);
   const wrapper = document.createElement('div');
-  wrapper.style.cssText = 'text-align:center; margin:1.5rem 0;';
+  wrapper.style.cssText = 'text-align:center; margin:2rem 0 1rem; padding:1.5rem; background:var(--surface); border:1px solid var(--border); border-radius:12px;';
   wrapper.innerHTML = `
-    <button class="btn module-done-btn" style="background:${done ? 'var(--green)' : 'var(--surface)'}; color:${done ? 'var(--bg)' : 'var(--text)'}; border:1px solid ${done ? 'var(--green)' : 'var(--border)'}; cursor:pointer; transition:all 0.2s;">
-      <span class="de">${done ? '✅ Modul abgeschlossen' : '☐ Modul als erledigt markieren'}</span>
-      <span class="en">${done ? '✅ Module completed' : '☐ Mark module as complete'}</span>
+    <p style="color:var(--muted); font-size:.85rem; margin:0 0 .75rem;">
+      <span class="de">Alles verstanden? Dann markiere dieses Modul als abgeschlossen.</span>
+      <span class="en">Got it all? Mark this module as complete.</span>
+    </p>
+    <button class="btn module-done-btn" style="background:${done ? 'var(--green)' : 'var(--surface)'}; color:${done ? 'var(--bg)' : 'var(--text)'}; border:1px solid ${done ? 'var(--green)' : 'var(--border)'}; cursor:pointer; transition:all 0.2s; font-size:.9rem; padding:.6rem 1.5rem;">
+      <span class="de">${done ? '✅ Modul abgeschlossen' : '☐ Als erledigt markieren'}</span>
+      <span class="en">${done ? '✅ Module completed' : '☐ Mark as complete'}</span>
     </button>
   `;
 
@@ -89,8 +95,8 @@ function initModuleCompletion(moduleId) {
       btn.style.background = 'var(--surface)';
       btn.style.color = 'var(--text)';
       btn.style.borderColor = 'var(--border)';
-      btn.querySelector('.de').textContent = '☐ Modul als erledigt markieren';
-      btn.querySelector('.en').textContent = '☐ Mark module as complete';
+      btn.querySelector('.de').textContent = '☐ Als erledigt markieren';
+      btn.querySelector('.en').textContent = '☐ Mark as complete';
     } else {
       markComplete(moduleId);
       btn.style.background = 'var(--green)';
@@ -104,6 +110,19 @@ function initModuleCompletion(moduleId) {
   container.parentNode.insertBefore(wrapper, container);
 }
 
+// Curriculum page: show completion indicators on module cards
+function initCurriculumProgress() {
+  document.querySelectorAll('[data-module-id]').forEach(card => {
+    const mid = card.dataset.moduleId;
+    const done = isComplete(mid);
+    const numEl = card.querySelector('.module-num');
+    if (numEl && done) {
+      numEl.style.background = 'var(--green)';
+      numEl.textContent = '✓';
+    }
+  });
+}
+
 // Init on page load
 document.addEventListener('DOMContentLoaded', () => {
   updateUI();
@@ -114,5 +133,10 @@ document.addEventListener('DOMContentLoaded', () => {
   if (match) {
     const moduleId = 'm' + match[1];
     initModuleCompletion(moduleId);
+  }
+
+  // Curriculum page
+  if (path.includes('curriculum')) {
+    initCurriculumProgress();
   }
 });

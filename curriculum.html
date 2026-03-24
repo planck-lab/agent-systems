@@ -83,7 +83,19 @@ section h2{font-size:1.6rem;font-weight:800;margin-bottom:1rem}
 <!-- Cluster 1: Grundlagen -->
 <div class="cluster-title"><span class="de">🔧 Phase 1: Grundlagen (M0–M3)</span><span class="en">🔧 Phase 1: Foundations (M0–M3)</span></div>
 
-<a href="modul0.html" class="module-card">
+<div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1rem 1.25rem;margin-bottom:1.5rem;display:flex;align-items:center;gap:1rem">
+<div style="flex:1">
+<div style="display:flex;justify-content:space-between;margin-bottom:.4rem">
+<span style="font-size:.85rem;font-weight:700"><span class="de">Fortschritt</span><span class="en">Progress</span></span>
+<span style="font-size:.85rem;color:var(--muted)" class="progress-count">0/15</span>
+</div>
+<div style="height:6px;background:var(--border);border-radius:3px;overflow:hidden">
+<div class="overall-progress-fill" style="height:100%;background:var(--green);border-radius:3px;transition:width .3s;width:0%"></div>
+</div>
+</div>
+</div>
+
+<a href="modul0.html" class="module-card" data-module-id="m0">
 <div class="module-num">0</div>
 <div class="module-info">
 <div class="module-title"><span class="de">Setup & Werkzeuge</span><span class="en">Setup & Tools</span></div>
@@ -94,7 +106,7 @@ section h2{font-size:1.6rem;font-weight:800;margin-bottom:1rem}
 <span class="meta-badge badge-time">60 min</span>
 </div></div></a>
 
-<a href="modul1.html" class="module-card">
+<a href="modul1.html" class="module-card" data-module-id="m1">
 <div class="module-num">1</div>
 <div class="module-info">
 <div class="module-title"><span class="de">Was ist ein Agent?</span><span class="en">What is an Agent?</span></div>
@@ -105,7 +117,7 @@ section h2{font-size:1.6rem;font-weight:800;margin-bottom:1rem}
 <span class="meta-badge badge-time">45 min</span>
 </div></div></a>
 
-<a href="modul2.html" class="module-card">
+<a href="modul2.html" class="module-card" data-module-id="m2">
 <div class="module-num">2</div>
 <div class="module-info">
 <div class="module-title"><span class="de">Der Agent Loop</span><span class="en">The Agent Loop</span></div>
@@ -116,7 +128,7 @@ section h2{font-size:1.6rem;font-weight:800;margin-bottom:1rem}
 <span class="meta-badge badge-time">60 min</span>
 </div></div></a>
 
-<a href="modul3.html" class="module-card">
+<a href="modul3.html" class="module-card" data-module-id="m3">
 <div class="module-num">3</div>
 <div class="module-info">
 <div class="module-title"><span class="de">Architektur eines Orchestrators</span><span class="en">Orchestrator Architecture</span></div>
@@ -130,7 +142,7 @@ section h2{font-size:1.6rem;font-weight:800;margin-bottom:1rem}
 <!-- Cluster 2: Konfiguration -->
 <div class="cluster-title"><span class="de">⚙️ Phase 2: Konfiguration (M4–M6)</span><span class="en">⚙️ Phase 2: Configuration (M4–M6)</span></div>
 
-<a href="modul4.html" class="module-card">
+<a href="modul4.html" class="module-card" data-module-id="m4">
 <div class="module-num">4</div>
 <div class="module-info">
 <div class="module-title"><span class="de">Tool Use & Kontrollierte Autonomie</span><span class="en">Tool Use & Controlled Autonomy</span></div>
@@ -141,7 +153,7 @@ section h2{font-size:1.6rem;font-weight:800;margin-bottom:1rem}
 <span class="meta-badge badge-time">60 min</span>
 </div></div></a>
 
-<a href="modul5.html" class="module-card">
+<a href="modul5.html" class="module-card" data-module-id="m5">
 <div class="module-num">5</div>
 <div class="module-info">
 <div class="module-title"><span class="de">Persona & Workspace</span><span class="en">Persona & Workspace</span></div>
@@ -152,7 +164,7 @@ section h2{font-size:1.6rem;font-weight:800;margin-bottom:1rem}
 <span class="meta-badge badge-time">60 min</span>
 </div></div></a>
 
-<a href="modul6.html" class="module-card">
+<a href="modul6.html" class="module-card" data-module-id="m6">
 <div class="module-num">6</div>
 <div class="module-info">
 <div class="module-title"><span class="de">Gedächtnis & Kontext</span><span class="en">Memory & Context</span></div>
@@ -166,7 +178,7 @@ section h2{font-size:1.6rem;font-weight:800;margin-bottom:1rem}
 <!-- Cluster 3: Erweiterung -->
 <div class="cluster-title"><span class="de">🧩 Phase 3: Erweiterung (M7–M9)</span><span class="en">🧩 Phase 3: Extension (M7–M9)</span></div>
 
-<a href="modul7a.html" class="module-card">
+<a href="modul7a.html" class="module-card" data-module-id="m7a">
 <div class="module-num">7a</div>
 <div class="module-info">
 <div class="module-title"><span class="de">Skills nutzen</span><span class="en">Using Skills</span></div>
@@ -177,7 +189,7 @@ section h2{font-size:1.6rem;font-weight:800;margin-bottom:1rem}
 <span class="meta-badge badge-time">60 min</span>
 </div></div></a>
 
-<a href="modul7b.html" class="module-card">
+<a href="modul7b.html" class="module-card" data-module-id="m7b">
 <div class="module-num dev-only">7b</div>
 <div class="module-info">
 <div class="module-title"><span class="de">Skills bauen</span><span class="en">Building Skills</span></div>
@@ -188,7 +200,7 @@ section h2{font-size:1.6rem;font-weight:800;margin-bottom:1rem}
 <span class="meta-badge badge-time">60 min</span>
 </div></div></a>
 
-<a href="modul8.html" class="module-card">
+<a href="modul8.html" class="module-card" data-module-id="m8">
 <div class="module-num">8</div>
 <div class="module-info">
 <div class="module-title"><span class="de">Fehler, Debugging & Ethik</span><span class="en">Failures, Debugging & Ethics</span></div>
@@ -199,7 +211,7 @@ section h2{font-size:1.6rem;font-weight:800;margin-bottom:1rem}
 <span class="meta-badge badge-time">75 min</span>
 </div></div></a>
 
-<a href="modul9.html" class="module-card">
+<a href="modul9.html" class="module-card" data-module-id="m9">
 <div class="module-num">9</div>
 <div class="module-info">
 <div class="module-title"><span class="de">Multi-Agent Systeme & A2A</span><span class="en">Multi-Agent Systems & A2A</span></div>
@@ -213,7 +225,7 @@ section h2{font-size:1.6rem;font-weight:800;margin-bottom:1rem}
 <!-- Cluster 4: Production -->
 <div class="cluster-title"><span class="de">🚀 Phase 4: Production (M10–M13)</span><span class="en">🚀 Phase 4: Production (M10–M13)</span></div>
 
-<a href="modul10.html" class="module-card">
+<a href="modul10.html" class="module-card" data-module-id="m10">
 <div class="module-num">10</div>
 <div class="module-info">
 <div class="module-title"><span class="de">Automatisierung</span><span class="en">Automation</span></div>
@@ -224,7 +236,7 @@ section h2{font-size:1.6rem;font-weight:800;margin-bottom:1rem}
 <span class="meta-badge badge-time">75 min</span>
 </div></div></a>
 
-<a href="modul11.html" class="module-card">
+<a href="modul11.html" class="module-card" data-module-id="m11">
 <div class="module-num">11</div>
 <div class="module-info">
 <div class="module-title"><span class="de">Sicherheit & Trust</span><span class="en">Security & Trust</span></div>
@@ -235,7 +247,7 @@ section h2{font-size:1.6rem;font-weight:800;margin-bottom:1rem}
 <span class="meta-badge badge-time">75 min</span>
 </div></div></a>
 
-<a href="modul12.html" class="module-card">
+<a href="modul12.html" class="module-card" data-module-id="m12">
 <div class="module-num dev-only">12</div>
 <div class="module-info">
 <div class="module-title"><span class="de">Eigene Orchestrierung</span><span class="en">Building Your Own Orchestration</span></div>
@@ -246,7 +258,7 @@ section h2{font-size:1.6rem;font-weight:800;margin-bottom:1rem}
 <span class="meta-badge badge-time">90 min</span>
 </div></div></a>
 
-<a href="modul13.html" class="module-card">
+<a href="modul13.html" class="module-card" data-module-id="m13">
 <div class="module-num">13</div>
 <div class="module-info">
 <div class="module-title"><span class="de">Production Readiness</span><span class="en">Production Readiness</span></div>
@@ -323,6 +335,7 @@ section h2{font-size:1.6rem;font-weight:800;margin-bottom:1rem}
 </footer>
 
 <script src="glossary.js"></script>
+<script src="progress.js"></script>
 <script>
 function setLang(l){document.documentElement.lang=l;document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('active'));document.querySelector(`.lang-btn[onclick="setLang('${l}')"]`).classList.add('active');localStorage.setItem('lang',l);if(typeof initGlossary==='function')initGlossary()}
 const s=localStorage.getItem('lang');if(s)setLang(s);
