@@ -152,3 +152,14 @@ tr:hover td { background: rgba(88,166,255,0.03); }
   .comparison { grid-template-columns: 1fr; }
   .glossary-panel { width: calc(100vw - 3rem); right: 1.5rem; }
 }
+
+/* Collapsible sections */
+details { margin: 1rem 0; }
+details summary {
+  cursor: pointer; font-weight: 700; font-size: .9rem; color: var(--muted);
+  padding: .5rem 0; list-style: none; display: flex; align-items: center; gap: .5rem;
+}
+details summary::-webkit-details-marker { display: none; }
+details summary::before { content: "▸"; transition: transform .2s; display: inline-block; }
+details[open] summary::before { transform: rotate(90deg); }
+details summary:hover { color: var(--text); }
