@@ -3,263 +3,433 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Modul 1: Was ist ein Agent? — Agent Systems</title>
-<meta name="description" content="Anatomie intelligenter Systeme: Die 5 Kernkomponenten eines AI Agents, das Autonomie-Spektrum und Andrew Ng's 4 Patterns.">
-<meta name="author" content="Jan Rummel">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>🤖</text></svg>">
+<title>Modul 1: Der Agent in Aktion — Agent Literacy</title>
+<meta name="description" content="Sieh einen AI Agent live arbeiten. Verstehe was unter der Haube passiert. Der Hook.">
+<meta property="og:title" content="Modul 1 — Agent Literacy">
+<meta property="og:url" content="https://planck-lab.github.io/agent-systems/modul1.html">
+<meta property="og:type" content="article">
+<meta name="twitter:card" content="summary">
+<meta property="og:image" content="https://planck-lab.github.io/agent-systems/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
 <link rel="stylesheet" href="style.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧭</text></svg>">
 <style>
-.spectrum{display:flex;align-items:stretch;margin:1.5rem 0;border-radius:12px;overflow:hidden;border:1px solid var(--border)}
-.spectrum-level{flex:1;padding:.75rem .5rem;text-align:center}
-.spectrum-level:not(:last-child){border-right:1px solid var(--border)}
-.spectrum-label{font-size:.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.2rem}
-.spectrum-icon{font-size:1.3rem;margin-bottom:.2rem}
-.spectrum-name{font-weight:700;font-size:.8rem}
-.spectrum-sub{font-size:.65rem;color:var(--muted);margin-top:.1rem}
-.spectrum-l0{background:rgba(88,166,255,.05)}.spectrum-l1{background:rgba(88,166,255,.08)}.spectrum-l2{background:rgba(63,185,80,.08)}.spectrum-l3{background:rgba(210,153,34,.08)}.spectrum-l4{background:rgba(248,81,73,.08)}
-.component-flow{display:flex;align-items:center;justify-content:center;gap:.25rem;flex-wrap:wrap;margin:1.5rem 0}
-.component-box{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:.75rem;text-align:center;min-width:80px}
-.component-box .c-icon{font-size:1.3rem;margin-bottom:.25rem}
-.component-box .c-name{font-weight:700;font-size:.8rem}
-.component-box .c-desc{font-size:.65rem;color:var(--muted);margin-top:.15rem}
-.component-arrow{color:var(--accent);font-size:1.2rem;font-weight:700}
-.pattern-grid{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin:1.5rem 0}
-.pattern-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1rem}
-.pattern-card .p-icon{font-size:1.2rem;margin-bottom:.35rem}
-.pattern-card .p-name{font-weight:700;font-size:.9rem;margin-bottom:.2rem}
-.pattern-card .p-desc{font-size:.8rem;color:var(--muted)}
-.pattern-card .p-module{font-size:.7rem;color:var(--accent);margin-top:.35rem;font-weight:600}
-@media(max-width:600px){.spectrum{flex-direction:column}.spectrum-level:not(:last-child){border-right:none;border-bottom:1px solid var(--border)}.pattern-grid{grid-template-columns:1fr}.component-flow{flex-direction:column}.component-arrow{transform:rotate(90deg)}}
+.module-header{position:relative;background:linear-gradient(135deg,rgba(88,166,255,.08),rgba(137,87,229,.06));border:1px solid var(--border);border-radius:16px;padding:2rem 1.5rem 1.5rem;margin-bottom:2rem;overflow:hidden}
+.module-header::before{content:'01';position:absolute;top:-10px;right:20px;font-size:6rem;font-weight:900;opacity:.04;line-height:1}
+.module-header .pills{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:.75rem}
+.module-header .pills span{font-size:.7rem;padding:.15rem .5rem;border-radius:20px;font-weight:600}
+.module-header h1{font-size:1.8rem;margin-bottom:.25rem}
+.module-header .question{color:var(--accent);font-style:italic;margin-bottom:.5rem}
+.module-header .lernziel{color:var(--muted);font-size:.85rem}
+.header-nav{display:flex;justify-content:space-between;margin-bottom:1rem;font-size:.85rem}
+.header-nav a{color:var(--accent);text-decoration:none}
+.header-nav a:hover{text-decoration:underline}
+
+.demo-box{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.5rem;margin:1.5rem 0;position:relative;overflow:hidden}
+.demo-box::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--accent)}
+.demo-step{border-left:2px solid var(--accent);padding-left:1rem;margin:.75rem 0}
+.demo-step.error{border-left-color:#f85149}
+.demo-step.human{border-left-color:var(--green)}
+.demo-label{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.25rem}
+.demo-label.agent{color:var(--accent)}
+.demo-label.error{color:#f85149}
+.demo-label.human{color:var(--green)}
+.demo-content{color:var(--muted);font-size:.88rem;line-height:1.6}
+
+.concept-grid{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin:1.5rem 0}
+.concept-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.25rem}
+.concept-card .icon{font-size:1.5rem;margin-bottom:.5rem}
+.concept-card h4{font-size:.9rem;margin-bottom:.4rem}
+.concept-card p{color:var(--muted);font-size:.82rem;line-height:1.5;margin:0}
+
+.loop-visual{display:flex;align-items:center;justify-content:center;gap:.5rem;flex-wrap:wrap;margin:1.5rem 0;padding:1.5rem;background:var(--surface);border:1px solid var(--border);border-radius:12px}
+.loop-step{padding:.5rem .75rem;border-radius:8px;font-weight:600;font-size:.82rem;text-align:center;min-width:80px}
+.loop-arrow{color:var(--muted);font-size:1.2rem}
+
+.reflection-box{background:rgba(210,153,34,.06);border:1px solid rgba(210,153,34,.2);border-radius:12px;padding:1.5rem;margin:1.5rem 0}
+.reflection-box h3{color:var(--orange);font-size:1rem;margin-bottom:.75rem}
+.reflection-box ol,.reflection-box ul{padding-left:1.25rem}
+.reflection-box li{color:var(--muted);font-size:.88rem;line-height:1.6;margin-bottom:.5rem}
+
+.callout{padding:1rem 1.25rem;border-radius:10px;font-size:.88rem;line-height:1.6;margin:1.5rem 0}
+.callout.blue{background:rgba(88,166,255,.06);border:1px solid rgba(88,166,255,.2)}
+.callout.green{background:rgba(63,185,80,.06);border:1px solid rgba(63,185,80,.2)}
+.callout.red{background:rgba(248,81,73,.06);border:1px solid rgba(248,81,73,.2)}
+
+.case-study{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.5rem;margin:1.5rem 0}
+.case-study h3{font-size:1rem;margin-bottom:.25rem}
+.case-study .label{font-size:.7rem;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem}
+
+.delegation-exercise{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.5rem;margin:1.5rem 0}
+.task-row{display:flex;align-items:center;gap:.75rem;padding:.75rem 0;border-bottom:1px solid var(--border);font-size:.88rem}
+.task-row:last-child{border-bottom:none}
+.task-emoji{font-size:1.2rem;flex-shrink:0}
+
+.bottom-nav{display:flex;justify-content:space-between;align-items:center;padding:1.5rem 0;margin-top:2rem;border-top:1px solid var(--border)}
+.bottom-nav a{color:var(--accent);text-decoration:none;font-size:.9rem}
+.bottom-nav a:hover{text-decoration:underline}
+
+@media(max-width:600px){
+.module-header h1{font-size:1.4rem}
+.concept-grid{grid-template-columns:1fr}
+.loop-visual{flex-direction:column}
+.loop-arrow{transform:rotate(90deg)}
+}
 </style>
+<script>const _l=localStorage.getItem("lang");if(_l)document.documentElement.lang=_l;</script>
 </head>
 <body>
-<!-- Banner: Neuer Kurs -->
-<div style="background:linear-gradient(135deg,rgba(88,166,255,.12),rgba(137,87,229,.1));border-bottom:1px solid var(--border);padding:.75rem 1.5rem;text-align:center;font-size:.88rem;line-height:1.5">
-<span class="de">🧭 <strong>Neuer Kurs:</strong> <a href="https://planck-lab.github.io/agent-literacy/" style="color:var(--accent);font-weight:600">Agent Literacy</a> — Verstehe AI Agents ohne Code. Dieser Kurs bleibt als Archiv online.</span>
-<span class="en">🧭 <strong>New course:</strong> <a href="https://planck-lab.github.io/agent-literacy/" style="color:var(--accent);font-weight:600">Agent Literacy</a> — Understand AI agents, no code. This course remains as archive.</span>
-</div>
 <a href="#main-content" class="skip-link"><span class="de">Zum Inhalt springen</span><span class="en">Skip to content</span></a>
 <div class="lang-switch" role="navigation" aria-label="Language">
 <button class="lang-btn active" onclick="setLang('de')">DE</button>
 <button class="lang-btn" onclick="setLang('en')">EN</button>
 </div>
 
-<div class="progress-bar"><div class="progress-fill" style="width:7.7%"></div></div>
+<div class="container" style="max-width:760px;margin:0 auto;padding:3rem 2rem 2rem">
 
-<div class="container" id="main-content">
-<div class="module-header">
-<span class="module-id">M1</span>
-<div class="meta-row">
-<span><span class="de">Modul 1 von 13</span><span class="en">Module 1 of 13</span></span>
-<span class="meta-pill track">🟠🔴</span>
-<span class="meta-pill level"><span class="de">Einfach</span><span class="en">Easy</span></span>
-<span class="meta-pill time">⏱ 45 min</span>
-</div>
-<h1><span class="de">Was ist ein Agent?</span><span class="en">What is an Agent?</span></h1>
-<p class="subtitle"><span class="de">Anatomie intelligenter Systeme — vom Chatbot zum autonomen Multi-Agent-System.</span><span class="en">Anatomy of intelligent systems — from chatbot to autonomous multi-agent system.</span></p>
-<div style="display:flex;justify-content:space-between;margin-top:.75rem;padding-top:.5rem;border-top:1px solid var(--border)">
-<a href="modul0.html" style="color:var(--muted);font-size:.8rem;text-decoration:none">← <span class="de">Modul 0</span><span class="en">Module 0</span></a>
-<a href="curriculum.html" style="color:var(--muted);font-size:.8rem;text-decoration:none">📋 <span class="de">Übersicht</span><span class="en">Overview</span></a>
-<a href="modul2.html" style="color:var(--muted);font-size:.8rem;text-decoration:none"><span class="de">Modul 2</span><span class="en">Module 2</span> →</a>
-</div>
-<div class="goal-row">
-<strong>🎯 <span class="de">Lernziel</span><span class="en">Learning Goal</span>:</strong> <span class="de">Innerhalb von 45 min: Die 5 Kernkomponenten eines AI Agents benennen und 3 reale Systeme auf dem Autonomie-Spektrum einordnen.</span><span class="en">Within 45 min: Name the 5 core components of an AI agent and place 3 real systems on the autonomy spectrum.</span>
-</div>
+<div class="breadcrumb"><span class="de"><a href="index.html">🧭 Agent Literacy</a> › Modul 1: Der Agent in Aktion</span><span class="en"><a href="index.html">🧭 Agent Literacy</a> › Module 1: The Agent in Action</span></div>
+<div class="header-nav">
+<a href="index.html">🧭 <span class="de">Übersicht</span><span class="en">Overview</span></a>
+<a href="modul2.html"><span class="de">Modul 2 →</span><span class="en">Module 2 →</span></a>
 </div>
 
-<!-- Before/After -->
-<div class="comparison" style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0">
-<div class="compare-card bad" style="background:var(--surface);border:1px solid rgba(248,81,73,.4);border-radius:12px;padding:1.25rem">
-<h4 style="font-size:.9rem;margin-bottom:.5rem"><span class="de">❌ Vorher</span><span class="en">❌ Before</span></h4>
-<p style="font-size:.85rem;color:var(--muted)"><span class="de">„Agent" und „Chatbot" sind das Gleiche.</span><span class="en">"Agent" and "chatbot" are the same thing.</span></p>
+<div class="module-header" id="main-content">
+<div class="pills">
+<span style="background:rgba(88,166,255,.1);color:var(--accent)">⏱ ~15 min</span>
+<span style="background:rgba(63,185,80,.1);color:var(--green)"><span class="de">Einstieg</span><span class="en">Start here</span></span>
 </div>
-<div class="compare-card good" style="background:var(--surface);border:1px solid rgba(63,185,80,.4);border-radius:12px;padding:1.25rem">
-<h4 style="font-size:.9rem;margin-bottom:.5rem"><span class="de">✅ Nachher</span><span class="en">✅ After</span></h4>
-<p style="font-size:.85rem;color:var(--muted)"><span class="de">Du ordnest jedes AI-System auf dem Autonomie-Spektrum ein.</span><span class="en">You place any AI system on the autonomy spectrum.</span></p>
-</div>
+<p class="question"><span class="de">"Was war das gerade?"</span><span class="en">"What just happened?"</span></p>
+<h1><span class="de">Modul 1: Der Agent in Aktion</span><span class="en">Module 1: The Agent in Action</span></h1>
+<p class="lernziel"><span class="de"><strong>Lernziel:</strong> Nach diesem Modul kannst du erklären was ein AI Agent ist, wie er sich von einem Chatbot unterscheidet, und bei einer konkreten Aufgabe einschätzen ob ein Agent sie übernehmen sollte.</span><span class="en"><strong>Learning Goal:</strong> After this module, you can explain what an AI agent is, how it differs from a chatbot, and assess whether an agent should handle a specific task.</span></p>
 </div>
 
-<!-- Concept: Agent Definition -->
-<h2><span class="de">Was macht einen Agent zum Agent?</span><span class="en">What makes an agent an agent?</span></h2>
+<!-- ===== TEIL 1: Live Demo ===== -->
+<section>
+<h2><span class="de">🎬 Ein Agent bei der Arbeit</span><span class="en">🎬 An Agent at Work</span></h2>
 
-<p><span class="de">Die klassische Definition nach <strong>Wooldridge & Jennings (1995)</strong> — immer noch die Grundlage:</span><span class="en">The classic definition by <strong>Wooldridge & Jennings (1995)</strong> — still the foundation:</span></p>
+<p><span class="de">Vergiss für einen Moment alles was du über Chatbots weißt. Schau dir an was passiert wenn jemand eine echte Aufgabe delegiert — nicht "schreibe mir einen Text", sondern eine Aufgabe mit echten Werkzeugen, echten Daten und echtem Fehlerpotenzial.</span><span class="en">Forget everything you know about chatbots for a moment. Watch what happens when someone delegates a real task — not "write me a text", but a task with real tools, real data, and real potential for failure.</span></p>
 
-<div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.5rem;margin:1rem 0">
-<p style="font-size:.9rem;margin-bottom:.5rem"><strong><span class="de">Autonomie</span><span class="en">Autonomy</span>:</strong> <span style="color:var(--muted)"><span class="de">Handelt ohne direkten Befehl</span><span class="en">Acts without direct command</span></span></p>
-<p style="font-size:.9rem;margin-bottom:.5rem"><strong><span class="de">Reaktivität</span><span class="en">Reactivity</span>:</strong> <span style="color:var(--muted)"><span class="de">Nimmt Umgebung wahr und reagiert</span><span class="en">Perceives environment and reacts</span></span></p>
-<p style="font-size:.9rem;margin-bottom:.5rem"><strong><span class="de">Pro-Aktivität</span><span class="en">Pro-activeness</span>:</strong> <span style="color:var(--muted)"><span class="de">Verfolgt eigene Ziele</span><span class="en">Pursues own goals</span></span></p>
-<p style="font-size:.9rem"><strong><span class="de">Soziale Fähigkeit</span><span class="en">Social ability</span>:</strong> <span style="color:var(--muted)"><span class="de">Interagiert mit anderen Agents/Menschen</span><span class="en">Interacts with other agents/humans</span></span></p>
+<div class="demo-box">
+<h3 style="font-size:.95rem;margin-bottom:1rem"><span class="de">Die Aufgabe: "Recherchiere den aktuellen Stand von AI Agents in der EU"</span><span class="en">The Task: "Research the current state of AI agents in the EU"</span></h3>
+
+<div class="demo-step">
+<div class="demo-label agent"><span class="de">Agent — Schritt 1: Verstehen</span><span class="en">Agent — Step 1: Understanding</span></div>
+<div class="demo-content"><span class="de">Der Agent liest die Nachricht und erkennt: Das ist ein Research-Auftrag. Er lädt seine Research-Anweisungen ("Skill"), die definieren <em>wie</em> gute Recherche aussieht: Mindestens 3 Quellen, Quellenbewertung, strukturierte Ausgabe.</span><span class="en">The agent reads the message and recognizes: This is a research task. It loads its research instructions ("Skill") that define <em>how</em> good research looks: At least 3 sources, source evaluation, structured output.</span></div>
 </div>
 
-<div class="source">📚 Wooldridge & Jennings (1995): "Intelligent Agents: Theory and Practice", <em>Knowledge Engineering Review</em> <span class="tier-badge tier-a" style="font-size:.65rem;padding:.1rem .4rem;border-radius:6px;font-weight:700;background:rgba(63,185,80,.2);color:var(--green)">Tier A</span></div>
-
-<!-- 5 Components -->
-<h2><span class="de">Die 5 Komponenten eines AI Agents</span><span class="en">The 5 Components of an AI Agent</span></h2>
-
-<div class="component-flow">
-<div class="component-box"><div class="c-icon">🎯</div><div class="c-name"><span class="de">Ziel</span><span class="en">Goal</span></div><div class="c-desc"><span class="de">Was soll erreicht werden?</span><span class="en">What should be achieved?</span></div></div>
-<div class="component-arrow">→</div>
-<div class="component-box"><div class="c-icon">👁️</div><div class="c-name"><span class="de">Wahrnehmung</span><span class="en">Perception</span></div><div class="c-desc"><span class="de">Input verarbeiten</span><span class="en">Process input</span></div></div>
-<div class="component-arrow">→</div>
-<div class="component-box"><div class="c-icon">🧠</div><div class="c-name">Reasoning</div><div class="c-desc"><span class="de">Denken & Planen</span><span class="en">Think & Plan</span></div></div>
-<div class="component-arrow">→</div>
-<div class="component-box"><div class="c-icon">⚡</div><div class="c-name"><span class="de">Aktion</span><span class="en">Action</span></div><div class="c-desc"><span class="de">Handeln & Tools</span><span class="en">Act & Tools</span></div></div>
-<div class="component-arrow">→</div>
-<div class="component-box"><div class="c-icon">💾</div><div class="c-name"><span class="de">Gedächtnis</span><span class="en">Memory</span></div><div class="c-desc"><span class="de">Erfahrung speichern</span><span class="en">Store experience</span></div></div>
+<div class="demo-step">
+<div class="demo-label agent"><span class="de">Agent — Schritt 2: Suchen</span><span class="en">Agent — Step 2: Searching</span></div>
+<div class="demo-content"><span class="de">Drei Web-Suchen: "EU AI Act agent systems 2026", "AI agent regulation Europe", "autonomous AI systems compliance". 7 relevante Ergebnisse gefiltert, Seiten gelesen, Infos extrahiert.</span><span class="en">Three web searches: "EU AI Act agent systems 2026", "AI agent regulation Europe", "autonomous AI systems compliance". 7 relevant results filtered, pages read, info extracted.</span></div>
 </div>
 
-<p style="color:var(--muted);font-size:.9rem"><span class="de"><strong>Xi et al. (2023)</strong> klassifizieren LLM-Agents in drei Dimensionen: Brain (LLM), Perception (Input), Action (Output). <strong>Wang et al. (2024)</strong> ergänzen dies mit einer konstruktionsorientierten Perspektive: Profiling (Rolle), Memory (Gedächtnis), Planning (Aufgaben-Zerlegung), Action (Tool-Ausführung) — die vier Bausteine, die sich als roter Faden durch unseren Kurs ziehen.</span><span class="en"><strong>Xi et al. (2023)</strong> classify LLM agents in three dimensions: Brain (LLM), Perception (Input), Action (Output). <strong>Wang et al. (2024)</strong> complement this with a construction-oriented perspective: Profiling (Role), Memory, Planning (Task Decomposition), Action (Tool Execution) — the four building blocks that run as a thread through our course.</span></p>
-
-<div class="source">📚 Xi et al. (2023): "The Rise and Potential of LLM Based Agents", arXiv:2309.07864 <span class="tier-badge tier-b" style="font-size:.65rem;padding:.1rem .4rem;border-radius:6px;font-weight:700;background:rgba(88,166,255,.15);color:var(--accent)">Tier B</span> · Wang et al. (2024): arXiv:2308.11432 <span class="tier-badge tier-b" style="font-size:.65rem;padding:.1rem .4rem;border-radius:6px;font-weight:700;background:rgba(88,166,255,.15);color:var(--accent)">Tier B</span></div>
-
-<!-- Autonomy Spectrum -->
-<h2><span class="de">Das Autonomie-Spektrum (L0–L4)</span><span class="en">The Autonomy Spectrum (L0–L4)</span></h2>
-
-<p style="color:var(--muted);font-size:.9rem;margin-bottom:1rem"><span class="de">Nicht jedes AI-System ist ein „Agent". Die entscheidende Frage: <strong>Wie viel Kontrolle hat das System?</strong></span><span class="en">Not every AI system is an "agent". The key question: <strong>How much control does the system have?</strong></span></p>
-
-<div class="spectrum">
-<div class="spectrum-level spectrum-l0"><div class="spectrum-label">L0</div><div class="spectrum-icon">💬</div><div class="spectrum-name">Chatbot</div><div class="spectrum-sub"><span class="de">Frage → Antwort</span><span class="en">Q → A</span></div></div>
-<div class="spectrum-level spectrum-l1"><div class="spectrum-label">L1</div><div class="spectrum-icon">🤝</div><div class="spectrum-name">Copilot</div><div class="spectrum-sub"><span class="de">Vorschläge</span><span class="en">Suggestions</span></div></div>
-<div class="spectrum-level spectrum-l2"><div class="spectrum-label">L2</div><div class="spectrum-icon">🛡️</div><div class="spectrum-name">HITL Agent</div><div class="spectrum-sub"><span class="de">Mit Freigabe</span><span class="en">With approval</span></div></div>
-<div class="spectrum-level spectrum-l3"><div class="spectrum-label">L3</div><div class="spectrum-icon">🤖</div><div class="spectrum-name"><span class="de">Autonom</span><span class="en">Autonomous</span></div><div class="spectrum-sub"><span class="de">Eigene Entscheidungen</span><span class="en">Own decisions</span></div></div>
-<div class="spectrum-level spectrum-l4"><div class="spectrum-label">L4</div><div class="spectrum-icon">🌐</div><div class="spectrum-name">Multi-Agent</div><div class="spectrum-sub"><span class="de">Koordiniert</span><span class="en">Coordinated</span></div></div>
+<div class="demo-step error">
+<div class="demo-label error"><span class="de">⚠️ Agent — Fehler</span><span class="en">⚠️ Agent — Error</span></div>
+<div class="demo-content"><span class="de">Der Agent schreibt: <em>"Der EU AI Act trat im August 2025 in Kraft."</em> Das klingt plausibel. Es ist falsch. Der AI Act wurde 2024 verabschiedet, die vollständige Durchsetzung beginnt erst <strong>August 2026</strong>. Der Agent hat zwei verschiedene Daten aus verschiedenen Quellen verwechselt — und es selbstbewusst als Fakt präsentiert.</span><span class="en">The agent writes: <em>"The EU AI Act came into force in August 2025."</em> Sounds plausible. It's wrong. The AI Act was adopted in 2024, full enforcement begins in <strong>August 2026</strong>. The agent confused two different dates from different sources — and confidently presented it as fact.</span></div>
 </div>
 
-<div style="background:rgba(137,87,229,.08);border:1px solid rgba(137,87,229,.3);border-radius:12px;padding:1.5rem;margin:2rem 0">
-<h3 style="color:var(--purple);font-size:1rem;margin-bottom:.5rem">🤖 Meta: <span class="de">Dieser Kurs wurde von einem Agent gebaut</span><span class="en">This course was built by an agent</span></h3>
-<p style="color:var(--muted);font-size:.9rem;line-height:1.6"><span class="de">Ein echtes Beispiel: Der Agent der diesen Kurs gebaut hat (Planck) ist ein L2-Agent — HITL mit Approval-Policies, Cron-Jobs und Skills. Er hat dieses Modul geschrieben, Jan hat es reviewt. Das ist Human-in-the-Loop in Aktion.</span><span class="en">A real example: The agent that built this course (Planck) is an L2 agent — HITL with approval policies, cron jobs, and skills. It wrote this module, Jan reviewed it. That's Human-in-the-Loop in action.</span></p>
+<div class="demo-step human">
+<div class="demo-label human"><span class="de">👤 Mensch — Korrektur</span><span class="en">👤 Human — Correction</span></div>
+<div class="demo-content"><span class="de">"Das Datum stimmt nicht. Der AI Act wurde 2024 verabschiedet, Durchsetzung ab August 2026." Der Agent korrigiert sich, speichert die Korrektur als Regel und wird diesen Fehler beim nächsten Mal nicht mehr machen.</span><span class="en">"That date is wrong. The AI Act was adopted in 2024, enforcement from August 2026." The agent corrects itself, saves the correction as a rule, and won't make this mistake again.</span></div>
 </div>
 
-<!-- Ng's 4 Patterns -->
-<h2><span class="de">Die 4 Kern-Patterns (Andrew Ng, 2024)</span><span class="en">The 4 Core Patterns (Andrew Ng, 2024)</span></h2>
-
-<p style="color:var(--muted);font-size:.9rem;margin-bottom:1rem"><span class="de">Diese vier Patterns sind die Roadmap für den gesamten Kurs. Jedes Pattern bekommt eigene Module:</span><span class="en">These four patterns are the roadmap for the entire course. Each pattern gets its own modules:</span></p>
-
-<div class="pattern-grid">
-<div class="pattern-card"><div class="p-icon">🪞</div><div class="p-name">Reflection</div><div class="p-desc"><span class="de">Agent evaluiert eigenen Output und iteriert</span><span class="en">Agent evaluates own output and iterates</span></div><div class="p-module">→ <span class="de">Modul 2</span><span class="en">Module 2</span></div></div>
-<div class="pattern-card"><div class="p-icon">🔧</div><div class="p-name">Tool Use</div><div class="p-desc"><span class="de">Agent ruft externe Werkzeuge auf</span><span class="en">Agent calls external tools</span></div><div class="p-module">→ <span class="de">Modul 4</span><span class="en">Module 4</span></div></div>
-<div class="pattern-card"><div class="p-icon">📋</div><div class="p-name">Planning</div><div class="p-desc"><span class="de">Agent zerlegt komplexe Aufgaben</span><span class="en">Agent decomposes complex tasks</span></div><div class="p-module">→ <span class="de">Modul 12</span><span class="en">Module 12</span></div></div>
-<div class="pattern-card"><div class="p-icon">👥</div><div class="p-name">Multi-Agent</div><div class="p-desc"><span class="de">Spezialisierte Agents für Teilaufgaben</span><span class="en">Specialized agents for sub-tasks</span></div><div class="p-module">→ <span class="de">Modul 9</span><span class="en">Module 9</span></div></div>
+<div class="demo-step">
+<div class="demo-label agent"><span class="de">Agent — Schritt 3: Ergebnis</span><span class="en">Agent — Step 3: Result</span></div>
+<div class="demo-content"><span class="de">Ein strukturiertes Briefing mit korrekten Daten, Quellenangaben mit Tier-Bewertung (A/B/C), offenen Fragen und einem Hinweis auf die eigene Korrektur: <em>"Hinweis: Datum initial falsch, nach Korrektur durch Nutzer aktualisiert."</em></span><span class="en">A structured briefing with correct data, source citations with tier ratings (A/B/C), open questions, and a note about its own correction: <em>"Note: Date initially wrong, updated after user correction."</em></span></div>
+</div>
 </div>
 
-<div class="source">📚 Ng, Andrew (2024): "Agentic Design Patterns" <span class="tier-badge tier-c" style="font-size:.65rem;padding:.1rem .4rem;border-radius:6px;font-weight:700;background:rgba(210,153,34,.15);color:var(--orange)">Tier C</span> · Anthropic (2024): "Building Effective Agents" <span class="tier-badge tier-c" style="font-size:.65rem;padding:.1rem .4rem;border-radius:6px;font-weight:700;background:rgba(210,153,34,.15);color:var(--orange)">Tier C</span></div>
+<div class="callout blue">
+<strong><span class="de">Was ist gerade passiert?</span><span class="en">What just happened?</span></strong>
+<span class="de">Keine Copy-Paste-Antwort aus einem Chatbot. Der Agent hat <strong>Werkzeuge benutzt</strong> (Web-Suche), eine <strong>Strategie verfolgt</strong> (Research-Skill), einen <strong>Fehler gemacht</strong> und aus der <strong>menschlichen Korrektur gelernt</strong>. Das ist der Unterschied.</span>
+<span class="en">No copy-paste answer from a chatbot. The agent <strong>used tools</strong> (web search), followed a <strong>strategy</strong> (research skill), <strong>made an error</strong>, and <strong>learned from human correction</strong>. That's the difference.</span>
+</div>
+</section>
 
-<!-- Framework Comparison -->
-<div style="margin:2rem 0">
-<h3><span class="de">🔄 Framework-Vergleich</span><span class="en">🔄 Framework Comparison</span></h3>
-<div style="overflow-x:auto">
+<!-- ===== TEIL 2: Was ist ein Agent? ===== -->
+<section>
+<h2><span class="de">Was ist ein AI Agent?</span><span class="en">What Is an AI Agent?</span></h2>
+
+<p><span class="de">Es gibt keine universelle Definition — aber es gibt einen Konsens über die Kernelemente. Anthropic, das Unternehmen hinter Claude, hat es 2024 so zusammengefasst:</span><span class="en">There's no universal definition — but there's consensus on the core elements. Anthropic, the company behind Claude, summarized it in 2024:</span></p>
+
+<div class="callout blue">
+<span class="de"><em>"Agents sind Systeme die LLMs nutzen um dynamisch ihren eigenen Workflow zu steuern und externe Tools zu verwenden, um Aufgaben zu erledigen."</em><br>— Anthropic, "Building Effective Agents" (2024)</span>
+<span class="en"><em>"Agents are systems that use LLMs to dynamically direct their own workflows and use external tools to accomplish tasks."</em><br>— Anthropic, "Building Effective Agents" (2024)</span>
+</div>
+
+<p><span class="de">Drei Worte sind entscheidend: <strong>dynamisch</strong>, <strong>eigenen</strong>, <strong>Tools</strong>. Lass uns die auseinandernehmen.</span><span class="en">Three words are key: <strong>dynamically</strong>, <strong>own</strong>, <strong>tools</strong>. Let's break them apart.</span></p>
+
+<div class="concept-grid">
+<div class="concept-card">
+<div class="icon">💬</div>
+<h4><span class="de">Chatbot</span><span class="en">Chatbot</span></h4>
+<p><span class="de">Du schreibst, er antwortet. Ein Ping-Pong. Der Chatbot hat kein Gedächtnis zwischen Sessions, keine Werkzeuge, keine Strategie. Er reagiert — er handelt nicht.</span><span class="en">You write, it answers. A ping-pong. The chatbot has no memory between sessions, no tools, no strategy. It reacts — it doesn't act.</span></p>
+</div>
+<div class="concept-card" style="border-color:var(--accent)">
+<div class="icon">🤖</div>
+<h4 style="color:var(--accent)"><span class="de">Agent</span><span class="en">Agent</span></h4>
+<p><span class="de">Du gibst einen Auftrag, er <em>entscheidet</em> wie er ihn löst. Er kann im Web suchen, Dateien lesen, andere Agents fragen, Ergebnisse speichern. Er plant, handelt und reflektiert — in einer Schleife.</span><span class="en">You give a task, it <em>decides</em> how to solve it. It can search the web, read files, ask other agents, save results. It plans, acts, and reflects — in a loop.</span></p>
+</div>
+</div>
+
+<h3><span class="de">Die Agent-Schleife</span><span class="en">The Agent Loop</span></h3>
+
+<p><span class="de">Jeder Agent — egal welches Framework, egal welcher Anbieter — folgt im Kern dem gleichen Muster:</span><span class="en">Every agent — regardless of framework or provider — follows the same core pattern:</span></p>
+
+<div class="loop-visual">
+<div class="loop-step" style="background:rgba(88,166,255,.1);color:var(--accent)"><span class="de">Wahrnehmen</span><span class="en">Perceive</span></div>
+<div class="loop-arrow">→</div>
+<div class="loop-step" style="background:rgba(137,87,229,.1);color:var(--purple)"><span class="de">Denken</span><span class="en">Think</span></div>
+<div class="loop-arrow">→</div>
+<div class="loop-step" style="background:rgba(63,185,80,.1);color:var(--green)"><span class="de">Handeln</span><span class="en">Act</span></div>
+<div class="loop-arrow">→</div>
+<div class="loop-step" style="background:rgba(210,153,34,.1);color:var(--orange)"><span class="de">Beobachten</span><span class="en">Observe</span></div>
+<div class="loop-arrow">↩</div>
+</div>
+
+<p><span class="de">Das ist keine Theorie — du hast es gerade gesehen:</span><span class="en">This isn't theory — you just saw it:</span></p>
+
+<ol>
+<li><span class="de"><strong>Wahrnehmen:</strong> Die Nachricht lesen, Intent erkennen ("Das ist ein Research-Auftrag")</span><span class="en"><strong>Perceive:</strong> Read the message, recognize intent ("This is a research task")</span></li>
+<li><span class="de"><strong>Denken:</strong> Research-Skill laden, Suchstrategie planen</span><span class="en"><strong>Think:</strong> Load research skill, plan search strategy</span></li>
+<li><span class="de"><strong>Handeln:</strong> Web-Suche ausführen, Seiten lesen, Infos extrahieren</span><span class="en"><strong>Act:</strong> Execute web search, read pages, extract information</span></li>
+<li><span class="de"><strong>Beobachten:</strong> Ergebnisse prüfen — reichen sie? Sind sie konsistent? → Wenn nicht: zurück zu Schritt 2</span><span class="en"><strong>Observe:</strong> Check results — are they sufficient? Consistent? → If not: back to step 2</span></li>
+</ol>
+
+<div class="callout green">
+<strong><span class="de">Das ist der Kern.</span><span class="en">That's the core.</span></strong>
+<span class="de">Alles andere — MCP, LangChain, CrewAI, OpenClaw — sind Implementierungen dieses Musters. Das Muster selbst ist älter als ChatGPT — es basiert auf dem Sense-Plan-Act-Paradigma aus der Robotik (1960er) und dem BDI-Modell (Belief-Desire-Intention, Rao &amp; Georgeff, 1995).</span>
+<span class="en">Everything else — MCP, LangChain, CrewAI, OpenClaw — are implementations of this pattern. The pattern predates ChatGPT — it's based on the Sense-Plan-Act paradigm from robotics (1960s) and the BDI model (Belief-Desire-Intention, Rao &amp; Georgeff, 1995).</span>
+</div>
+</section>
+
+<!-- ===== TEIL 3: Die vier Bausteine ===== -->
+<section>
+<h2><span class="de">Die vier Bausteine eines Agent Systems</span><span class="en">The Four Building Blocks of an Agent System</span></h2>
+
+<p><span class="de">Du musst kein Agent System bauen können. Aber du solltest wissen woraus es besteht — so wie du kein Auto bauen musst, aber Lenkrad, Bremse und Motor kennen solltest.</span><span class="en">You don't need to know how to build an agent system. But you should know what it's made of — just like you don't need to build a car, but you should know the steering wheel, brakes, and engine.</span></p>
+
+<div class="concept-grid">
+<div class="concept-card">
+<div class="icon">🧠</div>
+<h4><span class="de">1. Das Gehirn (LLM)</span><span class="en">1. The Brain (LLM)</span></h4>
+<p><span class="de">Ein Large Language Model wie GPT-4, Claude oder Llama. Es kann denken, Text verstehen und Entscheidungen treffen — aber es kann nichts <em>tun</em> ohne Werkzeuge.</span><span class="en">A Large Language Model like GPT-4, Claude, or Llama. It can think, understand text, and make decisions — but it can't <em>do</em> anything without tools.</span></p>
+</div>
+<div class="concept-card">
+<div class="icon">🔧</div>
+<h4><span class="de">2. Die Werkzeuge (Tools)</span><span class="en">2. The Tools</span></h4>
+<p><span class="de">Web-Suche, Dateien lesen, E-Mails senden, APIs aufrufen. Tools geben dem Agent Hände. Ohne Tools ist ein Agent nur ein Chatbot der gute Vorsätze hat.</span><span class="en">Web search, reading files, sending emails, calling APIs. Tools give the agent hands. Without tools, an agent is just a chatbot with good intentions.</span></p>
+</div>
+<div class="concept-card">
+<div class="icon">📝</div>
+<h4><span class="de">3. Das Gedächtnis (Memory)</span><span class="en">3. The Memory</span></h4>
+<p><span class="de">Kurzzeit (aktuelle Unterhaltung), Langzeit (gespeicherte Fakten und Regeln). Ohne Gedächtnis vergisst der Agent alles nach jedem Gespräch — wie ein Kollege mit totalem Gedächtnisverlust.</span><span class="en">Short-term (current conversation), long-term (stored facts and rules). Without memory, the agent forgets everything after each conversation — like a colleague with total amnesia.</span></p>
+</div>
+<div class="concept-card">
+<div class="icon">📋</div>
+<h4><span class="de">4. Die Anweisungen (Instructions)</span><span class="en">4. The Instructions</span></h4>
+<p><span class="de">Wer bin ich? Was darf ich? Was soll ich nie tun? Wie recherchiere ich? Anweisungen definieren Identität und Verhalten — wie ein Arbeitsvertrag mit Jobbeschreibung.</span><span class="en">Who am I? What may I do? What must I never do? How do I research? Instructions define identity and behavior — like an employment contract with a job description.</span></p>
+</div>
+</div>
+
+<div class="callout blue">
+<strong><span class="de">Merke:</span><span class="en">Remember:</span></strong>
+<span class="de">Gehirn + Tools + Gedächtnis + Anweisungen = Agent System. Jede dieser Komponenten kann stark oder schwach sein. Die Kunst liegt nicht im Bauen — sie liegt im <strong>richtigen Zusammenspiel</strong>.</span>
+<span class="en">Brain + Tools + Memory + Instructions = Agent System. Each component can be strong or weak. The art isn't in building — it's in the <strong>right combination</strong>.</span>
+</div>
+</section>
+
+<!-- ===== TEIL 4: Chatbot vs Agent ===== -->
+<section>
+<h2><span class="de">Chatbot vs. Agent — Der entscheidende Unterschied</span><span class="en">Chatbot vs. Agent — The Crucial Difference</span></h2>
+
 <table>
-<thead><tr>
-<th><span class="de">Aspekt</span><span class="en">Aspect</span></th>
-<th>LangChain</th><th>CrewAI</th><th>AutoGen</th><th>OpenClaw</th>
-</tr></thead>
+<thead>
+<tr>
+<th></th>
+<th><span class="de">Chatbot</span><span class="en">Chatbot</span></th>
+<th><span class="de">Agent</span><span class="en">Agent</span></th>
+</tr>
+</thead>
 <tbody>
-<tr><td><span class="de">Agent-Klasse</span><span class="en">Agent Class</span></td><td>AgentExecutor</td><td>Agent()</td><td>ConversableAgent</td><td>Session</td></tr>
-<tr><td><span class="de">Autonomie-Modell</span><span class="en">Autonomy Model</span></td><td>max_iterations</td><td>max_iter</td><td>max_consecutive</td><td>approval policy</td></tr>
-<tr><td><span class="de">Ziel-Definition</span><span class="en">Goal Definition</span></td><td>SystemMessage</td><td>role+goal+backstory</td><td>system_message</td><td>SOUL.md</td></tr>
+<tr>
+<td><span class="de">Interaktion</span><span class="en">Interaction</span></td>
+<td><span class="de">Frage → Antwort</span><span class="en">Question → Answer</span></td>
+<td><span class="de">Auftrag → Strategie → Ergebnis</span><span class="en">Task → Strategy → Result</span></td>
+</tr>
+<tr>
+<td><span class="de">Werkzeuge</span><span class="en">Tools</span></td>
+<td><span class="de">Keine (nur Texterzeugung)</span><span class="en">None (text generation only)</span></td>
+<td><span class="de">Web-Suche, Dateien, APIs, Shell</span><span class="en">Web search, files, APIs, shell</span></td>
+</tr>
+<tr>
+<td><span class="de">Gedächtnis</span><span class="en">Memory</span></td>
+<td><span class="de">Nur innerhalb der Session</span><span class="en">Only within the session</span></td>
+<td><span class="de">Über Sessions hinweg</span><span class="en">Across sessions</span></td>
+</tr>
+<tr>
+<td><span class="de">Autonomie</span><span class="en">Autonomy</span></td>
+<td><span class="de">Wartet auf Input</span><span class="en">Waits for input</span></td>
+<td><span class="de">Kann eigenständig handeln</span><span class="en">Can act independently</span></td>
+</tr>
+<tr>
+<td><span class="de">Fehler</span><span class="en">Errors</span></td>
+<td><span class="de">Falsche Antwort</span><span class="en">Wrong answer</span></td>
+<td><span class="de">Falsche Handlung (schwerwiegender)</span><span class="en">Wrong action (more serious)</span></td>
+</tr>
 </tbody>
 </table>
-</div>
-<p style="font-size:.8rem;color:var(--muted);margin-top:.5rem"><span class="de">Ziel: Konzepte verstehen, nicht Frameworks lernen. Jedes Framework löst dasselbe Problem anders.</span><span class="en">Goal: Understand concepts, not frameworks. Each framework solves the same problem differently.</span></p>
-</div>
 
-<!-- Track Split: Hands-on -->
-<h2><span class="de">🛠️ Hands-on</span><span class="en">🛠️ Hands-on</span></h2>
+<div class="callout red">
+<strong><span class="de">Warum der Unterschied wichtig ist:</span><span class="en">Why the difference matters:</span></strong>
+<span class="de">Wenn ein Chatbot etwas Falsches sagt, liest du es und ignorierst es. Wenn ein Agent etwas Falsches <em>tut</em> — eine Datei löscht, eine E-Mail sendet, einen falschen Commit pusht — hat das Konsequenzen in der echten Welt. Deshalb ist das Thema <strong>Vertrauen & Delegation</strong> (Modul 2) so zentral.</span>
+<span class="en">When a chatbot says something wrong, you read it and ignore it. When an agent <em>does</em> something wrong — deletes a file, sends an email, pushes a bad commit — that has real-world consequences. That's why <strong>Trust & Delegation</strong> (Module 2) is so central.</span>
+</div>
+</section>
 
-<div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1rem 1.25rem;margin:1rem 0">
-<p style="margin:0;font-size:.9rem"><span class="de">📓 Dieses Modul hat ein interaktives Notebook. Du kannst die Übungen dort oder lokal durcharbeiten.</span><span class="en">📓 This module has an interactive notebook. You can work through the exercises there or locally.</span></p>
-<p style="margin:.5rem 0 0"><a href="https://colab.research.google.com/github/planck-lab/agent-systems/blob/main/notebooks/modul1_was_ist_ein_agent.ipynb" target="_blank" style="color:var(--orange);font-size:.85rem;font-weight:600">Open in Colab →</a></p>
-</div>
+<!-- ===== TEIL 5: Fallstudie ===== -->
+<section>
+<div class="case-study">
+<div class="label"><span class="de">Fallstudie</span><span class="en">Case Study</span></div>
+<h3><span class="de">🏗️ "Dieser Kurs wurde von einem Agent mitgebaut"</span><span class="en">🏗️ "This course was co-built by an agent"</span></h3>
 
-<div class="step">
-<div class="step-header">
-<div class="step-num" style="background:var(--orange)">🟠</div>
-<div class="step-title">Power-User</div>
-</div>
-<p style="color:var(--muted);font-size:.9rem"><span class="de">Ordne diese 5 Systeme auf dem Autonomie-Spektrum ein:</span><span class="en">Place these 5 systems on the autonomy spectrum:</span></p>
-<ol style="color:var(--muted);font-size:.9rem;margin-top:.5rem">
-<li><strong>ChatGPT</strong> (chat.openai.com)</li>
-<li><strong>GitHub Copilot</strong></li>
-<li><strong>OpenClaw</strong> (<span class="de">dein Agent aus Modul 0</span><span class="en">your agent from Module 0</span>)</li>
-<li><strong>Siri / Google Assistant</strong></li>
-<li><strong>AutoGPT / Devin</strong></li>
-</ol>
-<p style="color:var(--muted);font-size:.85rem;margin-top:.75rem"><span class="de">Erstelle eine einfache Tabelle: System | Level (L0–L4) | Begründung</span><span class="en">Create a simple table: System | Level (L0–L4) | Reasoning</span></p>
-</div>
+<p style="color:var(--muted);font-size:.88rem;line-height:1.6"><span class="de">Kein Marketing-Claim — eine dokumentierte Tatsache. Die Architektur dieses Kurses wurde von einem AI Agent System entworfen, das auf einem Mac mini läuft. Der Agent:</span><span class="en">Not a marketing claim — a documented fact. This course's architecture was designed by an AI agent system running on a Mac mini. The agent:</span></p>
 
-<div class="step">
-<div class="step-header">
-<div class="step-num" style="background:#f85149">🔴</div>
-<div class="step-title">Developer</div>
-</div>
-<p style="color:var(--muted);font-size:.9rem"><span class="de">Zusätzlich zur Power-User-Aufgabe: Schau dir die OpenClaw-Architektur im Source-Code an. Identifiziere die 5 Komponenten (Ziel, Wahrnehmung, Reasoning, Aktion, Gedächtnis) in der Codebase.</span><span class="en">In addition to the Power-User task: Look at the OpenClaw architecture in the source code. Identify the 5 components (Goal, Perception, Reasoning, Action, Memory) in the codebase.</span></p>
-</div>
+<ul style="color:var(--muted);font-size:.88rem;line-height:1.8">
+<li><span class="de">Recherchierte existierende Kurse und fand die Marktlücke (alle Kurse sind Build-Kurse)</span><span class="en">Researched existing courses and found the market gap (all courses are build courses)</span></li>
+<li><span class="de">Analysierte die besten Online-Kurse weltweit (Andrew Ng, fast.ai, 3Blue1Brown) nach Engagement-Patterns</span><span class="en">Analyzed the world's best online courses (Andrew Ng, fast.ai, 3Blue1Brown) for engagement patterns</span></li>
+<li><span class="de">Fand 10 kritische Faktenfehler in einer früheren Version — und fixte sie</span><span class="en">Found 10 critical factual errors in an earlier version — and fixed them</span></li>
+<li><span class="de">Machte dabei selbst Fehler (falsche Jahreszahlen, verwechselte Autoren) — die der Mensch korrigierte</span><span class="en">Made its own mistakes along the way (wrong years, confused authors) — which the human corrected</span></li>
+</ul>
 
-<!-- HITL Box -->
-<div style="background:rgba(63,185,80,.08);border:1px solid rgba(63,185,80,.3);border-radius:12px;padding:1.5rem;margin:2rem 0">
-<h3 style="color:var(--green);font-size:1rem;margin-bottom:.5rem">🟢 HITL <span class="de">in diesem Modul</span><span class="en">in this module</span></h3>
-<p style="color:var(--muted);font-size:.9rem"><span class="de">Vertrauen wird aufgebaut, nicht geschaltet. <strong>Fahrlehrer-Phase: Jeder Tool-Aufruf braucht dein OK.</strong></span><span class="en">Trust is built, not switched. <strong>Instructor phase: Every tool call needs your OK.</strong></span></p>
-<div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:.75rem 1rem;margin-top:.75rem">
-<code style="font-size:.8rem;color:var(--accent)">tools: { approval: "always" }</code>
-<p style="font-size:.78rem;color:var(--muted);margin:.4rem 0 0"><span class="de">↳ Jeder Tool-Aufruf (Lesen, Suchen, Schreiben) braucht deine explizite Freigabe.</span><span class="en">↳ Every tool call (read, search, write) requires your explicit approval.</span></p>
+<p style="color:var(--muted);font-size:.88rem;line-height:1.6"><span class="de">Das ist kein perfekter Prozess. Es ist ein <strong>ehrlicher Prozess</strong> — und genau darum geht es in diesem Kurs. Die Architektur des Systems ist als <a href="https://github.com/planck-lab/agent-system-starter-kit" style="color:var(--accent)">Open-Source Starter Kit</a> verfügbar.</span><span class="en">This isn't a perfect process. It's an <strong>honest process</strong> — and that's exactly what this course is about. The system's architecture is available as an <a href="https://github.com/planck-lab/agent-system-starter-kit" style="color:var(--accent)">open-source Starter Kit</a>.</span></p>
 </div>
-<p style="margin-top:.75rem;font-size:.8rem;color:var(--muted)"><span class="de">📍 <strong>Autonomie-Stufe:</strong> 🟢 Fahrlehrer sitzt daneben, greift ständig ein — Approval für JEDE Aktion</span><span class="en">📍 <strong>Autonomy level:</strong> 🟢 Instructor sitting alongside, intervening constantly — Approval for EVERY action</span></p>
+</section>
+
+<!-- Running Example -->
+<section>
+<div style="background:rgba(137,87,229,.06);border:1px solid rgba(137,87,229,.2);border-radius:12px;padding:1.25rem;margin:1.5rem 0">
+<p style="font-size:.75rem;font-weight:700;color:#8957e5;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem"><span class="de">📎 Durchgängiges Beispiel: TechCo</span><span class="en">📎 Running Example: TechCo</span></p>
+<p style="color:var(--muted);font-size:.85rem;line-height:1.6"><span class="de"><strong>TechCo</strong> ist eine Beratungsfirma mit 20 Leuten. Die Geschäftsführerin Lisa hat gehört, dass AI Agents die Produktivität steigern können. Sie bittet ihren Tech Lead Marco, das Thema zu evaluieren. In jedem Modul begleiten wir TechCo bei einer Entscheidung.</span><span class="en"><strong>TechCo</strong> is a consulting firm with 20 people. CEO Lisa heard that AI agents can boost productivity. She asks tech lead Marco to evaluate the topic. In every module, we follow TechCo through a decision.</span></p>
+<p style="color:var(--muted);font-size:.85rem;line-height:1.6;margin-top:.5rem"><span class="de"><strong>Modul 1:</strong> Marco testet einen Agent mit einer Research-Aufgabe. Der Agent liefert in 3 Minuten ein Briefing — inklusive einem falschen Datum. Marco denkt: <em>"Beeindruckend schnell. Aber kann ich dem vertrauen?"</em></span><span class="en"><strong>Module 1:</strong> Marco tests an agent with a research task. The agent delivers a briefing in 3 minutes — including a wrong date. Marco thinks: <em>"Impressively fast. But can I trust it?"</em></span></p>
 </div>
+</section>
 
-<!-- Rubric -->
-<h2><span class="de">📊 Rubrik</span><span class="en">📊 Rubric</span></h2>
-<div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.5rem">
-<p style="margin-bottom:.5rem"><span style="color:var(--green)">✅ <strong>Basis:</strong></span> <span style="color:var(--muted);font-size:.9rem"><span class="de">5 Komponenten benannt, 3 Systeme auf Autonomie-Spektrum eingeordnet</span><span class="en">5 components named, 3 systems placed on autonomy spectrum</span></span></p>
-<p style="margin-bottom:.5rem"><span style="color:var(--orange)">⭐ <strong><span class="de">Fortgeschritten:</span><span class="en">Advanced:</span></strong></span> <span style="color:var(--muted);font-size:.9rem"><span class="de">Eigenes Diagramm gezeichnet, 4 Ng-Patterns auf 2 reale Systeme abgebildet</span><span class="en">Own diagram drawn, 4 Ng patterns mapped to 2 real systems</span></span></p>
-<p><span style="color:var(--accent)">🏆 <strong><span class="de">Experte:</span><span class="en">Expert:</span></strong></span> <span style="color:var(--muted);font-size:.9rem"><span class="de">Agent-Taxonomie (Xi et al.) auf eigenes Projekt angewendet ODER kritischen Unterschied zwischen zwei Frameworks erklärt</span><span class="en">Agent taxonomy (Xi et al.) applied to own project OR critical difference between two frameworks explained</span></span></p>
-</div>
+<!-- ===== TEIL 6: Erstes Delegation Decision ===== -->
+<section>
+<h2><span class="de">🧭 Dein erstes Delegation Decision</span><span class="en">🧭 Your First Delegation Decision</span></h2>
 
-<!-- Glossary Inline -->
-<h2><span class="de">📖 Begriffe in diesem Modul</span><span class="en">📖 Terms in this module</span></h2>
-<div class="glossary">
-<dl>
-<dt>Agent</dt><dd><span class="de">Software-Entität mit Ziel, Werkzeugen und Entscheidungsschleife — mehr als ein Chatbot.</span><span class="en">Software entity with a goal, tools, and a decision loop — more than a chatbot.</span></dd>
-<dt>Orchestrator</dt><dd><span class="de">System, das Agents koordiniert, routet und überwacht.</span><span class="en">System that coordinates, routes, and monitors agents.</span></dd>
-<dt>HITL (Human-in-the-Loop)</dt><dd><span class="de">Mensch als Kontrollinstanz im Agent-Workflow.</span><span class="en">Human as control authority in agent workflows.</span></dd>
-<dt><span class="de">Autonomie-Spektrum</span><span class="en">Autonomy Spectrum</span></dt><dd><span class="de">Skala von voll-manuell (L0) bis voll-autonom (L4).</span><span class="en">Scale from fully manual (L0) to fully autonomous (L4).</span></dd>
-</dl>
-</div>
+<p><span class="de">Das zentrale Framework dieses Kurses. Für jede Aufgabe: <strong>Kann der Agent sie?</strong> und <strong>Was passiert wenn er einen Fehler macht?</strong></span><span class="en">The central framework of this course. For every task: <strong>Can the agent do it?</strong> and <strong>What happens if it makes a mistake?</strong></span></p>
 
-<!-- Sources -->
-<details>
-<summary><span class="de">📚 Quellen</span><span class="en">📚 Sources</span></summary>
-<div class="source">Wooldridge & Jennings (1995): "Intelligent Agents", <em>Knowledge Engineering Review</em> <span class="tier-badge tier-a" style="font-size:.65rem;padding:.1rem .4rem;border-radius:6px;font-weight:700;background:rgba(63,185,80,.2);color:var(--green)">Tier A</span></div>
-<div class="source">Xi et al. (2023): "Rise and Potential of LLM Based Agents", arXiv:2309.07864 <span class="tier-badge tier-b" style="font-size:.65rem;padding:.1rem .4rem;border-radius:6px;font-weight:700;background:rgba(88,166,255,.15);color:var(--accent)">Tier B</span></div>
-<div class="source">Wang et al. (2024): "Survey on LLM based Autonomous Agents", arXiv:2308.11432 <span class="tier-badge tier-b" style="font-size:.65rem;padding:.1rem .4rem;border-radius:6px;font-weight:700;background:rgba(88,166,255,.15);color:var(--accent)">Tier B</span></div>
-<div class="source">Ng, Andrew (2024): "Agentic Design Patterns" <span class="tier-badge tier-c" style="font-size:.65rem;padding:.1rem .4rem;border-radius:6px;font-weight:700;background:rgba(210,153,34,.15);color:var(--orange)">Tier C</span></div>
-<div class="source">Anthropic (2024): "Building Effective Agents" <span class="tier-badge tier-c" style="font-size:.65rem;padding:.1rem .4rem;border-radius:6px;font-weight:700;background:rgba(210,153,34,.15);color:var(--orange)">Tier C</span></div>
+<div class="delegation-exercise">
+<h3 style="font-size:.95rem;margin-bottom:1rem"><span class="de">Übung: Ordne diese Aufgaben ein</span><span class="en">Exercise: Classify these tasks</span></h3>
 
+<div class="task-row">
+<span class="task-emoji">📰</span>
+<div>
+<strong><span class="de">Nachrichten zu einem Thema zusammenfassen</span><span class="en">Summarize news about a topic</span></strong>
+<details><summary style="color:var(--accent);font-size:.8rem;cursor:pointer;margin-top:.25rem"><span class="de">Lösung zeigen</span><span class="en">Show solution</span></summary>
+<p style="color:var(--muted);font-size:.8rem;padding-top:.25rem"><span class="de">Agent kann es ✅ · Risiko niedrig → <strong style="color:var(--green)">Delegieren</strong></span><span class="en">Agent can do it ✅ · Risk low → <strong style="color:var(--green)">Delegate</strong></span></p>
 </details>
-
-<div class="tip" style="border-left-color: var(--orange);">
-<strong>💰 <span class="de">Geschätzte API-Kosten für dieses Modul</span><span class="en">Estimated API costs for this module</span></strong>
-<p style="margin:.5rem 0;color:var(--muted);font-size:.9rem;">
-<span class="de">Haiku: ~$1.50 · Sonnet: ~$2.00 · GPT-4o: ~$2.40</span>
-<span class="en">Haiku: ~$1.50 · Sonnet: ~$2.00 · GPT-4o: ~$2.40</span>
-</p>
+</div>
 </div>
 
-<!-- Nav Footer -->
-<div class="nav-footer">
-<a href="modul0.html" class="btn" style="background:var(--surface);color:var(--text);border:1px solid var(--border)">← <span class="de">Modul 0: Setup</span><span class="en">Module 0: Setup</span></a>
-<a href="modul2.html" class="btn"><span class="de">Modul 2: Der Agent Loop →</span><span class="en">Module 2: The Agent Loop →</span></a>
+<div class="task-row">
+<span class="task-emoji">📧</span>
+<div>
+<strong><span class="de">E-Mail an einen Kunden senden</span><span class="en">Send an email to a customer</span></strong>
+<details><summary style="color:var(--accent);font-size:.8rem;cursor:pointer;margin-top:.25rem"><span class="de">Lösung zeigen</span><span class="en">Show solution</span></summary>
+<p style="color:var(--muted);font-size:.8rem;padding-top:.25rem"><span class="de">Agent kann es ✅ · Risiko hoch (irreversibel, reputationsrelevant) → <strong style="color:var(--orange)">Nur mit Freigabe</strong></span><span class="en">Agent can do it ✅ · Risk high (irreversible, reputation) → <strong style="color:var(--orange)">Only with approval</strong></span></p>
+</details>
 </div>
 </div>
+
+<div class="task-row">
+<span class="task-emoji">🔢</span>
+<div>
+<strong><span class="de">Komplexe Finanzprognose erstellen</span><span class="en">Create a complex financial forecast</span></strong>
+<details><summary style="color:var(--accent);font-size:.8rem;cursor:pointer;margin-top:.25rem"><span class="de">Lösung zeigen</span><span class="en">Show solution</span></summary>
+<p style="color:var(--muted);font-size:.8rem;padding-top:.25rem"><span class="de">Agent kann es eingeschränkt · Risiko hoch → <strong style="color:#f85149">Nicht delegieren</strong> (Agent kann Daten sammeln, Mensch analysiert)</span><span class="en">Agent can partially · Risk high → <strong style="color:#f85149">Don't delegate</strong> (Agent collects data, human analyzes)</span></p>
+</details>
+</div>
+</div>
+
+<div class="task-row">
+<span class="task-emoji">🗂️</span>
+<div>
+<strong><span class="de">Dateien in einem Ordner umbenennen</span><span class="en">Rename files in a folder</span></strong>
+<details><summary style="color:var(--accent);font-size:.8rem;cursor:pointer;margin-top:.25rem"><span class="de">Lösung zeigen</span><span class="en">Show solution</span></summary>
+<p style="color:var(--muted);font-size:.8rem;padding-top:.25rem"><span class="de">Agent kann es ✅ · Risiko mittel (reversibel, aber nervig) → <strong style="color:var(--orange)">Plan zeigen lassen, dann freigeben</strong></span><span class="en">Agent can do it ✅ · Risk medium (reversible, but annoying) → <strong style="color:var(--orange)">Review plan first, then approve</strong></span></p>
+</details>
+</div>
+</div>
+</div>
+</section>
+
+<!-- ===== TEIL 7: Reflexion ===== -->
+<section>
+<div class="reflection-box">
+<h3>💭 <span class="de">Reflexionsfragen</span><span class="en">Reflection Questions</span></h3>
+<ol>
+<li><span class="de">In der Demo hat der Agent ein falsches Datum präsentiert. <strong>Woran hättest du erkannt dass es falsch ist?</strong> Was wenn du das Thema nicht gut genug kennst um den Fehler zu bemerken?</span><span class="en">In the demo, the agent presented a wrong date. <strong>How would you have recognized it was wrong?</strong> What if you don't know the topic well enough to spot the error?</span></li>
+<li><span class="de">Denk an deinen Arbeitsalltag: <strong>Welche Aufgabe würdest du als erstes an einen Agent delegieren?</strong> Warum gerade die?</span><span class="en">Think about your workday: <strong>Which task would you delegate to an agent first?</strong> Why that one?</span></li>
+<li><span class="de">Der Fehler war ein falsches Datum — relativ harmlos. <strong>Was wäre passiert wenn der Fehler in einer E-Mail an einen wichtigen Kunden gelandet wäre?</strong></span><span class="en">The error was a wrong date — relatively harmless. <strong>What would have happened if that error ended up in an email to an important client?</strong></span></li>
+</ol>
+</div>
+</section>
+
+<!-- ===== Spot the Error ===== -->
+<section>
+<h2><span class="de">🔍 Spot the Error</span><span class="en">🔍 Spot the Error</span></h2>
+
+<p><span class="de">Ein Agent hat folgendes geschrieben. Finde den Fehler:</span><span class="en">An agent wrote the following. Find the error:</span></p>
+
+<div class="demo-box" style="border-color:var(--orange)">
+<p style="font-size:.88rem;line-height:1.6;color:var(--muted);font-style:italic"><span class="de">"MCP (Model Context Protocol) wurde 2024 von OpenAI vorgestellt und hat sich als Industriestandard für die Kommunikation zwischen Agents etabliert."</span><span class="en">"MCP (Model Context Protocol) was introduced by OpenAI in 2024 and has established itself as the industry standard for communication between agents."</span></p>
+</div>
+
+<details>
+<summary style="cursor:pointer;color:var(--accent);font-size:.9rem"><span class="de">Lösung aufdecken</span><span class="en">Reveal solution</span></summary>
+<div style="margin-top:.75rem;padding:1rem;background:var(--surface);border-radius:8px;font-size:.88rem">
+<p><span class="de"><strong>Zwei Fehler:</strong></span><span class="en"><strong>Two errors:</strong></span></p>
+<ol style="color:var(--muted);line-height:1.6">
+<li><span class="de">MCP wurde von <strong>Anthropic</strong> vorgestellt, nicht von OpenAI.</span><span class="en">MCP was introduced by <strong>Anthropic</strong>, not OpenAI.</span></li>
+<li><span class="de">MCP ist ein Protokoll für <strong>Tool-Nutzung</strong> (Agent ↔ Tool), nicht für die Kommunikation zwischen Agents. Für Agent-zu-Agent gibt es A2A (Agent-to-Agent Protocol) von Google.</span><span class="en">MCP is a protocol for <strong>tool usage</strong> (Agent ↔ Tool), not for communication between agents. For agent-to-agent communication, there's A2A (Agent-to-Agent Protocol) by Google.</span></li>
+</ol>
+<p style="color:var(--muted)"><span class="de"><strong>Lesson:</strong> Agents verwechseln häufig ähnliche Konzepte — besonders bei Firmen und Protokollen. Immer verifizieren.</span><span class="en"><strong>Lesson:</strong> Agents frequently confuse similar concepts — especially companies and protocols. Always verify.</span></p>
+</div>
+</details>
+</section>
+
+<!-- ===== Takeaway ===== -->
+<section>
+<h2><span class="de">📌 Was du mitnimmst</span><span class="en">📌 Key Takeaways</span></h2>
+
+<ol style="line-height:1.8;font-size:.92rem">
+<li><span class="de"><strong>Ein Agent ist kein besserer Chatbot</strong> — er kann handeln, planen und Fehler machen die echte Konsequenzen haben.</span><span class="en"><strong>An agent is not a better chatbot</strong> — it can act, plan, and make mistakes with real consequences.</span></li>
+<li><span class="de"><strong>Die Agent-Schleife</strong> (Wahrnehmen → Denken → Handeln → Beobachten) ist das universelle Muster hinter jedem Framework.</span><span class="en"><strong>The Agent Loop</strong> (Perceive → Think → Act → Observe) is the universal pattern behind every framework.</span></li>
+<li><span class="de"><strong>Vier Bausteine:</strong> Gehirn (LLM), Werkzeuge, Gedächtnis, Anweisungen. Jeder kann stark oder schwach sein.</span><span class="en"><strong>Four building blocks:</strong> Brain (LLM), Tools, Memory, Instructions. Each can be strong or weak.</span></li>
+<li><span class="de"><strong>The Delegation Decision</strong> — die erste Frage bei jeder Aufgabe: Kann der Agent das? Und was passiert wenn er sich irrt?</span><span class="en"><strong>The Delegation Decision</strong> — the first question for every task: Can the agent do it? And what happens if it's wrong?</span></li>
+</ol>
+</section>
+
+<!-- ===== Bottom Navigation ===== -->
+<div class="bottom-nav">
+<a href="index.html">← <span class="de">Übersicht</span><span class="en">Overview</span></a>
+<a href="modul2.html"><span class="de">Modul 2: Vertrauen & Delegation →</span><span class="en">Module 2: Trust & Delegation →</span></a>
+</div>
+
+</div><!-- /.container -->
 
 <footer role="contentinfo">
-<a href="https://github.com/planck-lab/agent-systems"><span class="de">Quellcode auf GitHub</span><span class="en">Source on GitHub</span></a> · Made with ❤️ <span class="de">und Neugier</span><span class="en">and curiosity</span>
-<br><span style="font-size:.7rem"><span class="de">Fragen? <a href="https://linkedin.com/in/janrummel">Schreib mir auf LinkedIn.</a> · Teil des <a href="https://janrummel.github.io/ai-learning/">AI Learning Ökosystems</a> · <a href="disclaimer.html">Haftungshinweis</a></span><span class="en">Questions? <a href="https://linkedin.com/in/janrummel">Message me on LinkedIn.</a> · Part of the <a href="https://janrummel.github.io/ai-learning/">AI Learning Ecosystem</a> · <a href="disclaimer.html">Disclaimer</a></span></span>
+<a href="https://github.com/planck-lab/agent-systems"><span class="de">Quellcode auf GitHub</span><span class="en">Source on GitHub</span></a> · <a href="index.html">🧭 Agent Literacy</a>
+<br><span style="font-size:.65rem;color:var(--muted)"><span class="de">Verantwortlich: Jan Rummel · Kontakt via <a href="https://linkedin.com/in/janrummel">LinkedIn</a> · Kein Tracking, keine Cookies.</span><span class="en">Responsible: Jan Rummel · Contact via <a href="https://linkedin.com/in/janrummel">LinkedIn</a> · No tracking, no cookies.</span></span>
 </footer>
 
-<script src="glossary.js"></script>
 <script>
-function setLang(l){document.documentElement.lang=l;document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('active'));document.querySelector(`.lang-btn[onclick="setLang('${l}')"]`).classList.add('active');localStorage.setItem('lang',l);if(typeof initGlossary==='function')initGlossary()}
+function setLang(l){document.documentElement.lang=l;document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('active'));document.querySelector(`.lang-btn[onclick="setLang('${l}')"]`).classList.add('active');localStorage.setItem('lang',l)}
 const s=localStorage.getItem('lang');if(s)setLang(s);
 </script>
-<script src="progress.js"></script>
+<button class="back-to-top" onclick="scrollTo({top:0,behavior:'smooth'})">↑</button>
+<script>const b=document.querySelector(".back-to-top");window.addEventListener("scroll",()=>{b.style.display=window.scrollY>400?"flex":"none"})</script>
 </body></html>

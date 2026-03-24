@@ -3,260 +3,210 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Agent Systems: Vom Konzept zum eigenen Orchestrator</title>
-<meta name="description" content="Verstehe wie AI Agents funktionieren, wo sie scheitern, und baue dein eigenes System. 15 kostenlose Module.">
-<meta property="og:title" content="Agent Systems: Vom Konzept zum eigenen Orchestrator">
-<meta property="og:description" content="Verstehe wie AI Agents funktionieren, wo sie scheitern, und baue dein eigenes System. 15 kostenlose Module.">
-<meta property="og:type" content="website">
+<title>Agent Literacy — Verstehe wie AI Agent Systeme funktionieren</title>
+<meta name="description" content="Der Kurs über AI Agents, den es noch nicht gibt. 5 Module, ~1 Stunde, kein Code nötig. Verstehen statt Bauen.">
+<meta property="og:title" content="Agent Literacy — Verstehe AI Agent Systeme">
+<meta property="og:description" content="5 Module, ~1 Stunde, kein Code. Der Kurs über AI Agents für Entscheider.">
 <meta property="og:url" content="https://planck-lab.github.io/agent-systems/">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
 <meta property="og:image" content="https://planck-lab.github.io/agent-systems/og-image.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://planck-lab.github.io/agent-systems/og-image.png">
-<meta name="author" content="Jan Rummel">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>🤖</text></svg>">
 <link rel="stylesheet" href="style.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧭</text></svg>">
 <style>
-.hero{text-align:center;padding:5rem 2rem 2rem;max-width:720px;margin:0 auto}
-.hero h1{font-size:2.4rem;font-weight:800;line-height:1.15;margin-bottom:.75rem}
-.hero .subtitle{font-size:1.1rem;color:var(--muted);max-width:600px;margin:0 auto 1rem}
-.badge{display:inline-block;background:rgba(88,166,255,.12);color:var(--accent);padding:.4rem 1rem;border-radius:20px;font-size:.9rem;font-weight:700}
-.hero-cta{margin-top:1.5rem}
-section{max-width:720px;margin:0 auto;padding:3rem 2rem}
-section h2{font-size:1.6rem;font-weight:800;margin-bottom:1rem}
-section h3{font-size:1.2rem;font-weight:700;margin:1.5rem 0 .5rem;color:var(--accent)}
-.highlight{color:var(--accent);font-weight:600}
-.cta-box{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:2rem;text-align:center;margin:2rem 0}
-.cta-box h3{color:var(--text);margin-bottom:.5rem}
-.cta-box p{color:var(--muted);font-size:.9rem;margin-bottom:1rem}
-.journey-map{display:flex;align-items:flex-start;justify-content:center;gap:.2rem;flex-wrap:wrap;margin:2rem 0}
-.journey-cluster{display:flex;flex-direction:column;align-items:center;gap:.25rem}
-.journey-cluster-label{font-size:.65rem;color:var(--accent);font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.25rem}
-.journey-steps{display:flex;align-items:center;gap:.15rem}
-.journey-step{display:flex;flex-direction:column;align-items:center;gap:.2rem}
-.journey-icon{width:44px;height:44px;border-radius:10px;background:var(--surface);border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:1.1rem;transition:all .2s}
-.journey-label{font-size:.58rem;color:var(--muted);text-align:center;max-width:60px;line-height:1.2}
-.journey-arrow{color:var(--border);font-size:1rem;margin:0 .1rem;padding-top:.8rem}
-.journey-cluster-arrow{color:var(--accent);font-size:1.4rem;margin:0 .3rem;padding-top:.8rem;font-weight:700}
-.spectrum{display:flex;align-items:stretch;margin:1.5rem 0;border-radius:12px;overflow:hidden;border:1px solid var(--border)}
-.spectrum-level{flex:1;padding:1rem .75rem;text-align:center}
-.spectrum-level:not(:last-child){border-right:1px solid var(--border)}
-.spectrum-label{font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.25rem}
-.spectrum-icon{font-size:1.5rem;margin-bottom:.25rem}
-.spectrum-name{font-weight:700;font-size:.85rem}
-.spectrum-sub{font-size:.7rem;color:var(--muted);margin-top:.15rem}
-.spectrum-l0{background:rgba(88,166,255,.05)}.spectrum-l1{background:rgba(88,166,255,.08)}.spectrum-l2{background:rgba(63,185,80,.08)}.spectrum-l3{background:rgba(210,153,34,.08)}.spectrum-l4{background:rgba(248,81,73,.08)}
-.outcome-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0}
-.outcome-item{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.25rem}
-.outcome-icon{font-size:1.5rem;margin-bottom:.5rem}
-.outcome-title{font-weight:700;font-size:.95rem;margin-bottom:.25rem}
-.outcome-desc{font-size:.85rem;color:var(--muted)}
-.faq-item{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.25rem;margin-bottom:.75rem}
-.faq-q{font-weight:700;font-size:.95rem;margin-bottom:.4rem}
-.faq-a{color:var(--muted);font-size:.85rem;line-height:1.6}
-.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0}
-.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.25rem;text-align:center}
-.stat-number{font-size:1.8rem;font-weight:800;color:var(--accent)}
-.stat-label{font-size:.8rem;color:var(--muted);margin-top:.25rem}
-@media(max-width:600px){.hero h1{font-size:1.8rem}.hero{padding:4rem 1.25rem 1.5rem}section{padding:2rem 1.25rem}.journey-map{gap:.1rem}.journey-icon{width:34px;height:34px;font-size:.9rem}.journey-label{font-size:.5rem;max-width:48px}.journey-cluster-arrow{font-size:1rem}.spectrum{flex-direction:column}.spectrum-level:not(:last-child){border-right:none;border-bottom:1px solid var(--border)}.outcome-grid,.stats-grid{grid-template-columns:1fr}}
+.hero{text-align:center;padding:5rem 1.5rem 3rem}
+.hero h1{font-size:2.5rem;margin-bottom:.5rem}
+.hero .tagline{color:var(--muted);font-size:1.15rem;max-width:600px;margin:0 auto 2rem}
+.hero .meta{color:var(--muted);font-size:.85rem;margin-bottom:2rem}
+.module-grid{display:grid;gap:1rem;margin:2rem 0}
+.mod-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.25rem;position:relative;overflow:hidden;transition:transform .2s,border-color .2s;text-decoration:none;color:inherit;display:block}
+.mod-card:hover{transform:translateY(-2px);border-color:var(--accent)}
+.mod-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.mod-card.m1::before{background:var(--accent)}
+.mod-card.m2::before{background:var(--green)}
+.mod-card.m3::before{background:var(--purple)}
+.mod-card.m4::before{background:#f85149}
+.mod-card.m5::before{background:var(--orange)}
+.mod-num{font-size:2rem;font-weight:900;opacity:.12;position:absolute;top:.5rem;right:1rem}
+.mod-title{font-size:1.05rem;font-weight:700;margin-bottom:.35rem}
+.mod-question{color:var(--accent);font-size:.85rem;font-style:italic;margin-bottom:.5rem}
+.mod-desc{color:var(--muted);font-size:.85rem;line-height:1.5}
+.mod-meta{display:flex;gap:.5rem;margin-top:.75rem;font-size:.75rem}
+.mod-meta span{padding:.15rem .5rem;border-radius:20px;font-weight:600}
+.framework-box{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.5rem;margin:2rem 0;text-align:center}
+.matrix{display:grid;grid-template-columns:auto 1fr 1fr;gap:0;margin:1rem auto;max-width:480px;font-size:.85rem}
+.matrix div{padding:.6rem .75rem;border:1px solid var(--border)}
+.matrix .header{background:rgba(88,166,255,.08);font-weight:700;font-size:.8rem}
+.matrix .row-label{background:rgba(88,166,255,.05);font-weight:600;font-size:.8rem}
+.matrix .cell-green{background:rgba(63,185,80,.08)}
+.matrix .cell-yellow{background:rgba(210,153,34,.08)}
+.matrix .cell-red{background:rgba(248,81,73,.08)}
+.matrix .cell-gray{background:var(--surface)}
+.diff-grid{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin:1.5rem 0}
+.diff-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1rem;font-size:.82rem}
+.diff-card .icon{font-size:1.5rem;margin-bottom:.5rem}
+.diff-card h4{font-size:.85rem;margin-bottom:.35rem}
+.diff-card p{color:var(--muted);line-height:1.5;margin:0}
+.cta-section{text-align:center;margin:3rem 0 2rem}
+.ecosystem{display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap;margin:1rem 0}
+.eco-badge{padding:.4rem .8rem;background:var(--surface);border:1px solid var(--border);border-radius:8px;font-size:.8rem;color:var(--muted);text-decoration:none}
+.eco-badge:hover{border-color:var(--accent);color:var(--text)}
+.eco-badge.current{border-color:var(--accent);color:var(--accent);font-weight:600}
+@media(max-width:600px){.hero h1{font-size:1.8rem}.diff-grid{grid-template-columns:1fr}.matrix{font-size:.75rem}}
 </style>
+<script>const _l=localStorage.getItem("lang");if(_l)document.documentElement.lang=_l;</script>
 </head>
 <body>
-<!-- Banner: Neuer Kurs -->
-<div style="background:linear-gradient(135deg,rgba(88,166,255,.12),rgba(137,87,229,.1));border-bottom:1px solid var(--border);padding:.75rem 1.5rem;text-align:center;font-size:.88rem;line-height:1.5">
-<span class="de">🧭 <strong>Neuer Kurs verfügbar:</strong> <a href="https://planck-lab.github.io/agent-literacy/" style="color:var(--accent);font-weight:600">Agent Literacy</a> — Verstehe wie AI Agent Systeme funktionieren. Kein Code nötig. Dieser Build-Kurs bleibt als Archiv online.</span>
-<span class="en">🧭 <strong>New course available:</strong> <a href="https://planck-lab.github.io/agent-literacy/" style="color:var(--accent);font-weight:600">Agent Literacy</a> — Understand how AI agent systems work. No code required. This build course remains online as archive.</span>
-</div>
 <a href="#main-content" class="skip-link"><span class="de">Zum Inhalt springen</span><span class="en">Skip to content</span></a>
 <div class="lang-switch" role="navigation" aria-label="Language">
 <button class="lang-btn active" onclick="setLang('de')">DE</button>
 <button class="lang-btn" onclick="setLang('en')">EN</button>
 </div>
 
+<div class="container" style="max-width:760px;margin:0 auto;padding:3rem 2rem 2rem">
+
 <div class="hero" id="main-content">
-<h1><span class="de">Agent Systems: Vom Konzept zum eigenen Orchestrator</span><span class="en">Agent Systems: From Concept to Your Own Orchestrator</span></h1>
-<p class="subtitle"><span class="de">Verstehe wie AI Agents funktionieren, wo sie scheitern, und baue dein eigenes System.</span><span class="en">Understand how AI agents work, where they fail, and build your own system.</span></p>
-<span class="badge"><span class="de">Kostenlos · 15 Module · ~16 Stunden · DE + EN</span><span class="en">Free · 15 Modules · ~16 hours · EN + DE</span></span>
-<div class="hero-cta"><a href="modul0.html" class="btn"><span class="de">Modul 0 starten — Setup in 60 Min →</span><span class="en">Start Module 0 — Setup in 60 min →</span></a></div>
+<p style="font-size:.85rem;color:var(--muted);margin-bottom:1rem"><span class="de">Ein Kurs von <a href="https://linkedin.com/in/janrummel" style="color:var(--accent)">Jan Rummel</a></span><span class="en">A course by <a href="https://linkedin.com/in/janrummel" style="color:var(--accent)">Jan Rummel</a></span></p>
+<h1>🧭 Agent Literacy</h1>
+<p class="tagline"><span class="de">Verstehe wie AI Agent Systeme funktionieren — ohne eine Zeile Code.</span><span class="en">Understand how AI agent systems work — without writing a single line of code.</span></p>
+<p class="meta"><span class="de">5 Module · ~1 Stunde · Framework-agnostisch · Kostenlos</span><span class="en">5 Modules · ~1 hour · Framework-agnostic · Free</span></p>
+<a href="modul1.html" class="btn"><span class="de">Modul 1 starten →</span><span class="en">Start Module 1 →</span></a>
 </div>
-
-<section style="padding-top:1rem">
-<h2 style="text-align:center"><span class="de">Dein Weg in 4 Phasen</span><span class="en">Your path in 4 phases</span></h2>
-<div class="journey-map">
-<div class="journey-cluster">
-<div class="journey-cluster-label"><span class="de">Grundlagen</span><span class="en">Foundations</span></div>
-<div class="journey-steps">
-<div class="journey-step"><div class="journey-icon">🔧</div><div class="journey-label">M0</div></div>
-<div class="journey-arrow">→</div>
-<div class="journey-step"><div class="journey-icon">🧠</div><div class="journey-label">M1</div></div>
-<div class="journey-arrow">→</div>
-<div class="journey-step"><div class="journey-icon">🔄</div><div class="journey-label">M2</div></div>
-<div class="journey-arrow">→</div>
-<div class="journey-step"><div class="journey-icon">🏗️</div><div class="journey-label">M3</div></div>
-</div></div>
-<div class="journey-cluster-arrow">→</div>
-<div class="journey-cluster">
-<div class="journey-cluster-label"><span class="de">Konfiguration</span><span class="en">Configuration</span></div>
-<div class="journey-steps">
-<div class="journey-step"><div class="journey-icon">⚙️</div><div class="journey-label">M4</div></div>
-<div class="journey-arrow">→</div>
-<div class="journey-step"><div class="journey-icon">🎭</div><div class="journey-label">M5</div></div>
-<div class="journey-arrow">→</div>
-<div class="journey-step"><div class="journey-icon">💾</div><div class="journey-label">M6</div></div>
-</div></div>
-<div class="journey-cluster-arrow">→</div>
-<div class="journey-cluster">
-<div class="journey-cluster-label"><span class="de">Erweiterung</span><span class="en">Extension</span></div>
-<div class="journey-steps">
-<div class="journey-step"><div class="journey-icon">🧩</div><div class="journey-label">M7</div></div>
-<div class="journey-arrow">→</div>
-<div class="journey-step"><div class="journey-icon">🐛</div><div class="journey-label">M8</div></div>
-<div class="journey-arrow">→</div>
-<div class="journey-step"><div class="journey-icon">👥</div><div class="journey-label">M9</div></div>
-</div></div>
-<div class="journey-cluster-arrow">→</div>
-<div class="journey-cluster">
-<div class="journey-cluster-label">Production</div>
-<div class="journey-steps">
-<div class="journey-step"><div class="journey-icon">⏰</div><div class="journey-label">M10</div></div>
-<div class="journey-arrow">→</div>
-<div class="journey-step"><div class="journey-icon">🔒</div><div class="journey-label">M11</div></div>
-<div class="journey-arrow">→</div>
-<div class="journey-step"><div class="journey-icon">🎯</div><div class="journey-label">M12</div></div>
-<div class="journey-arrow">→</div>
-<div class="journey-step"><div class="journey-icon">🚀</div><div class="journey-label">M13</div></div>
-</div></div>
-</div>
-<p style="text-align:center;color:var(--muted);font-size:.85rem"><span class="de">Framework-agnostisch · Wissenschaftlich fundiert · 2 Tracks (Power-User &amp; Developer)</span><span class="en">Framework-agnostic · Research-backed · 2 Tracks (Power-User &amp; Developer)</span></p>
-</section>
 
 <section>
-<h2><span class="de">Das Problem</span><span class="en">The Problem</span></h2>
-<p><span class="de">Du nutzt AI-Tools täglich — ChatGPT, Copilot, Claude. Aber du verstehst nicht, <span class="highlight">wie sie eigentlich funktionieren</span>.</span><span class="en">You use AI tools daily — ChatGPT, Copilot, Claude. But you don't understand <span class="highlight">how they actually work</span>.</span></p>
-<div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.5rem;margin:1rem 0">
-<p style="color:var(--muted);font-size:.95rem;margin-bottom:.5rem"><span class="de">❌ Du kopierst Prompts aus dem Internet, ohne zu wissen warum sie funktionieren</span><span class="en">❌ You copy prompts from the internet without knowing why they work</span></p>
-<p style="color:var(--muted);font-size:.95rem;margin-bottom:.5rem"><span class="de">❌ Wenn der Agent Mist baut, weißt du nicht wie du debuggst</span><span class="en">❌ When the agent messes up, you don't know how to debug</span></p>
-<p style="color:var(--muted);font-size:.95rem;margin-bottom:.5rem"><span class="de">❌ Du traust dich nicht, dem Agent echte Aufgaben zu geben</span><span class="en">❌ You don't trust the agent with real tasks</span></p>
-<p style="color:var(--muted);font-size:.95rem"><span class="de">❌ „Agent" und „Chatbot" klingt für dich nach dem Gleichen</span><span class="en">❌ "Agent" and "chatbot" sound the same to you</span></p>
+<h2 style="text-align:center;margin-bottom:.5rem"><span class="de">Warum dieser Kurs?</span><span class="en">Why this course?</span></h2>
+<p style="text-align:center;color:var(--muted);font-size:.9rem;max-width:600px;margin:0 auto 1.5rem"><span class="de">Jeder Kurs über AI Agents lehrt dich, eins zu bauen. Aber die meisten Menschen müssen nicht bauen — sie müssen <strong>verstehen, bewerten und entscheiden.</strong></span><span class="en">Every course about AI agents teaches you to build one. But most people don't need to build — they need to <strong>understand, evaluate, and decide.</strong></span></p>
+
+<div class="diff-grid">
+<div class="diff-card">
+<div class="icon">📚</div>
+<h4><span class="de">Andere Kurse</span><span class="en">Other courses</span></h4>
+<p><span class="de">"Installiere LangChain, schreibe diesen Code, deploye deinen Agent." Framework-spezifisch. Veraltet in Monaten.</span><span class="en">"Install LangChain, write this code, deploy your agent." Framework-specific. Outdated in months.</span></p>
 </div>
-<p style="margin-top:1rem"><span class="de">Dieser Kurs ändert das — <span class="highlight">systematisch, nicht oberflächlich</span>.</span><span class="en">This course changes that — <span class="highlight">systematically, not superficially</span>.</span></p>
+<div class="diff-card" style="border-color:var(--accent)">
+<div class="icon">🧭</div>
+<h4 style="color:var(--accent)"><span class="de">Dieser Kurs</span><span class="en">This course</span></h4>
+<p><span class="de">"Verstehe die Patterns. Erkenne die Risiken. Triff informierte Entscheidungen." Framework-agnostisch. Hält Jahre.</span><span class="en">"Understand the patterns. Recognize the risks. Make informed decisions." Framework-agnostic. Lasts years.</span></p>
+</div>
+</div>
 </section>
 
+<!-- The Delegation Decision -->
 <section>
-<h2><span class="de">Die Wahrheit: Nicht jeder „Agent" ist gleich</span><span class="en">The Truth: Not every "agent" is the same</span></h2>
-<p style="margin-bottom:1.5rem"><span class="de">Das <strong>Autonomie-Spektrum</strong> ist der rote Faden dieses Kurses. Vom simplen Chatbot bis zum autonomen Multi-Agent-System — du lernst jede Stufe verstehen und steuern.</span><span class="en">The <strong>Autonomy Spectrum</strong> is the throughline of this course. From simple chatbot to autonomous multi-agent system — you'll learn to understand and control every level.</span></p>
-<div class="spectrum">
-<div class="spectrum-level spectrum-l0"><div class="spectrum-label">L0</div><div class="spectrum-icon">💬</div><div class="spectrum-name">Chatbot</div><div class="spectrum-sub"><span class="de">Frage → Antwort</span><span class="en">Q → A</span></div></div>
-<div class="spectrum-level spectrum-l1"><div class="spectrum-label">L1</div><div class="spectrum-icon">🤝</div><div class="spectrum-name">Copilot</div><div class="spectrum-sub"><span class="de">Vorschläge</span><span class="en">Suggestions</span></div></div>
-<div class="spectrum-level spectrum-l2"><div class="spectrum-label">L2</div><div class="spectrum-icon">🛡️</div><div class="spectrum-name">HITL Agent</div><div class="spectrum-sub"><span class="de">Mit Freigabe</span><span class="en">With approval</span></div></div>
-<div class="spectrum-level spectrum-l3"><div class="spectrum-label">L3</div><div class="spectrum-icon">🤖</div><div class="spectrum-name"><span class="de">Autonom</span><span class="en">Autonomous</span></div><div class="spectrum-sub"><span class="de">Eigene Entscheidungen</span><span class="en">Own decisions</span></div></div>
-<div class="spectrum-level spectrum-l4"><div class="spectrum-label">L4</div><div class="spectrum-icon">🌐</div><div class="spectrum-name">Multi-Agent</div><div class="spectrum-sub"><span class="de">Koordiniert</span><span class="en">Coordinated</span></div></div>
+<div class="framework-box">
+<h2 style="font-size:1.1rem;margin-bottom:.25rem"><span class="de">Das Kern-Framework: The Delegation Decision</span><span class="en">The Core Framework: The Delegation Decision</span></h2>
+<p style="color:var(--muted);font-size:.85rem;margin-bottom:1rem"><span class="de">Eine Frage für jede Aufgabe. Zieht sich durch den ganzen Kurs.</span><span class="en">One question for every task. Runs through the entire course.</span></p>
+<div class="matrix">
+<div class="header"></div>
+<div class="header"><span class="de">Agent kann es</span><span class="en">Agent CAN</span></div>
+<div class="header"><span class="de">Agent kann es nicht</span><span class="en">Agent CANNOT</span></div>
+<div class="row-label"><span class="de">Risiko niedrig</span><span class="en">Low risk</span></div>
+<div class="cell-green">✅ <span class="de">Delegieren</span><span class="en">Delegate</span></div>
+<div class="cell-gray"><span class="de">Mensch macht es</span><span class="en">Human does it</span></div>
+<div class="row-label"><span class="de">Risiko hoch</span><span class="en">High risk</span></div>
+<div class="cell-yellow">⚠️ <span class="de">Mit Aufsicht</span><span class="en">With oversight</span></div>
+<div class="cell-red">❌ <span class="de">Nicht delegieren</span><span class="en">Don't delegate</span></div>
 </div>
-<div class="source"><span class="de">📚 Basierend auf Wooldridge &amp; Jennings (1995), Xi et al. (2023), Andrew Ng's 4 Agentic Design Patterns (2024)</span><span class="en">📚 Based on Wooldridge &amp; Jennings (1995), Xi et al. (2023), Andrew Ng's 4 Agentic Design Patterns (2024)</span></div>
+</div>
 </section>
 
+<!-- 5 Modules -->
 <section>
-<h2><span class="de">Was du danach kannst</span><span class="en">What you'll be able to do</span></h2>
-<div class="outcome-grid">
-<div class="outcome-item"><div class="outcome-icon">🧠</div><div class="outcome-title"><span class="de">Agents verstehen</span><span class="en">Understand Agents</span></div><div class="outcome-desc"><span class="de">Jedes AI-System auf dem Autonomie-Spektrum einordnen. Hype von Substanz trennen.</span><span class="en">Place any AI system on the autonomy spectrum. Separate hype from substance.</span></div></div>
-<div class="outcome-item"><div class="outcome-icon">⚙️</div><div class="outcome-title"><span class="de">Agents konfigurieren</span><span class="en">Configure Agents</span></div><div class="outcome-desc"><span class="de">Persona, Memory, Tools und Approval-Policies — ein System nach deinen Regeln.</span><span class="en">Persona, memory, tools, and approval policies — a system by your rules.</span></div></div>
-<div class="outcome-item"><div class="outcome-icon">🐛</div><div class="outcome-title"><span class="de">Agents debuggen</span><span class="en">Debug Agents</span></div><div class="outcome-desc"><span class="de">Logs lesen, Fehlermuster erkennen, systematisch fixen.</span><span class="en">Read logs, recognize failure patterns, fix systematically.</span></div></div>
-<div class="outcome-item"><div class="outcome-icon">🚀</div><div class="outcome-title"><span class="de">Agents produktiv betreiben</span><span class="en">Run Agents in Production</span></div><div class="outcome-desc"><span class="de">Monitoring, Security, Automatisierung — vom Experiment zum Alltagssystem.</span><span class="en">Monitoring, security, automation — from experiment to daily system.</span></div></div>
+<h2 style="text-align:center;margin-bottom:1.5rem"><span class="de">5 Module</span><span class="en">5 Modules</span></h2>
+
+<div class="module-grid">
+<a href="modul1.html" class="mod-card m1">
+<span class="mod-num">01</span>
+<p class="mod-question"><span class="de">"Was war das gerade?"</span><span class="en">"What just happened?"</span></p>
+<div class="mod-title"><span class="de">Der Agent in Aktion</span><span class="en">The Agent in Action</span></div>
+<div class="mod-desc"><span class="de">Sieh einen Agent live arbeiten — inklusive Fehler. Dann verstehe, was unter der Haube passiert.</span><span class="en">Watch an agent work live — including mistakes. Then understand what happens under the hood.</span></div>
+<div class="mod-meta">
+<span style="background:rgba(88,166,255,.1);color:var(--accent)">⏱ ~15 min</span>
+<span style="background:rgba(63,185,80,.1);color:var(--green)"><span class="de">Einstieg</span><span class="en">Start here</span></span>
+</div>
+</a>
+
+<a href="modul2.html" class="mod-card m2">
+<span class="mod-num">02</span>
+<p class="mod-question"><span class="de">"Kann ich dem vertrauen?"</span><span class="en">"Can I trust this?"</span></p>
+<div class="mod-title"><span class="de">Vertrauen & Delegation</span><span class="en">Trust & Delegation</span></div>
+<div class="mod-desc"><span class="de">Wann delegieren, wann eingreifen? Trust Calibration — die Kernkompetenz im Umgang mit Agents.</span><span class="en">When to delegate, when to intervene? Trust calibration — the core skill for working with agents.</span></div>
+<div class="mod-meta">
+<span style="background:rgba(63,185,80,.1);color:var(--green)">⏱ ~15 min</span>
+</div>
+</a>
+
+<a href="modul3.html" class="mod-card m3">
+<span class="mod-num">03</span>
+<p class="mod-question"><span class="de">"Wie funktioniert das?"</span><span class="en">"How does it work?"</span></p>
+<div class="mod-title"><span class="de">Wie Agents zusammenarbeiten</span><span class="en">How Agents Collaborate</span></div>
+<div class="mod-desc"><span class="de">Architektur, Protokolle (MCP, A2A), Multi-Agent-Patterns. Nicht als Katalog — als Antwort auf deine Neugier.</span><span class="en">Architecture, protocols (MCP, A2A), multi-agent patterns. Not a catalog — an answer to your curiosity.</span></div>
+<div class="mod-meta">
+<span style="background:rgba(137,87,229,.1);color:var(--purple)">⏱ ~15 min</span>
+</div>
+</a>
+
+<a href="modul4.html" class="mod-card m4">
+<span class="mod-num">04</span>
+<p class="mod-question"><span class="de">"Was kann schiefgehen?"</span><span class="en">"What can go wrong?"</span></p>
+<div class="mod-title"><span class="de">Was schiefgehen kann</span><span class="en">What Can Go Wrong</span></div>
+<div class="mod-desc"><span class="de">Echte Fails, Security, Kosten-Fallen, EU AI Act. Die Seite die kein Marketing zeigt.</span><span class="en">Real failures, security, cost traps, EU AI Act. The side no marketing shows.</span></div>
+<div class="mod-meta">
+<span style="background:rgba(248,81,73,.1);color:#f85149">⏱ ~15 min</span>
+</div>
+</a>
+
+<a href="modul5.html" class="mod-card m5">
+<span class="mod-num">05</span>
+<p class="mod-question"><span class="de">"Was mache ich jetzt damit?"</span><span class="en">"What do I do with this?"</span></p>
+<div class="mod-title"><span class="de">Deine Agent-Strategie</span><span class="en">Your Agent Strategy</span></div>
+<div class="mod-desc"><span class="de">Build vs. Buy vs. Don't. Dein persönliches Decision Framework. Plus: Wohin entwickelt sich das Feld?</span><span class="en">Build vs. buy vs. don't. Your personal decision framework. Plus: where is the field heading?</span></div>
+<div class="mod-meta">
+<span style="background:rgba(210,153,34,.1);color:var(--orange)">⏱ ~15 min</span>
+</div>
+</a>
 </div>
 </section>
 
+<!-- Built by an Agent -->
 <section>
-<div class="cta-box" style="border-color:var(--green);text-align:left">
-<h3 style="color:var(--green)"><span class="de">🏆 Was du am Ende hast</span><span class="en">🏆 What you'll have at the end</span></h3>
-<ul style="color:var(--muted);font-size:.9rem;padding-left:1.5rem;margin-top:.75rem">
-<li><span class="de">Einen funktionierenden AI Agent mit Persona, Memory und Tools</span><span class="en">A working AI agent with persona, memory, and tools</span></li>
-<li><span class="de">Ein dokumentiertes Threat Model für dein Setup</span><span class="en">A documented threat model for your setup</span></li>
-<li><span class="de">Mindestens 2 konfigurierte Skills (installiert oder selbst gebaut)</span><span class="en">At least 2 configured skills (installed or self-built)</span></li>
-<li><span class="de">Ein Multi-Agent-Setup mit Channel-Routing</span><span class="en">A multi-agent setup with channel routing</span></li>
-<li><span class="de">Automatisierte Workflows (Cron + Hooks) mit HITL-Eskalation</span><span class="en">Automated workflows (cron + hooks) with HITL escalation</span></li>
-<li><span class="de">Production-Runbook mit Monitoring, Backup und Health-Checks</span><span class="en">A production runbook with monitoring, backup, and health checks</span></li>
-</ul>
+<div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.5rem;text-align:center">
+<p style="font-size:1.5rem;margin-bottom:.5rem">🤖</p>
+<h3 style="font-size:1rem;margin-bottom:.5rem"><span class="de">Gebaut von einem Agent</span><span class="en">Built by an Agent</span></h3>
+<p style="color:var(--muted);font-size:.85rem;max-width:500px;margin:0 auto"><span class="de">Dieser Kurs wurde mit Hilfe eines AI Agent Systems erstellt — dem gleichen System, das als Fallstudie dient. Wir lehren nicht nur Theorie — wir praktizieren sie. <a href="https://github.com/planck-lab/agent-system-starter-kit" style="color:var(--accent)">Architektur ansehen →</a></span><span class="en">This course was created with the help of an AI agent system — the same system used as a case study. We don't just teach theory — we practice it. <a href="https://github.com/planck-lab/agent-system-starter-kit" style="color:var(--accent)">View architecture →</a></span></p>
 </div>
 </section>
 
+<!-- Ecosystem -->
 <section>
-<h2><span class="de">Warum jetzt?</span><span class="en">Why now?</span></h2>
-<div class="stats-grid">
-<div class="stat-card"><div class="stat-number">1 Mrd.</div><div class="stat-label"><span class="de">GitHub Contributions 2024</span><span class="en">GitHub Contributions 2024</span></div></div>
-<div class="stat-card"><div class="stat-number">33%</div><div class="stat-label"><span class="de">Enterprise-Software mit Agentic AI bis 2028</span><span class="en">Enterprise software with agentic AI by 2028</span></div></div>
-</div>
-<div class="source"><span class="de">📚 <a href="https://github.blog/news-insights/octoverse/octoverse-2024/" target="_blank">GitHub Octoverse 2024</a> · <a href="https://www.gartner.com/en/newsroom/press-releases/2024-05-14-gartner-predicts-33-percent-of-enterprise-software-will-include-agentic-ai-by-2028" target="_blank">Gartner AI Agent Prediction 2024</a></span><span class="en">📚 <a href="https://github.blog/news-insights/octoverse/octoverse-2024/" target="_blank">GitHub Octoverse 2024</a> · <a href="https://www.gartner.com/en/newsroom/press-releases/2024-05-14-gartner-predicts-33-percent-of-enterprise-software-will-include-agentic-ai-by-2028" target="_blank">Gartner AI Agent Prediction 2024</a></span></div>
-<p style="color:var(--muted);font-size:.9rem;margin-top:.75rem"><span class="de">Dieser Kurs basiert auf 18 wissenschaftlichen Quellen (Peer-Reviewed + arXiv + Industrie-Standards) — mit Quellenangaben in jedem Modul.</span><span class="en">This course is based on 18 scientific sources (peer-reviewed + arXiv + industry standards) — with citations in every module.</span></p>
-</section>
-
-<section>
-<h2><span class="de">„Aber ist das was für mich?"</span><span class="en">"But is this for me?"</span></h2>
-<div class="faq-item">
-<div class="faq-q"><span class="de">❓ Ist das zu technisch für mich?</span><span class="en">❓ Is this too technical for me?</span></div>
-<div class="faq-a"><span class="de">Beide Tracks erfordern Terminal-Grundkenntnisse. Wenn du noch nie ein Terminal geöffnet hast, starte mit Modul 0 und plane doppelte Zeit ein. Es gibt einen Power-User-Track (kein Code schreiben) und einen Developer-Track.</span><span class="en">Both tracks require basic terminal skills. If you've never opened a terminal, start with Module 0 and plan for double time. There's a Power-User track (no coding) and a Developer track.</span></div>
-</div>
-<div class="faq-item">
-<div class="faq-q"><span class="de">❓ Brauche ich Programmierkenntnisse?</span><span class="en">❓ Do I need coding skills?</span></div>
-<div class="faq-a"><span class="de">Für den 🟠 Power-User-Track: Nein, aber du musst JSON/YAML editieren und CLI-Befehle ausführen. Für den 🔴 Developer-Track: Ja, Shell-Scripting und Programmier-Erfahrung sind Voraussetzung.</span><span class="en">For the 🟠 Power-User track: No, but you need to edit JSON/YAML and run CLI commands. For the 🔴 Developer track: Yes, shell scripting and programming experience required.</span></div>
-</div>
-<div class="faq-item">
-<div class="faq-q"><span class="de">❓ Was kostet das?</span><span class="en">❓ What does it cost?</span></div>
-<div class="faq-a"><span class="de">Der Kurs ist komplett kostenlos. Du brauchst einen API-Key (Anthropic oder OpenAI) — Budget: ca. $15–80 für den gesamten Kurs je nach Modell. Jedes Modul nennt die geschätzten Kosten.</span><span class="en">The course is completely free. You need an API key (Anthropic or OpenAI) — budget: about $15–80 for the entire course depending on model. Each module lists estimated costs.</span></div>
-</div>
-<div class="faq-item">
-<div class="faq-q"><span class="de">❓ Bin ich an OpenClaw gebunden?</span><span class="en">❓ Am I locked into OpenClaw?</span></div>
-<div class="faq-a"><span class="de">Nein. Jedes Modul beginnt mit dem framework-agnostischen Konzept. ~50% des Contents bleibt relevant, selbst wenn du ein anderes Tool nutzt (LangChain, CrewAI, AutoGen). OpenClaw ist die Referenz-Implementierung, nicht die einzige Option.</span><span class="en">No. Every module starts with the framework-agnostic concept. ~50% of content remains relevant even with a different tool (LangChain, CrewAI, AutoGen). OpenClaw is the reference implementation, not the only option.</span></div>
+<p style="text-align:center;color:var(--muted);font-size:.85rem;margin-bottom:.5rem"><span class="de">Teil des AI Learning Ökosystems</span><span class="en">Part of the AI Learning Ecosystem</span></p>
+<div class="ecosystem">
+<a href="https://janrummel.github.io/ai-fluency/" class="eco-badge">AI Fluency</a>
+<span class="eco-badge current">🧭 Agent Literacy</span>
+<a href="https://github.com/planck-lab/agent-system-starter-kit" class="eco-badge">Starter Kit</a>
+<a href="https://janrummel.github.io/ai-learning/" class="eco-badge"><span class="de">Alle Kurse</span><span class="en">All Courses</span></a>
 </div>
 </section>
 
-<section>
-<div style="background:rgba(137,87,229,.08);border:1px solid rgba(137,87,229,.3);border-radius:12px;padding:1.5rem;margin:2rem 0">
-<h3 style="color:var(--purple);font-size:1rem;margin-bottom:.5rem">🤖 Meta: <span class="de">Dieser Kurs wurde von einem Agent gebaut</span><span class="en">This course was built by an agent</span></h3>
-<p style="color:var(--muted);font-size:.9rem;line-height:1.6"><span class="de">Dieser Kurs wurde nicht von einem Team gebaut — sondern von Planck, einem AI Agent auf einem Mac mini. Jedes Modul, jedes Notebook, jedes Design-Element: gebaut, stressgetestet und iteriert von einem Agent-System. Die Git History ist öffentlich. Du lernst hier Konzepte, die bei der Erstellung dieses Kurses tatsächlich angewendet wurden.</span><span class="en">This course wasn't built by a team — it was built by Planck, an AI agent running on a Mac mini. Every module, every notebook, every design element: built, stress-tested, and iterated by an agent system. The Git history is public. You're learning concepts that were actually applied to create this course.</span></p>
-<p style="margin-top:.75rem;font-size:.85rem"><a href="https://github.com/planck-lab/agent-systems" target="_blank" style="color:var(--accent)"><span class="de">→ Git History auf GitHub</span><span class="en">→ Git history on GitHub</span></a></p>
-</div>
-</section>
-
-<section>
-<h2><span class="de">Wer steckt dahinter?</span><span class="en">Who's behind this?</span></h2>
-<p><span class="de">Ich bin <strong>Jan</strong> — Ingenieur, der AI Agents nicht nur nutzt, sondern versteht. Ich baue mein eigenes Agent-System und habe dabei gelernt: Die meisten Tutorials zeigen dir <em>was</em> du klicken sollst. Keiner erklärt dir <em>warum</em>.</span><span class="en">I'm <strong>Jan</strong> — an engineer who doesn't just use AI agents but understands them. I'm building my own agent system and learned along the way: Most tutorials show you <em>what</em> to click. Nobody explains <em>why</em>.</span></p>
-<p style="margin-top:.75rem"><span class="de">Dieser Kurs ist der Kurs, den ich mir gewünscht hätte. Framework-agnostisch, wissenschaftlich fundiert, ehrlich über Grenzen.</span><span class="en">This course is the course I wish I had. Framework-agnostic, research-backed, honest about limitations.</span></p>
-<p style="margin-top:.5rem;color:var(--muted);font-size:.9rem"><span class="de">Teil des <a href="https://janrummel.github.io/ai-learning/">AI Learning</a> Ökosystems.</span><span class="en">Part of the <a href="https://janrummel.github.io/ai-learning/">AI Learning</a> ecosystem.</span></p>
-</section>
-
-<section>
-<div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.5rem;margin-bottom:2rem">
-<h3 style="font-size:1.1rem;margin-bottom:1rem"><span class="de">⚡ Bevor du startest: 5 Dinge die du wissen solltest</span><span class="en">⚡ Before you start: 5 things you should know</span></h3>
-<ol style="color:var(--muted);font-size:.88rem;line-height:1.8;padding-left:1.25rem">
-<li><span class="de"><strong>Agents können echten Schaden anrichten.</strong> Shell-Zugriff = Dateien löschen, Kosten verursachen, Daten leaken. Nicht theoretisch — <a href="disclaimer.html" style="color:var(--accent)">dokumentierte Fälle</a> existieren.</span><span class="en"><strong>Agents can cause real damage.</strong> Shell access = delete files, incur costs, leak data. Not theoretical — <a href="disclaimer.html" style="color:var(--accent)">documented cases</a> exist.</span></li>
-<li><span class="de"><strong>Sandbox first.</strong> Installiere Agent-Software nur auf dedizierten Systemen (VM, Container, separater Rechner). Nie auf deinem Hauptsystem.</span><span class="en"><strong>Sandbox first.</strong> Install agent software only on dedicated systems (VM, container, separate machine). Never on your main system.</span></li>
-<li><span class="de"><strong>API-Kosten sind real.</strong> Budget: $15–80 für den gesamten Kurs. Richte Spending Limits ein <em>bevor</em> du startest.</span><span class="en"><strong>API costs are real.</strong> Budget: $15–80 for the full course. Set up spending limits <em>before</em> you start.</span></li>
-<li><span class="de"><strong>Human-in-the-Loop immer an.</strong> Starte mit maximaler Kontrolle (Approval für jede Aktion) und öffne schrittweise.</span><span class="en"><strong>Human-in-the-loop always on.</strong> Start with maximum control (approval for every action) and open up gradually.</span></li>
-<li><span class="de"><strong>Anwendung auf eigene Verantwortung.</strong> Dieser Kurs ist kostenlos und ohne Gewähr. <a href="disclaimer.html" style="color:var(--accent)">Vollständiger Haftungshinweis →</a></span><span class="en"><strong>Use at your own risk.</strong> This course is free and without warranty. <a href="disclaimer.html" style="color:var(--accent)">Full disclaimer →</a></span></li>
-</ol>
+<div class="cta-section">
+<a href="modul1.html" class="btn"><span class="de">Modul 1 starten — kostenlos →</span><span class="en">Start Module 1 — free →</span></a>
+<p style="color:var(--muted);font-size:.8rem;margin-top:.75rem"><span class="de">Kein Account. Kein Upsell. Kein Code.</span><span class="en">No account. No upsell. No code.</span></p>
 </div>
 
-<div class="cta-box">
-<h3><span class="de">🚀 Bereit? Modul 0 dauert 60 Minuten.</span><span class="en">🚀 Ready? Module 0 takes 60 minutes.</span></h3>
-<p><span class="de">Komplett kostenlos. Kein Account nötig. Kein Upsell.</span><span class="en">Completely free. No account needed. No upsell.</span></p>
-<div style="display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap">
-<a href="modul0.html" class="btn"><span class="de">Modul 0 starten →</span><span class="en">Start Module 0 →</span></a>
-<a href="curriculum.html" class="btn" style="background:var(--surface);color:var(--text);border:1px solid var(--border)"><span class="de">Alle Module ansehen</span><span class="en">View all modules</span></a>
-</div>
-</div>
-</section>
+</div><!-- /.container -->
 
 <footer role="contentinfo">
 <a href="https://github.com/planck-lab/agent-systems"><span class="de">Quellcode auf GitHub</span><span class="en">Source on GitHub</span></a> · Made with ❤️ <span class="de">und Neugier</span><span class="en">and curiosity</span>
-<br><span style="font-size:.7rem"><span class="de">Fragen? <a href="https://linkedin.com/in/janrummel">Schreib mir auf LinkedIn.</a> · Teil des <a href="https://janrummel.github.io/ai-learning/">AI Learning Ökosystems</a> · <a href="disclaimer.html">Haftungshinweis</a></span>
-<span class="en">Questions? <a href="https://linkedin.com/in/janrummel">Message me on LinkedIn.</a> · Part of the <a href="https://janrummel.github.io/ai-learning/">AI Learning Ecosystem</a> · <a href="disclaimer.html">Disclaimer</a></span>
-</span>
+<br><span style="font-size:.7rem"><span class="de">Fragen? <a href="https://linkedin.com/in/janrummel">Schreib mir auf LinkedIn.</a> · Teil des <a href="https://janrummel.github.io/ai-learning/">AI Learning Ökosystems</a></span><span class="en">Questions? <a href="https://linkedin.com/in/janrummel">Message me on LinkedIn.</a> · Part of the <a href="https://janrummel.github.io/ai-learning/">AI Learning Ecosystem</a></span></span>
+<br><span style="font-size:.65rem;color:var(--muted)"><span class="de">Verantwortlich: Jan Rummel · Kontakt via <a href="https://linkedin.com/in/janrummel">LinkedIn</a> · Kein Tracking, keine Cookies.</span><span class="en">Responsible: Jan Rummel · Contact via <a href="https://linkedin.com/in/janrummel">LinkedIn</a> · No tracking, no cookies.</span></span>
 </footer>
 
-<script src="glossary.js"></script>
 <script>
-function setLang(l){document.documentElement.lang=l;document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('active'));document.querySelector(`.lang-btn[onclick="setLang('${l}')"]`).classList.add('active');localStorage.setItem('lang',l);if(typeof initGlossary==='function')initGlossary()}
+function setLang(l){document.documentElement.lang=l;document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('active'));document.querySelector(`.lang-btn[onclick="setLang('${l}')"]`).classList.add('active');localStorage.setItem('lang',l)}
 const s=localStorage.getItem('lang');if(s)setLang(s);
 </script>
+<button class="back-to-top" onclick="scrollTo({top:0,behavior:'smooth'})">↑</button>
+<script>const b=document.querySelector(".back-to-top");window.addEventListener("scroll",()=>{b.style.display=window.scrollY>400?"flex":"none"})</script>
 </body></html>

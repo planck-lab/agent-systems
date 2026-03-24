@@ -3,315 +3,435 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Modul 3: Architektur eines Orchestrators — Agent Systems</title>
-<meta name="description" content="Die 4 Schichten eines Orchestrators verstehen: Channel → Gateway → Session → Runtime. Vergleich von LangGraph, CrewAI, AutoGen und OpenClaw.">
-<meta name="author" content="Jan Rummel">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>🤖</text></svg>">
+<title>Modul 3: Wie Agents zusammenarbeiten — Agent Literacy</title>
+<meta name="description" content="Architektur, Protokolle und Multi-Agent-Patterns. Verstehe wie Agent-Systeme unter der Haube funktionieren.">
+<meta property="og:title" content="Modul 3 — Agent Literacy">
+<meta property="og:url" content="https://planck-lab.github.io/agent-systems/modul3.html">
+<meta property="og:type" content="article">
+<meta name="twitter:card" content="summary">
+<meta property="og:image" content="https://planck-lab.github.io/agent-systems/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
 <link rel="stylesheet" href="style.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧭</text></svg>">
 <style>
-.arch-diagram{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.5rem;margin:1.5rem 0;font-family:'SF Mono',Monaco,Consolas,monospace;font-size:.78rem;line-height:1.7;overflow-x:auto;white-space:pre}
-.layer-grid{display:grid;grid-template-columns:1fr;gap:.75rem;margin:1.5rem 0}
-.layer-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.25rem;display:flex;gap:1rem;align-items:flex-start}
-.layer-num{background:var(--accent);color:#0d1117;font-weight:700;font-size:.8rem;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.layer-card .l-name{font-weight:700;font-size:.9rem;margin-bottom:.2rem}
-.layer-card .l-desc{font-size:.8rem;color:var(--muted)}
-.fw-table{width:100%;border-collapse:collapse;margin:1.5rem 0;font-size:.85rem}
-.fw-table th,.fw-table td{padding:.6rem .8rem;text-align:left;border-bottom:1px solid var(--border)}
-.fw-table th{color:var(--accent);font-weight:700;font-size:.75rem;text-transform:uppercase;letter-spacing:.05em}
-.fw-table td{color:var(--muted)}
-.fw-table tr:hover td{background:rgba(88,166,255,.04)}
-.kc-box{background:var(--surface);border:2px solid var(--orange);border-radius:12px;padding:1.5rem;margin:2rem 0}
-.kc-box h3{color:var(--orange);margin-bottom:1rem;font-size:1rem}
-.kc-q{color:var(--muted);font-size:.9rem;padding:.5rem 0;border-bottom:1px solid var(--border)}
-.kc-q:last-child{border-bottom:none}
-.kc-num{color:var(--accent);font-weight:700;margin-right:.5rem}
+.module-header{position:relative;background:linear-gradient(135deg,rgba(137,87,229,.08),rgba(88,166,255,.06));border:1px solid var(--border);border-radius:16px;padding:2rem 1.5rem 1.5rem;margin-bottom:2rem;overflow:hidden}
+.module-header::before{content:'03';position:absolute;top:-10px;right:20px;font-size:6rem;font-weight:900;opacity:.04;line-height:1}
+.module-header .pills{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:.75rem}
+.module-header .pills span{font-size:.7rem;padding:.15rem .5rem;border-radius:20px;font-weight:600}
+.module-header h1{font-size:1.8rem;margin-bottom:.25rem}
+.module-header .question{color:var(--purple,#8957e5);font-style:italic;margin-bottom:.5rem}
+.module-header .lernziel{color:var(--muted);font-size:.85rem}
+.header-nav{display:flex;justify-content:space-between;margin-bottom:1rem;font-size:.85rem}
+.header-nav a{color:var(--accent);text-decoration:none}
+.header-nav a:hover{text-decoration:underline}
+
+.arch-visual{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.5rem;margin:1.5rem 0;text-align:center}
+.arch-layer{padding:.6rem 1rem;margin:.35rem auto;border-radius:8px;font-size:.82rem;font-weight:600;max-width:400px;position:relative}
+.arch-arrow{color:var(--muted);font-size:.9rem;margin:.15rem 0}
+
+.protocol-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.25rem;margin:1rem 0;position:relative;overflow:hidden}
+.protocol-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.protocol-card h4{font-size:.9rem;margin-bottom:.35rem}
+.protocol-card .by{font-size:.75rem;color:var(--muted);margin-bottom:.5rem}
+.protocol-card p{color:var(--muted);font-size:.85rem;line-height:1.6;margin:0}
+.protocol-card .analogy{color:var(--accent);font-size:.82rem;font-style:italic;margin-top:.5rem}
+
+.pattern-visual{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.25rem;margin:1rem 0}
+.pattern-visual h4{font-size:.9rem;margin-bottom:.75rem}
+.pattern-flow{display:flex;align-items:center;justify-content:center;gap:.4rem;flex-wrap:wrap;margin:.75rem 0}
+.pattern-node{padding:.4rem .7rem;border-radius:6px;font-size:.75rem;font-weight:600;text-align:center}
+.pattern-arrow{color:var(--muted);font-size:.9rem}
+.pattern-desc{color:var(--muted);font-size:.82rem;line-height:1.5;margin-top:.5rem}
+
+.exchange-visual{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.5rem;margin:1.5rem 0}
+.exchange-step{display:flex;gap:.75rem;align-items:flex-start;padding:.5rem 0;font-size:.85rem}
+.exchange-step .actor{font-weight:700;min-width:80px;flex-shrink:0;font-size:.8rem}
+.exchange-step .action{color:var(--muted);line-height:1.5}
+
+.callout{padding:1rem 1.25rem;border-radius:10px;font-size:.88rem;line-height:1.6;margin:1.5rem 0}
+.callout.blue{background:rgba(88,166,255,.06);border:1px solid rgba(88,166,255,.2)}
+.callout.green{background:rgba(63,185,80,.06);border:1px solid rgba(63,185,80,.2)}
+.callout.red{background:rgba(248,81,73,.06);border:1px solid rgba(248,81,73,.2)}
+.callout.purple{background:rgba(137,87,229,.06);border:1px solid rgba(137,87,229,.2)}
+
+.case-study{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.5rem;margin:1.5rem 0}
+.case-study .label{font-size:.7rem;font-weight:700;color:#8957e5;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem}
+
+.fw-grid{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin:1.5rem 0}
+.fw-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1rem}
+.fw-card h4{font-size:.85rem;margin-bottom:.25rem}
+.fw-card .type{font-size:.7rem;color:var(--muted);margin-bottom:.4rem}
+.fw-card p{color:var(--muted);font-size:.8rem;line-height:1.5;margin:0}
+
+.reflection-box{background:rgba(210,153,34,.06);border:1px solid rgba(210,153,34,.2);border-radius:12px;padding:1.5rem;margin:1.5rem 0}
+.reflection-box h3{color:var(--orange);font-size:1rem;margin-bottom:.75rem}
+.reflection-box li{color:var(--muted);font-size:.88rem;line-height:1.6;margin-bottom:.5rem}
+
+.bottom-nav{display:flex;justify-content:space-between;align-items:center;padding:1.5rem 0;margin-top:2rem;border-top:1px solid var(--border)}
+.bottom-nav a{color:var(--accent);text-decoration:none;font-size:.9rem}
+
+@media(max-width:600px){
+.module-header h1{font-size:1.4rem}
+.fw-grid{grid-template-columns:1fr}
+.pattern-flow{flex-direction:column}
+.pattern-arrow{transform:rotate(90deg)}
+}
 </style>
+<script>const _l=localStorage.getItem("lang");if(_l)document.documentElement.lang=_l;</script>
 </head>
 <body>
-<!-- Banner: Neuer Kurs -->
-<div style="background:linear-gradient(135deg,rgba(88,166,255,.12),rgba(137,87,229,.1));border-bottom:1px solid var(--border);padding:.75rem 1.5rem;text-align:center;font-size:.88rem;line-height:1.5">
-<span class="de">🧭 <strong>Neuer Kurs:</strong> <a href="https://planck-lab.github.io/agent-literacy/" style="color:var(--accent);font-weight:600">Agent Literacy</a> — Verstehe AI Agents ohne Code. Dieser Kurs bleibt als Archiv online.</span>
-<span class="en">🧭 <strong>New course:</strong> <a href="https://planck-lab.github.io/agent-literacy/" style="color:var(--accent);font-weight:600">Agent Literacy</a> — Understand AI agents, no code. This course remains as archive.</span>
-</div>
 <a href="#main-content" class="skip-link"><span class="de">Zum Inhalt springen</span><span class="en">Skip to content</span></a>
 <div class="lang-switch" role="navigation" aria-label="Language">
 <button class="lang-btn active" onclick="setLang('de')">DE</button>
 <button class="lang-btn" onclick="setLang('en')">EN</button>
 </div>
 
-<div class="progress-bar"><div class="progress-fill" style="width:23%"></div></div>
+<div class="container" style="max-width:760px;margin:0 auto;padding:3rem 2rem 2rem">
 
-<div class="container" id="main-content">
-<div class="module-header">
-<span class="module-id">M3</span>
-<div class="meta-row">
-<span><span class="de">Modul 3 von 13</span><span class="en">Module 3 of 13</span></span>
-<span class="meta-pill track">🟠🔴</span>
-<span class="meta-pill level"><span class="de">Mittel</span><span class="en">Intermediate</span></span>
-<span class="meta-pill time">⏱ 60 min</span>
-</div>
-<h1><span class="de">Architektur eines Orchestrators</span><span class="en">Orchestrator Architecture</span></h1>
-<p class="subtitle"><span class="de">Schichten verstehen — vom Telegram-Chat bis zur Tool-Ausführung.</span><span class="en">Understanding layers — from Telegram chat to tool execution.</span></p>
-<div style="display:flex;justify-content:space-between;margin-top:.75rem;padding-top:.5rem;border-top:1px solid var(--border)">
-<a href="modul2.html" style="color:var(--muted);font-size:.8rem;text-decoration:none">← <span class="de">Modul 2</span><span class="en">Module 2</span></a>
-<a href="curriculum.html" style="color:var(--muted);font-size:.8rem;text-decoration:none">📋 <span class="de">Übersicht</span><span class="en">Overview</span></a>
-<a href="modul4.html" style="color:var(--muted);font-size:.8rem;text-decoration:none"><span class="de">Modul 4</span><span class="en">Module 4</span> →</a>
-</div>
-<div class="goal-row">
-<strong>🎯 <span class="de">Lernziel</span><span class="en">Learning Goal</span>:</strong> <span class="de">Innerhalb von 60 min: Die 4 Schichten eines Orchestrators auf einem Diagramm zuordnen und je eine Konfiguration vornehmen.</span><span class="en">Within 60 min: Map the 4 layers of an orchestrator on a diagram and configure one setting for each.</span>
-</div>
+<div class="breadcrumb"><span class="de"><a href="index.html">🧭 Agent Literacy</a> › Modul 3: Wie Agents zusammenarbeiten</span><span class="en"><a href="index.html">🧭 Agent Literacy</a> › Module 3: How Agents Collaborate</span></div>
+<div class="header-nav">
+<a href="modul2.html"><span class="de">← Modul 2</span><span class="en">← Module 2</span></a>
+<a href="modul4.html"><span class="de">Modul 4 →</span><span class="en">Module 4 →</span></a>
 </div>
 
-<!-- Before/After -->
-<div class="comparison" style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0">
-<div class="compare-card bad" style="background:var(--surface);border:1px solid rgba(248,81,73,.4);border-radius:12px;padding:1.25rem">
-<h4 style="font-size:.9rem;margin-bottom:.5rem"><span class="de">❌ Vorher</span><span class="en">❌ Before</span></h4>
-<p style="font-size:.85rem;color:var(--muted)"><span class="de">Agent-System = monolithische App. Alles in einer Box.</span><span class="en">Agent system = monolithic app. Everything in one box.</span></p>
+<div class="module-header" id="main-content">
+<div class="pills">
+<span style="background:rgba(137,87,229,.1);color:#8957e5">⏱ ~15 min</span>
+<span style="background:rgba(88,166,255,.1);color:var(--accent)"><span class="de">Architektur</span><span class="en">Architecture</span></span>
 </div>
-<div class="compare-card good" style="background:var(--surface);border:1px solid rgba(63,185,80,.4);border-radius:12px;padding:1.25rem">
-<h4 style="font-size:.9rem;margin-bottom:.5rem"><span class="de">✅ Nachher</span><span class="en">✅ After</span></h4>
-<p style="font-size:.85rem;color:var(--muted)"><span class="de">Du verstehst Channel → Gateway → Session → Runtime als unabhängige Schichten.</span><span class="en">You understand Channel → Gateway → Session → Runtime as independent layers.</span></p>
-</div>
+<p class="question"><span class="de">"Wie funktioniert das unter der Haube?"</span><span class="en">"How does it work under the hood?"</span></p>
+<h1><span class="de">Modul 3: Wie Agents zusammenarbeiten</span><span class="en">Module 3: How Agents Collaborate</span></h1>
+<p class="lernziel"><span class="de"><strong>Lernziel:</strong> Nach diesem Modul kannst du die Architektur eines Agent-Systems skizzieren, den Unterschied zwischen MCP und A2A erklären, und drei Multi-Agent-Patterns benennen.</span><span class="en"><strong>Learning Goal:</strong> After this module, you can sketch the architecture of an agent system, explain the difference between MCP and A2A, and name three multi-agent patterns.</span></p>
 </div>
 
-<!-- 4-Layer Architecture -->
-<h2><span class="de">Die 4 Schichten</span><span class="en">The 4 Layers</span></h2>
+<!-- ===== TEIL 1: Hook ===== -->
+<section>
+<h2><span class="de">🏗️ Warum Architektur wichtig ist</span><span class="en">🏗️ Why Architecture Matters</span></h2>
 
-<p style="color:var(--muted);font-size:.9rem"><span class="de">Jedes Agent-System — egal ob LangGraph, CrewAI oder OpenClaw — hat diese grundlegenden Schichten. Die Namen unterscheiden sich, das Prinzip bleibt gleich:</span><span class="en">Every agent system — whether LangGraph, CrewAI, or OpenClaw — has these fundamental layers. Names differ, but the principle stays the same:</span></p>
+<p><span class="de">Du musst kein Haus bauen können um zu erkennen ob eines gut gebaut ist. Aber du solltest wissen wo die tragenden Wände sind — damit du nicht versehentlich eine rausnimmst.</span><span class="en">You don't need to build a house to recognize if one is well built. But you should know where the load-bearing walls are — so you don't accidentally remove one.</span></p>
 
-<div style="display:flex;flex-direction:column;gap:0;margin:1.5rem 0">
-<div style="background:rgba(88,166,255,.12);border:1px solid rgba(88,166,255,.3);border-radius:12px 12px 0 0;padding:1rem 1.25rem">
-<div style="display:flex;align-items:center;gap:.75rem">
-<span style="background:var(--accent);color:var(--bg);font-weight:800;font-size:.8rem;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center">1</span>
-<div>
-<div style="font-weight:700;font-size:.95rem"><span class="de">CHANNELS</span><span class="en">CHANNELS</span> <span style="color:var(--muted);font-weight:400;font-size:.8rem">Input/Output</span></div>
-<div style="font-size:.8rem;color:var(--muted);margin-top:.15rem">Telegram · WhatsApp · Web UI · CLI · API</div>
-</div>
-</div>
-</div>
-<div style="text-align:center;background:var(--bg);padding:.15rem 0;font-size:.8rem;color:var(--border)">▼</div>
-<div style="background:rgba(63,185,80,.1);border:1px solid rgba(63,185,80,.25);padding:1rem 1.25rem">
-<div style="display:flex;align-items:center;gap:.75rem">
-<span style="background:var(--green);color:var(--bg);font-weight:800;font-size:.8rem;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center">2</span>
-<div>
-<div style="font-weight:700;font-size:.95rem"><span class="de">GATEWAY</span><span class="en">GATEWAY</span> <span style="color:var(--muted);font-weight:400;font-size:.8rem">Control Plane</span></div>
-<div style="font-size:.8rem;color:var(--muted);margin-top:.15rem"><span class="de">Routing · Auth · Rate-Limiting · DM-Policy</span><span class="en">Routing · Auth · Rate Limiting · DM Policy</span></div>
-</div>
-</div>
-</div>
-<div style="text-align:center;background:var(--bg);padding:.15rem 0;font-size:.8rem;color:var(--border)">▼</div>
-<div style="background:rgba(210,153,34,.1);border:1px solid rgba(210,153,34,.25);padding:1rem 1.25rem">
-<div style="display:flex;align-items:center;gap:.75rem">
-<span style="background:var(--orange);color:var(--bg);font-weight:800;font-size:.8rem;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center">3</span>
-<div>
-<div style="font-weight:700;font-size:.95rem"><span class="de">SESSIONS</span><span class="en">SESSIONS</span> <span style="color:var(--muted);font-weight:400;font-size:.8rem">State Management</span></div>
-<div style="font-size:.8rem;color:var(--muted);margin-top:.15rem"><span class="de">Kontext-History · Memory · Isolation</span><span class="en">Context History · Memory · Isolation</span></div>
-</div>
-</div>
-</div>
-<div style="text-align:center;background:var(--bg);padding:.15rem 0;font-size:.8rem;color:var(--border)">▼</div>
-<div style="background:rgba(137,87,229,.1);border:1px solid rgba(137,87,229,.25);border-radius:0 0 12px 12px;padding:1rem 1.25rem">
-<div style="display:flex;align-items:center;gap:.75rem">
-<span style="background:var(--purple);color:#fff;font-weight:800;font-size:.8rem;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center">4</span>
-<div>
-<div style="font-weight:700;font-size:.95rem"><span class="de">RUNTIME</span><span class="en">RUNTIME</span> <span style="color:var(--muted);font-weight:400;font-size:.8rem">Execution</span></div>
-<div style="font-size:.8rem;color:var(--muted);margin-top:.15rem"><span class="de">LLM · Tools · Skills · Approval-Checks</span><span class="en">LLM · Tools · Skills · Approval Checks</span></div>
-</div>
-</div>
-</div>
+<p><span class="de">Dasselbe gilt für Agent-Systeme. In diesem Modul schauen wir unter die Haube — nicht um zu bauen, sondern um zu <strong>verstehen, bewerten und mitentscheiden</strong> zu können.</span><span class="en">The same applies to agent systems. In this module we look under the hood — not to build, but to <strong>understand, evaluate, and co-decide</strong>.</span></p>
+</section>
+
+<!-- ===== TEIL 2: Die vier Schichten ===== -->
+<section>
+<h2><span class="de">Die vier Schichten eines Agent-Systems</span><span class="en">The Four Layers of an Agent System</span></h2>
+
+<p><span class="de">Jedes Agent-System — ob von Google, Microsoft, einem Startup oder selbst gebaut — besteht aus vier Schichten:</span><span class="en">Every agent system — whether from Google, Microsoft, a startup, or self-built — consists of four layers:</span></p>
+
+<div class="arch-visual">
+<div class="arch-layer" style="background:rgba(137,87,229,.12);color:#8957e5"><span class="de">4. Skills — WAS der Agent kann</span><span class="en">4. Skills — WHAT the agent can do</span></div>
+<div class="arch-arrow">↑</div>
+<div class="arch-layer" style="background:rgba(210,153,34,.12);color:var(--orange)"><span class="de">3. Gedächtnis — WAS der Agent weiß</span><span class="en">3. Memory — WHAT the agent knows</span></div>
+<div class="arch-arrow">↑</div>
+<div class="arch-layer" style="background:rgba(63,185,80,.12);color:var(--green)"><span class="de">2. Verhalten — WIE der Agent handelt</span><span class="en">2. Behavior — HOW the agent acts</span></div>
+<div class="arch-arrow">↑</div>
+<div class="arch-layer" style="background:rgba(88,166,255,.12);color:var(--accent)"><span class="de">1. Identität — WER der Agent ist</span><span class="en">1. Identity — WHO the agent is</span></div>
 </div>
 
-<div class="layer-grid">
-<div class="layer-card">
-<div class="layer-num">1</div>
-<div><div class="l-name"><span class="de">Channels — Die Eingangstür</span><span class="en">Channels — The Front Door</span></div>
-<div class="l-desc"><span class="de">Verschiedene Plattformen → ein Interface. Ob Telegram, WhatsApp oder CLI — der Agent bekommt immer dasselbe Format. <strong>Konfiguration:</strong> Welche Channels aktiviert? Welche Rechte?</span><span class="en">Different platforms → one interface. Whether Telegram, WhatsApp, or CLI — the agent always gets the same format. <strong>Config:</strong> Which channels enabled? What permissions?</span></div>
-</div>
-</div>
-<div class="layer-card">
-<div class="layer-num">2</div>
-<div><div class="l-name"><span class="de">Gateway — Der Türsteher</span><span class="en">Gateway — The Bouncer</span></div>
-<div class="l-desc"><span class="de">Routing, Authentifizierung, Rate-Limiting. <code>dmPolicy: "pairing"</code> bedeutet: Nur gepaarte Nutzer dürfen kommunizieren. <strong>Konfiguration:</strong> Wer darf rein? Wie viele Anfragen pro Minute?</span><span class="en">Routing, authentication, rate limiting. <code>dmPolicy: "pairing"</code> means: Only paired users can communicate. <strong>Config:</strong> Who gets in? How many requests per minute?</span></div>
-</div>
-</div>
-<div class="layer-card">
-<div class="layer-num">3</div>
-<div><div class="l-name"><span class="de">Sessions — Das Gedächtnis</span><span class="en">Sessions — The Memory</span></div>
-<div class="l-desc"><span class="de">Jede Konversation ist isoliert — Session A sieht nichts von Session B. Context-History, Memory-Dateien, Session-Timer. <strong>Konfiguration:</strong> Wie lang bleibt eine Session aktiv? Was wird gespeichert?</span><span class="en">Each conversation is isolated — Session A can't see Session B. Context history, memory files, session timer. <strong>Config:</strong> How long does a session stay active? What gets saved?</span></div>
-</div>
-</div>
-<div class="layer-card">
-<div class="layer-num">4</div>
-<div><div class="l-name"><span class="de">Runtime — Die Werkstatt</span><span class="en">Runtime — The Workshop</span></div>
-<div class="l-desc"><span class="de">LLM-Aufruf, Tool-Execution, Skill-Routing, Approval-Checks. Hier passiert die eigentliche Arbeit. <strong>Konfiguration:</strong> Welches Modell? Welche Tools erlaubt?</span><span class="en">LLM call, tool execution, skill routing, approval checks. This is where the actual work happens. <strong>Config:</strong> Which model? Which tools allowed?</span></div>
-</div>
-</div>
-</div>
+<p><span class="de">Jede Schicht baut auf der darunter auf. Du kannst Skills ändern ohne die Identität anzufassen. Du kannst das Verhalten anpassen ohne Skills neu zu schreiben. Diese Trennung ist kein Zufall — sie macht das System wartbar.</span><span class="en">Each layer builds on the one below. You can change skills without touching identity. You can adjust behavior without rewriting skills. This separation isn't accidental — it makes the system maintainable.</span></p>
 
-<div class="source">📚 Garlan & Shaw (1993): "An Introduction to Software Architecture", <em>Advances in Software Engineering</em> <span class="tier-badge tier-a" style="font-size:.65rem;padding:.1rem .4rem;border-radius:6px;font-weight:700;background:rgba(63,185,80,.2);color:var(--green)">Tier A</span></div>
-
-<!-- Framework Comparison -->
-<h2><span class="de">Vergleich: Architektur in 4 Frameworks</span><span class="en">Comparison: Architecture in 4 Frameworks</span></h2>
-
-<table class="fw-table">
+<table>
 <thead>
 <tr>
 <th><span class="de">Schicht</span><span class="en">Layer</span></th>
-<th>LangGraph</th>
-<th>CrewAI</th>
-<th>AutoGen</th>
-<th>OpenClaw</th>
+<th><span class="de">Analogie</span><span class="en">Analogy</span></th>
+<th><span class="de">Beispiel</span><span class="en">Example</span></th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><strong>Input</strong></td>
-<td><span class="de">Graph-Input</span><span class="en">Graph input</span></td>
-<td>Task Input</td>
-<td>UserProxyAgent</td>
-<td>Channel Plugin</td>
+<td><span class="de"><strong>Identität</strong></span><span class="en"><strong>Identity</strong></span></td>
+<td><span class="de">Personalausweis</span><span class="en">ID card</span></td>
+<td><span class="de">Name, Sprache, Persönlichkeit, harte Grenzen</span><span class="en">Name, language, personality, hard boundaries</span></td>
 </tr>
 <tr>
-<td><strong>Control</strong></td>
-<td>StateGraph</td>
-<td>Crew Orchestrator</td>
-<td>GroupChatManager</td>
-<td>Gateway</td>
+<td><span class="de"><strong>Verhalten</strong></span><span class="en"><strong>Behavior</strong></span></td>
+<td><span class="de">Arbeitsvertrag</span><span class="en">Employment contract</span></td>
+<td><span class="de">Routing-Regeln, Delegations-Policy, Sicherheit</span><span class="en">Routing rules, delegation policy, security</span></td>
 </tr>
 <tr>
-<td><strong>State</strong></td>
-<td>Graph State</td>
-<td>Task Context</td>
-<td>Chat History</td>
-<td>Session</td>
+<td><span class="de"><strong>Gedächtnis</strong></span><span class="en"><strong>Memory</strong></span></td>
+<td><span class="de">Notizbuch + Langzeitgedächtnis</span><span class="en">Notebook + long-term memory</span></td>
+<td><span class="de">Tagesnotizen, User-Präferenzen, gelernte Regeln</span><span class="en">Daily notes, user preferences, learned rules</span></td>
 </tr>
 <tr>
-<td><strong>Execution</strong></td>
-<td>Node Functions</td>
-<td>Agent + Tools</td>
-<td>ConversableAgent</td>
-<td>Runtime (LLM + Tools)</td>
-</tr>
-<tr>
-<td><strong><span class="de">Stärke</span><span class="en">Strength</span></strong></td>
-<td><span class="de">Flexibler Graph-Flow</span><span class="en">Flexible graph flow</span></td>
-<td><span class="de">Rollen-basiert</span><span class="en">Role-based</span></td>
-<td><span class="de">Multi-Agent native</span><span class="en">Multi-agent native</span></td>
-<td><span class="de">Channel-Abstraktion</span><span class="en">Channel abstraction</span></td>
+<td><span class="de"><strong>Skills</strong></span><span class="en"><strong>Skills</strong></span></td>
+<td><span class="de">Fortbildungszertifikate</span><span class="en">Training certificates</span></td>
+<td><span class="de">Research-Skill, Quality Gate, Pre-Build-Check</span><span class="en">Research skill, quality gate, pre-build check</span></td>
 </tr>
 </tbody>
 </table>
 
-<!-- Hands-on -->
-<h2><span class="de">🛠️ Hands-on</span><span class="en">🛠️ Hands-on</span></h2>
+<div class="callout purple">
+<strong><span class="de">Warum das für dich relevant ist:</span><span class="en">Why this matters for you:</span></strong>
+<span class="de">Wenn du ein Agent-System evaluierst, frag: <em>Kann ich die Identität anpassen? Kann ich das Verhalten einschränken? Ist das Gedächtnis transparent? Kann ich Skills hinzufügen oder entfernen?</em> Wenn nicht — bist du eingesperrt.</span>
+<span class="en">When evaluating an agent system, ask: <em>Can I customize the identity? Can I restrict behavior? Is the memory transparent? Can I add or remove skills?</em> If not — you're locked in.</span>
+</div>
+</section>
 
-<div class="step">
-<div class="step-header">
-<div class="step-num" style="background:var(--orange)">🟠</div>
-<div class="step-title">Power-User</div>
-</div>
-<p style="color:var(--muted);font-size:.9rem"><span class="de"><strong>openclaw.json konfigurieren und Architektur zeichnen:</strong></span><span class="en"><strong>Configure openclaw.json and draw architecture:</strong></span></p>
-<ol style="color:var(--muted);font-size:.9rem;margin-top:.5rem">
-<li><span class="de">Öffne <code>openclaw.json</code> und identifiziere die 4 Schichten</span><span class="en">Open <code>openclaw.json</code> and identify the 4 layers</span></li>
-<li><span class="de">Konfiguriere 2 Channels (z.B. Telegram + Web-UI)</span><span class="en">Configure 2 channels (e.g. Telegram + Web UI)</span></li>
-<li><span class="de">Setze <code>dmPolicy: "pairing"</code> im Gateway</span><span class="en">Set <code>dmPolicy: "pairing"</code> in the gateway</span></li>
-<li><span class="de">Zeichne ein Diagramm deiner Architektur (Papier oder Tool)</span><span class="en">Draw a diagram of your architecture (paper or tool)</span></li>
-</ol>
+<!-- ===== TEIL 3: Protokolle ===== -->
+<section>
+<h2><span class="de">Protokolle: Wie Agents mit der Welt reden</span><span class="en">Protocols: How Agents Talk to the World</span></h2>
 
-<div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1rem 1.25rem;margin:1rem 0">
-<p style="margin:0;font-size:.9rem"><span class="de">📓 Dieses Modul hat ein interaktives Notebook. Du kannst die Übungen dort oder lokal durcharbeiten.</span><span class="en">📓 This module has an interactive notebook. You can work through the exercises there or locally.</span></p>
-<p style="margin:.5rem 0 0"><a href="https://colab.research.google.com/github/planck-lab/agent-systems/blob/main/notebooks/modul3_architektur.ipynb" target="_blank" style="color:var(--orange);font-size:.85rem;font-weight:600">Open in Colab →</a></p>
-</div>
-</div>
+<p><span class="de">Stell dir vor: Ein Agent will eine Web-Suche machen. Wie "spricht" er mit der Suchmaschine? Dafür gibt es Protokolle — standardisierte Sprachen die definieren wie Agents mit Tools und anderen Agents kommunizieren.</span><span class="en">Imagine: An agent wants to do a web search. How does it "talk" to the search engine? That's what protocols are for — standardized languages that define how agents communicate with tools and other agents.</span></p>
 
-<div class="step">
-<div class="step-header">
-<div class="step-num" style="background:#f85149">🔴</div>
-<div class="step-title">Developer</div>
-</div>
-<p style="color:var(--muted);font-size:.9rem"><span class="de"><strong>Session-Isolation im Code nachvollziehen:</strong></span><span class="en"><strong>Trace session isolation in code:</strong></span></p>
-<ol style="color:var(--muted);font-size:.9rem;margin-top:.5rem">
-<li><span class="de">Starte 2 parallele Sessions (z.B. Telegram + CLI)</span><span class="en">Start 2 parallel sessions (e.g. Telegram + CLI)</span></li>
-<li><span class="de">Sende in Session A eine Info, frage in Session B danach</span><span class="en">Send info in Session A, ask about it in Session B</span></li>
-<li><span class="de">Dokumentiere: Sind die Sessions wirklich isoliert?</span><span class="en">Document: Are the sessions truly isolated?</span></li>
-<li><span class="de">Bonus: Wo liegt die Session-State-Datei im Filesystem?</span><span class="en">Bonus: Where is the session state file in the filesystem?</span></li>
-</ol>
+<p><span class="de">2024/2025 haben sich zwei Standards herauskristallisiert:</span><span class="en">In 2024/2025, two standards emerged:</span></p>
+
+<div class="protocol-card" style="border-color:var(--accent)">
+<div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--accent)"></div>
+<h4 style="color:var(--accent)">MCP — Model Context Protocol</h4>
+<div class="by"><span class="de">Von Anthropic (2024) · De-facto-Standard</span><span class="en">By Anthropic (2024) · De facto standard</span></div>
+<p><span class="de"><strong>Was es tut:</strong> Verbindet Agents mit Tools. MCP definiert wie ein Agent einer Datenbank, einer API oder einem Dateisystem sagt was er will — und wie er die Antwort versteht.</span><span class="en"><strong>What it does:</strong> Connects agents to tools. MCP defines how an agent tells a database, an API, or a file system what it wants — and how it understands the response.</span></p>
+<p class="analogy"><span class="de">🔌 Analogie: MCP ist wie USB — ein universeller Anschluss für Tools. Egal welcher Agent, egal welches Tool.</span><span class="en">🔌 Analogy: MCP is like USB — a universal connector for tools. Any agent, any tool.</span></p>
 </div>
 
-<!-- HITL Box -->
-<div style="background:rgba(63,185,80,.08);border:1px solid rgba(63,185,80,.3);border-radius:12px;padding:1.5rem;margin:2rem 0">
-<h3 style="color:var(--green);font-size:1rem;margin-bottom:.5rem">🟢 HITL <span class="de">in diesem Modul</span><span class="en">in this module</span></h3>
-<p style="color:var(--muted);font-size:.9rem"><span class="de"><strong>Fahrlehrer entscheidet, wer mitfahren darf.</strong> Nur bekannte Channels, Approval bei Unbekanntem.</span><span class="en"><strong>Instructor decides who can ride along.</strong> Only known channels, approval for unknowns.</span></p>
-<div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:.75rem 1rem;margin-top:.75rem">
-<code style="font-size:.8rem;color:var(--accent)">gateway: { channels: ["telegram"], approval: "on-miss" }</code>
-<p style="font-size:.78rem;color:var(--muted);margin:.4rem 0 0"><span class="de">↳ Nur Telegram als Kanal aktiv. Bei unbekannten Anfragen (z.B. neuer Chat) wird um Freigabe gebeten.</span><span class="en">↳ Only Telegram active as channel. Unknown requests (e.g., new chat) require approval.</span></p>
-</div>
-<p style="margin-top:.75rem;font-size:.8rem;color:var(--muted)"><span class="de">📍 <strong>Autonomie-Stufe:</strong> 🟢 Fahrlehrer sitzt daneben, greift ständig ein — Approval für JEDE Aktion</span><span class="en">📍 <strong>Autonomy level:</strong> 🟢 Instructor sitting alongside, intervening constantly — Approval for EVERY action</span></p>
+<div class="protocol-card" style="border-color:var(--green)">
+<div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--green)"></div>
+<h4 style="color:var(--green)">A2A — Agent-to-Agent Protocol</h4>
+<div class="by"><span class="de">Von Google (2025) · Aufkommender Standard</span><span class="en">By Google (2025) · Emerging standard</span></div>
+<p><span class="de"><strong>Was es tut:</strong> Lässt Agents miteinander sprechen. Während MCP Agent↔Tool verbindet, verbindet A2A Agent↔Agent. Agents können sich gegenseitig Aufgaben geben, Ergebnisse austauschen und ihre Fähigkeiten beschreiben.</span><span class="en"><strong>What it does:</strong> Lets agents talk to each other. While MCP connects Agent↔Tool, A2A connects Agent↔Agent. Agents can assign tasks to each other, exchange results, and describe their capabilities.</span></p>
+<p class="analogy"><span class="de">📡 Analogie: A2A ist wie ein Telefonnetz zwischen Agents — sie können sich anrufen, Aufträge weitergeben und Ergebnisse zurückmelden.</span><span class="en">📡 Analogy: A2A is like a phone network between agents — they can call each other, pass tasks, and report results back.</span></p>
 </div>
 
-<!-- Knowledge Check 1 -->
-<div class="kc-box">
-<h2><span class="de">🔖 Knowledge-Check 1</span><span class="en">🔖 Knowledge-Check 1</span></h2>
-<p style="color:var(--muted);font-size:.85rem;margin-bottom:1rem"><span class="de">5 Self-Assessment-Fragen nach Modul 1–3. Beantworte jede ehrlich — kein Score, nur Selbstreflexion.</span><span class="en">5 self-assessment questions after Modules 1–3. Answer each honestly — no score, just self-reflection.</span></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>MCP</th>
+<th>A2A</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><span class="de">Verbindet</span><span class="en">Connects</span></td>
+<td><span class="de">Agent ↔ Tool</span><span class="en">Agent ↔ Tool</span></td>
+<td><span class="de">Agent ↔ Agent</span><span class="en">Agent ↔ Agent</span></td>
+</tr>
+<tr>
+<td><span class="de">Von</span><span class="en">By</span></td>
+<td>Anthropic (2024)</td>
+<td>Google (2025)</td>
+</tr>
+<tr>
+<td><span class="de">Status</span><span class="en">Status</span></td>
+<td><span class="de">De-facto-Standard</span><span class="en">De facto standard</span></td>
+<td><span class="de">Frühe Adoption</span><span class="en">Early adoption</span></td>
+</tr>
+<tr>
+<td><span class="de">Analogie</span><span class="en">Analogy</span></td>
+<td>USB</td>
+<td><span class="de">Telefonnetz</span><span class="en">Phone network</span></td>
+</tr>
+</tbody>
+</table>
 
-<div class="kc-q"><span class="kc-num">1.</span> <span class="de">Nenne die 5 Kernkomponenten eines AI Agents aus dem Kopf.</span><span class="en">Name the 5 core components of an AI agent from memory.</span></div>
-<div class="kc-q"><span class="kc-num">2.</span> <span class="de">Was unterscheidet L2 (HITL-Agent) von L3 (Autonom) auf dem Autonomie-Spektrum?</span><span class="en">What distinguishes L2 (HITL agent) from L3 (autonomous) on the autonomy spectrum?</span></div>
-<div class="kc-q"><span class="kc-num">3.</span> <span class="de">Erkläre den ReAct-Loop in einem Satz. Was passiert in den 3 Phasen?</span><span class="en">Explain the ReAct loop in one sentence. What happens in the 3 phases?</span></div>
-<div class="kc-q"><span class="kc-num">4.</span> <span class="de">Welche 4 Schichten hat ein Orchestrator? Nenne für jede ein Beispiel aus OpenClaw ODER einem anderen Framework.</span><span class="en">What 4 layers does an orchestrator have? Name an example from OpenClaw OR another framework for each.</span></div>
-<div class="kc-q"><span class="kc-num">5.</span> <span class="de">Warum ist HITL kein Modul, sondern ein Design-Prinzip? Gib ein Beispiel aus den ersten 3 Modulen.</span><span class="en">Why is HITL not a module but a design principle? Give an example from the first 3 modules.</span></div>
+<div class="callout blue">
+<strong><span class="de">Was du dir merken solltest:</span><span class="en">What to remember:</span></strong>
+<span class="de">MCP = Agent spricht mit Tools. A2A = Agent spricht mit Agent. Beide ergänzen sich. In 2-3 Jahren werden sie vermutlich so selbstverständlich sein wie HTTP heute.</span>
+<span class="en">MCP = Agent talks to tools. A2A = Agent talks to agent. They complement each other. In 2-3 years, they'll probably be as natural as HTTP is today.</span>
+</div>
+</section>
+
+<!-- ===== TEIL 4: Multi-Agent Patterns ===== -->
+<section>
+<h2><span class="de">Drei Wege wie Agents zusammenarbeiten</span><span class="en">Three Ways Agents Collaborate</span></h2>
+
+<p><span class="de">Nicht jeder Agent arbeitet allein. In komplexen Systemen arbeiten mehrere Agents zusammen — aber nach unterschiedlichen Mustern:</span><span class="en">Not every agent works alone. In complex systems, multiple agents work together — but following different patterns:</span></p>
+
+<div class="pattern-visual">
+<h4><span class="de">1. Sequential (Staffellauf)</span><span class="en">1. Sequential (Relay Race)</span></h4>
+<div class="pattern-flow">
+<div class="pattern-node" style="background:rgba(88,166,255,.15);color:var(--accent)"><span class="de">Agent A<br>recherchiert</span><span class="en">Agent A<br>researches</span></div>
+<div class="pattern-arrow">→</div>
+<div class="pattern-node" style="background:rgba(63,185,80,.15);color:var(--green)"><span class="de">Agent B<br>schreibt</span><span class="en">Agent B<br>writes</span></div>
+<div class="pattern-arrow">→</div>
+<div class="pattern-node" style="background:rgba(137,87,229,.15);color:#8957e5"><span class="de">Agent C<br>prüft</span><span class="en">Agent C<br>reviews</span></div>
+</div>
+<p class="pattern-desc"><span class="de">Jeder Agent erledigt seinen Teil und gibt das Ergebnis an den nächsten weiter. Wie ein Staffellauf — klar, vorhersehbar, leicht zu debuggen.</span><span class="en">Each agent completes its part and passes the result to the next. Like a relay race — clear, predictable, easy to debug.</span></p>
+<p class="pattern-desc"><span class="de"><strong>Gut für:</strong> Workflows mit klaren Schritten (Research → Zusammenfassung → Review).</span><span class="en"><strong>Good for:</strong> Workflows with clear steps (Research → Summary → Review).</span></p>
 </div>
 
-<!-- Rubric -->
-<h2><span class="de">📊 Rubrik</span><span class="en">📊 Rubric</span></h2>
-<div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.5rem">
-<p style="margin-bottom:.5rem"><span style="color:var(--green)">✅ <strong>Basis:</strong></span> <span style="color:var(--muted);font-size:.9rem"><span class="de">4 Schichten zugeordnet, je eine Konfiguration (Channel, Gateway, Session, Runtime)</span><span class="en">4 layers assigned, one configuration each (Channel, Gateway, Session, Runtime)</span></span></p>
-<p style="margin-bottom:.5rem"><span style="color:var(--orange)">⭐ <strong><span class="de">Fortgeschritten:</span><span class="en">Advanced:</span></strong></span> <span style="color:var(--muted);font-size:.9rem"><span class="de">Architektur-Diagramm mit Datenfluss, Session-Isolation über 3 Sessions getestet</span><span class="en">Architecture diagram with data flow, session isolation tested across 3 sessions</span></span></p>
-<p><span style="color:var(--accent)">🏆 <strong><span class="de">Experte:</span><span class="en">Expert:</span></strong></span> <span style="color:var(--muted);font-size:.9rem"><span class="de">Schichtenarchitektur auf anderes Tool übertragen (AutoGen, LangGraph) ODER Architektur-Schwachstelle identifiziert</span><span class="en">Layer architecture transferred to another tool (AutoGen, LangGraph) OR architecture weakness identified</span></span></p>
+<div class="pattern-visual">
+<h4><span class="de">2. Parallel (Arbeitsteilung)</span><span class="en">2. Parallel (Division of Labor)</span></h4>
+<div class="pattern-flow">
+<div class="pattern-node" style="background:rgba(88,166,255,.15);color:var(--accent)"><span class="de">Agent A<br>Thema 1</span><span class="en">Agent A<br>Topic 1</span></div>
+<div class="pattern-node" style="background:rgba(63,185,80,.15);color:var(--green)"><span class="de">Agent B<br>Thema 2</span><span class="en">Agent B<br>Topic 2</span></div>
+<div class="pattern-node" style="background:rgba(137,87,229,.15);color:#8957e5"><span class="de">Agent C<br>Thema 3</span><span class="en">Agent C<br>Topic 3</span></div>
+</div>
+<div class="pattern-flow">
+<div class="pattern-arrow">↓</div>
+<div class="pattern-arrow">↓</div>
+<div class="pattern-arrow">↓</div>
+</div>
+<div class="pattern-flow">
+<div class="pattern-node" style="background:rgba(210,153,34,.15);color:var(--orange)"><span class="de">Orchestrator<br>fasst zusammen</span><span class="en">Orchestrator<br>combines results</span></div>
+</div>
+<p class="pattern-desc"><span class="de">Mehrere Agents arbeiten gleichzeitig an verschiedenen Teilen. Ein Orchestrator sammelt die Ergebnisse. Schneller als sequential, aber schwieriger zu koordinieren.</span><span class="en">Multiple agents work simultaneously on different parts. An orchestrator collects results. Faster than sequential, but harder to coordinate.</span></p>
+<p class="pattern-desc"><span class="de"><strong>Gut für:</strong> Unabhängige Research-Aufgaben, Audits mit verschiedenen Perspektiven.</span><span class="en"><strong>Good for:</strong> Independent research tasks, audits with different perspectives.</span></p>
 </div>
 
-<!-- Glossary -->
-<h2><span class="de">📖 Begriffe in diesem Modul</span><span class="en">📖 Terms in this module</span></h2>
-<div class="glossary">
-<dl>
-<dt>Gateway</dt><dd><span class="de">Vermittlungsschicht zwischen Channels und Agent-Runtime — der Türsteher.</span><span class="en">Mediation layer between channels and agent runtime — the bouncer.</span></dd>
-<dt>Session</dt><dd><span class="de">Isolierter Gesprächskontext mit eigener History und eigenem State.</span><span class="en">Isolated conversation context with its own history and state.</span></dd>
-<dt>Channel</dt><dd><span class="de">Plattform-Anbindung (Telegram, WhatsApp, CLI) — die Eingangstür.</span><span class="en">Platform connection (Telegram, WhatsApp, CLI) — the front door.</span></dd>
-<dt>Runtime</dt><dd><span class="de">Die Ausführungsschicht: LLM-Aufruf, Tool-Execution, Approval-Checks.</span><span class="en">The execution layer: LLM call, tool execution, approval checks.</span></dd>
-</dl>
+<div class="pattern-visual">
+<h4><span class="de">3. Handoff (Übergabe)</span><span class="en">3. Handoff</span></h4>
+<div class="pattern-flow">
+<div class="pattern-node" style="background:rgba(88,166,255,.15);color:var(--accent)"><span class="de">Agent A<br>(Generalist)</span><span class="en">Agent A<br>(Generalist)</span></div>
+<div class="pattern-arrow"><span class="de">→ "Das ist eine Rechtsfrage" →</span><span class="en">→ "That's a legal question" →</span></div>
+<div class="pattern-node" style="background:rgba(248,81,73,.15);color:#f85149"><span class="de">Agent B<br>(Rechtsexperte)</span><span class="en">Agent B<br>(Legal Expert)</span></div>
+</div>
+<p class="pattern-desc"><span class="de">Ein Agent erkennt dass er nicht der richtige für die Aufgabe ist und gibt sie an einen spezialisierten Agent weiter. Wie eine Telefonhotline die dich an die richtige Abteilung weiterleitet.</span><span class="en">An agent recognizes it's not the right one for the task and hands it off to a specialized agent. Like a phone hotline that transfers you to the right department.</span></p>
+<p class="pattern-desc"><span class="de"><strong>Gut für:</strong> Systeme mit spezialisierten Agents (Legal, Finance, Technical).</span><span class="en"><strong>Good for:</strong> Systems with specialized agents (Legal, Finance, Technical).</span></p>
+</div>
+</section>
+
+<!-- ===== TEIL 5: Fallstudie Agent Exchange ===== -->
+<section>
+<div class="case-study">
+<div class="label"><span class="de">Fallstudie</span><span class="en">Case Study</span></div>
+<h3><span class="de">📬 Zwei Agents die über Git kommunizieren</span><span class="en">📬 Two Agents Communicating via Git</span></h3>
+
+<p style="color:var(--muted);font-size:.88rem;line-height:1.6;margin-bottom:1rem"><span class="de">Ein echtes Beispiel: Zwei Agents laufen auf verschiedenen Rechnern. Kein gemeinsamer Server, keine API, keine Echtzeit-Verbindung. Wie kommunizieren sie? Über ein geteiltes Git-Repository.</span><span class="en">A real example: Two agents run on different machines. No shared server, no API, no real-time connection. How do they communicate? Through a shared Git repository.</span></p>
+
+<div class="exchange-visual">
+<div class="exchange-step">
+<div class="actor" style="color:var(--accent)"><span class="de">Agent A</span><span class="en">Agent A</span></div>
+<div class="action"><span class="de">Schreibt eine Anfrage als Markdown-Datei: <code>signals/review-request.md</code><br><em>"Bitte prüfe die letzten 5 Commits auf Fehler."</em></span><span class="en">Writes a request as a markdown file: <code>signals/review-request.md</code><br><em>"Please review the last 5 commits for errors."</em></span></div>
+</div>
+<div class="exchange-step">
+<div class="actor" style="color:var(--muted)">Git</div>
+<div class="action"><span class="de"><code>git push</code> — Die Datei wird hochgeladen.</span><span class="en"><code>git push</code> — The file gets uploaded.</span></div>
+</div>
+<div class="exchange-step">
+<div class="actor" style="color:var(--green)"><span class="de">Agent B</span><span class="en">Agent B</span></div>
+<div class="action"><span class="de"><code>git pull</code> — Sieht die neue Datei, liest die Anfrage, führt das Review durch.</span><span class="en"><code>git pull</code> — Sees the new file, reads the request, performs the review.</span></div>
+</div>
+<div class="exchange-step">
+<div class="actor" style="color:var(--green)"><span class="de">Agent B</span><span class="en">Agent B</span></div>
+<div class="action"><span class="de">Schreibt das Ergebnis: <code>responses/review-done.md</code><br><em>"3 von 5 Commits OK. Commit #4 hat einen Fehler in Zeile 42."</em></span><span class="en">Writes the result: <code>responses/review-done.md</code><br><em>"3 of 5 commits OK. Commit #4 has an error on line 42."</em></span></div>
+</div>
+<div class="exchange-step">
+<div class="actor" style="color:var(--accent)"><span class="de">Agent A</span><span class="en">Agent A</span></div>
+<div class="action"><span class="de"><code>git pull</code> — Liest die Antwort und arbeitet weiter.</span><span class="en"><code>git pull</code> — Reads the response and continues working.</span></div>
+</div>
 </div>
 
-<!-- Sources -->
+<div class="callout green">
+<strong><span class="de">Warum Git?</span><span class="en">Why Git?</span></strong>
+<span class="de"><strong>Auditierbar</strong> (jede Änderung hat einen Zeitstempel), <strong>resilient</strong> (funktioniert offline, synct wenn verbunden), <strong>simpel</strong> (keine Protokoll-Verhandlung, nur Markdown-Dateien), <strong>reversibel</strong> (fehlerhafte Kommunikation kann rückgängig gemacht werden).</span>
+<span class="en"><strong>Auditable</strong> (every change has a timestamp), <strong>resilient</strong> (works offline, syncs when connected), <strong>simple</strong> (no protocol negotiation, just markdown files), <strong>reversible</strong> (bad communications can be undone).</span>
+</div>
+</div>
+</section>
+
+<!-- Running Example -->
+<section>
+<div style="background:rgba(137,87,229,.06);border:1px solid rgba(137,87,229,.2);border-radius:12px;padding:1.25rem;margin:1.5rem 0">
+<p style="font-size:.75rem;font-weight:700;color:#8957e5;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem"><span class="de">📎 TechCo: Kapitel 3</span><span class="en">📎 TechCo: Chapter 3</span></p>
+<p style="color:var(--muted);font-size:.85rem;line-height:1.6"><span class="de">Lisa fragt: <em>"Brauchen wir LangChain? Oder reicht Microsoft Copilot?"</em> Marco evaluiert: TechCo hat bereits Microsoft 365. Kein Entwicklerteam für Custom-Lösungen. Die Berater brauchen Research-Unterstützung, keine Code-Generierung.</span><span class="en">Lisa asks: <em>"Do we need LangChain? Or is Microsoft Copilot enough?"</em> Marco evaluates: TechCo already has Microsoft 365. No dev team for custom solutions. Consultants need research support, not code generation.</span></p>
+<p style="color:var(--muted);font-size:.85rem;line-height:1.6;margin-top:.5rem"><span class="de"><strong>Marcos Empfehlung:</strong> Kategorie "No-Code" — Copilot testen. Kein Framework, kein Custom-Build. Erst verstehen, was der Agent kann, dann entscheiden ob mehr nötig ist.</span><span class="en"><strong>Marco's recommendation:</strong> Category "No-Code" — test Copilot. No framework, no custom build. First understand what the agent can do, then decide if more is needed.</span></p>
+</div>
+</section>
+
+<!-- ===== TEIL 6: Die Framework-Landschaft ===== -->
+<section>
+<h2><span class="de">Die Framework-Landschaft (kein Katalog)</span><span class="en">The Framework Landscape (Not a Catalog)</span></h2>
+
+<p><span class="de">Es gibt dutzende Frameworks für Agent-Systeme. Statt einen Katalog aufzulisten, zeigen wir die vier Kategorien — damit du weißt wonach du suchst:</span><span class="en">There are dozens of frameworks for agent systems. Instead of listing a catalog, we show the four categories — so you know what to look for:</span></p>
+
+<div class="fw-grid">
+<div class="fw-card">
+<h4>🏢 Enterprise</h4>
+<div class="type"><span class="de">Für Unternehmen mit bestehender Cloud</span><span class="en">For companies with existing cloud</span></div>
+<p><span class="de">Microsoft Azure AI Agent Service, Amazon Bedrock Agents, Google Vertex AI. Integriert in bestehende Cloud-Infrastruktur. Managed, skalierbar, teuer.</span><span class="en">Microsoft Azure AI Agent Service, Amazon Bedrock Agents, Google Vertex AI. Integrated into existing cloud infrastructure. Managed, scalable, expensive.</span></p>
+</div>
+<div class="fw-card">
+<h4>🔧 Developer Frameworks</h4>
+<div class="type"><span class="de">Für Entwickler die bauen wollen</span><span class="en">For developers who want to build</span></div>
+<p><span class="de">LangChain/LangGraph, CrewAI, AutoGen (AG2), OpenAI Agents SDK. Open Source, flexibel, erfordert Entwicklerkenntnisse.</span><span class="en">LangChain/LangGraph, CrewAI, AutoGen (AG2), OpenAI Agents SDK. Open source, flexible, requires developer skills.</span></p>
+</div>
+<div class="fw-card">
+<h4>🏠 Personal/Local</h4>
+<div class="type"><span class="de">Für persönliche Assistenten</span><span class="en">For personal assistants</span></div>
+<p><span class="de">OpenClaw, Claude Code, Cursor. Laufen lokal, volle Kontrolle, Datenschutz. Erfordern technisches Setup.</span><span class="en">OpenClaw, Claude Code, Cursor. Run locally, full control, privacy. Require technical setup.</span></p>
+</div>
+<div class="fw-card">
+<h4>🌐 No-Code</h4>
+<div class="type"><span class="de">Für Business-User</span><span class="en">For business users</span></div>
+<p><span class="de">OpenAI Operator, Microsoft Copilot, Google Gemini. Fertige Produkte, kein Setup. Weniger Kontrolle, dafür sofort nutzbar.</span><span class="en">OpenAI Operator, Microsoft Copilot, Google Gemini. Ready-made products, no setup. Less control, but immediately usable.</span></p>
+</div>
+</div>
+
+<div class="callout blue">
+<strong><span class="de">Die richtige Frage ist nicht "Welches Framework?"</span><span class="en">The right question isn't "Which framework?"</span></strong>
+<span class="de">Sondern: <em>"Welche Kategorie passt zu meinem Team, meinem Budget und meinem Risikoprofil?"</em> Die Antwort findest du in Modul 5.</span>
+<span class="en">But rather: <em>"Which category fits my team, my budget, and my risk profile?"</em> The answer comes in Module 5.</span>
+</div>
+</section>
+
+<!-- ===== TEIL 7: Spot the Error ===== -->
+<section>
+<h2><span class="de">🔍 Spot the Error</span><span class="en">🔍 Spot the Error</span></h2>
+
+<p><span class="de">Jemand behauptet in einer Präsentation:</span><span class="en">Someone claims in a presentation:</span></p>
+
+<div class="protocol-card" style="border-color:var(--orange)">
+<p style="font-size:.88rem;line-height:1.6;color:var(--muted);font-style:italic"><span class="de">"MCP und A2A sind Konkurrenten — man muss sich für eins entscheiden. MCP von OpenAI ist der Marktführer."</span><span class="en">"MCP and A2A are competitors — you have to choose one. MCP by OpenAI is the market leader."</span></p>
+</div>
+
 <details>
-<summary><span class="de">📚 Quellen</span><span class="en">📚 Sources</span></summary>
-<div class="source">Garlan & Shaw (1993): "An Introduction to Software Architecture", <em>Advances in Software Engineering</em> <span class="tier-badge tier-a" style="font-size:.65rem;padding:.1rem .4rem;border-radius:6px;font-weight:700;background:rgba(63,185,80,.2);color:var(--green)">Tier A</span></div>
-<div class="source">OpenClaw Docs (2026): docs.openclaw.ai <span class="tier-badge tier-c" style="font-size:.65rem;padding:.1rem .4rem;border-radius:6px;font-weight:700;background:rgba(210,153,34,.15);color:var(--orange)">Tier C</span></div>
-
+<summary style="cursor:pointer;color:var(--accent);font-size:.9rem"><span class="de">Lösung aufdecken</span><span class="en">Reveal solution</span></summary>
+<div style="margin-top:.75rem;padding:1rem;background:var(--surface);border-radius:8px;font-size:.88rem">
+<p><span class="de"><strong>Drei Fehler:</strong></span><span class="en"><strong>Three errors:</strong></span></p>
+<ol style="color:var(--muted);line-height:1.6">
+<li><span class="de">MCP und A2A sind <strong>keine Konkurrenten</strong> — sie lösen verschiedene Probleme. MCP = Agent↔Tool, A2A = Agent↔Agent. Sie ergänzen sich.</span><span class="en">MCP and A2A are <strong>not competitors</strong> — they solve different problems. MCP = Agent↔Tool, A2A = Agent↔Agent. They complement each other.</span></li>
+<li><span class="de">MCP ist von <strong>Anthropic</strong>, nicht OpenAI.</span><span class="en">MCP is by <strong>Anthropic</strong>, not OpenAI.</span></li>
+<li><span class="de">"Man muss sich entscheiden" ist falsch — man kann beide gleichzeitig nutzen.</span><span class="en">"You have to choose" is wrong — you can use both simultaneously.</span></li>
+</ol>
+</div>
 </details>
+</section>
 
-<div class="tip" style="border-left-color: var(--orange);">
-<strong>💰 <span class="de">Geschätzte API-Kosten für dieses Modul</span><span class="en">Estimated API costs for this module</span></strong>
-<p style="margin:.5rem 0;color:var(--muted);font-size:.9rem;">
-<span class="de">Haiku: ~$1.50 · Sonnet: ~$2.00 · GPT-4o: ~$2.40</span>
-<span class="en">Haiku: ~$1.50 · Sonnet: ~$2.00 · GPT-4o: ~$2.40</span>
-</p>
+<!-- ===== Reflexion ===== -->
+<section>
+<div class="reflection-box">
+<h3>💭 <span class="de">Reflexionsfragen</span><span class="en">Reflection Questions</span></h3>
+<ol>
+<li><span class="de">Du evaluierst ein Agent-System für dein Team. <strong>Welche der vier Schichten wäre dir am wichtigsten?</strong> Warum?</span><span class="en">You're evaluating an agent system for your team. <strong>Which of the four layers would be most important to you?</strong> Why?</span></li>
+<li><span class="de">Dein Unternehmen hat bereits AWS. <strong>Ist Amazon Bedrock Agents automatisch die beste Wahl?</strong> Was könnten Gründe dagegen sein?</span><span class="en">Your company already uses AWS. <strong>Is Amazon Bedrock Agents automatically the best choice?</strong> What could be reasons against it?</span></li>
+<li><span class="de">Das Agent-Exchange-Pattern nutzt Git statt einer API. <strong>Welche Vorteile hat das? Welche Nachteile?</strong></span><span class="en">The Agent Exchange pattern uses Git instead of an API. <strong>What are the advantages? What are the disadvantages?</strong></span></li>
+</ol>
+</div>
+</section>
+
+<!-- ===== Takeaway ===== -->
+<section>
+<h2><span class="de">📌 Was du mitnimmst</span><span class="en">📌 Key Takeaways</span></h2>
+
+<ol style="line-height:1.8;font-size:.92rem">
+<li><span class="de"><strong>Vier Schichten:</strong> Identität → Verhalten → Gedächtnis → Skills. Frag bei jedem System: Kann ich jede Schicht anpassen?</span><span class="en"><strong>Four layers:</strong> Identity → Behavior → Memory → Skills. For every system ask: Can I customize each layer?</span></li>
+<li><span class="de"><strong>MCP ≠ A2A:</strong> MCP verbindet Agents mit Tools (USB). A2A verbindet Agents miteinander (Telefonnetz). Beide ergänzen sich.</span><span class="en"><strong>MCP ≠ A2A:</strong> MCP connects agents to tools (USB). A2A connects agents to each other (phone network). They complement each other.</span></li>
+<li><span class="de"><strong>Drei Multi-Agent-Patterns:</strong> Sequential (Staffellauf), Parallel (Arbeitsteilung), Handoff (Übergabe).</span><span class="en"><strong>Three multi-agent patterns:</strong> Sequential (relay race), Parallel (division of labor), Handoff.</span></li>
+<li><span class="de"><strong>Framework-Wahl = Kategorie-Wahl:</strong> Enterprise, Developer, Personal/Local, oder No-Code.</span><span class="en"><strong>Framework choice = category choice:</strong> Enterprise, Developer, Personal/Local, or No-Code.</span></li>
+</ol>
+</section>
+
+<!-- ===== Bottom Navigation ===== -->
+<div class="bottom-nav">
+<a href="modul2.html">← <span class="de">Modul 2: Vertrauen & Delegation</span><span class="en">Module 2: Trust & Delegation</span></a>
+<a href="modul4.html"><span class="de">Modul 4: Was schiefgehen kann →</span><span class="en">Module 4: What Can Go Wrong →</span></a>
 </div>
 
-<!-- Nav Footer -->
-<div class="nav-footer">
-<a href="modul2.html" class="btn" style="background:var(--surface);color:var(--text);border:1px solid var(--border)">← <span class="de">Modul 2: Der Agent Loop</span><span class="en">Module 2: The Agent Loop</span></a>
-<a href="modul4.html" class="btn"><span class="de">Modul 4: Tool Use →</span><span class="en">Module 4: Tool Use →</span></a>
-</div>
-</div>
+</div><!-- /.container -->
 
 <footer role="contentinfo">
-<a href="https://github.com/planck-lab/agent-systems"><span class="de">Quellcode auf GitHub</span><span class="en">Source on GitHub</span></a> · Made with ❤️ <span class="de">und Neugier</span><span class="en">and curiosity</span>
-<br><span style="font-size:.7rem"><span class="de">Fragen? <a href="https://linkedin.com/in/janrummel">Schreib mir auf LinkedIn.</a> · Teil des <a href="https://janrummel.github.io/ai-learning/">AI Learning Ökosystems</a> · <a href="disclaimer.html">Haftungshinweis</a></span><span class="en">Questions? <a href="https://linkedin.com/in/janrummel">Message me on LinkedIn.</a> · Part of the <a href="https://janrummel.github.io/ai-learning/">AI Learning Ecosystem</a> · <a href="disclaimer.html">Disclaimer</a></span></span>
+<a href="https://github.com/planck-lab/agent-systems"><span class="de">Quellcode auf GitHub</span><span class="en">Source on GitHub</span></a> · <a href="index.html">🧭 Agent Literacy</a>
+<br><span style="font-size:.65rem;color:var(--muted)"><span class="de">Verantwortlich: Jan Rummel · Kontakt via <a href="https://linkedin.com/in/janrummel">LinkedIn</a> · Kein Tracking, keine Cookies.</span><span class="en">Responsible: Jan Rummel · Contact via <a href="https://linkedin.com/in/janrummel">LinkedIn</a> · No tracking, no cookies.</span></span>
 </footer>
 
-<script src="glossary.js"></script>
 <script>
-function setLang(l){document.documentElement.lang=l;document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('active'));document.querySelector(`.lang-btn[onclick="setLang('${l}')"]`).classList.add('active');localStorage.setItem('lang',l);if(typeof initGlossary==='function')initGlossary()}
+function setLang(l){document.documentElement.lang=l;document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('active'));document.querySelector(`.lang-btn[onclick="setLang('${l}')"]`).classList.add('active');localStorage.setItem('lang',l)}
 const s=localStorage.getItem('lang');if(s)setLang(s);
 </script>
-<script src="progress.js"></script>
+<button class="back-to-top" onclick="scrollTo({top:0,behavior:'smooth'})">↑</button>
+<script>const b=document.querySelector(".back-to-top");window.addEventListener("scroll",()=>{b.style.display=window.scrollY>400?"flex":"none"})</script>
 </body></html>
