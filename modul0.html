@@ -107,6 +107,11 @@ npm --version     # z.B. 10.x.x</code></pre>
 <div class="step-num">4</div>
 <div class="step-title"><span class="de">OpenClaw installieren</span><span class="en">Install OpenClaw</span></div>
 </div>
+<div class="troubleshooting" style="margin-bottom:1rem;border-color:#f85149">
+<strong>🔴 <span class="de">Sicherheitshinweis</span><span class="en">Security Notice</span></strong>
+<p><span class="de">OpenClaw installiert einen Agent-Service der <strong>Shell-Befehle auf deinem System ausführen kann</strong> — einschließlich Dateien lesen, schreiben und löschen. Die Installation sollte <strong>nur von erfahrenen Nutzern in einer Sandbox-Umgebung</strong> durchgeführt werden (VM, Container oder dedizierter Rechner). <strong>Dies stellt keine Empfehlung zur Installation dar.</strong> Für jegliche Schäden oder Folgeschäden durch die Installation oder Nutzung wird keine Haftung übernommen.</span><span class="en">OpenClaw installs an agent service that <strong>can execute shell commands on your system</strong> — including reading, writing, and deleting files. Installation should <strong>only be performed by experienced users in a sandbox environment</strong> (VM, container, or dedicated machine). <strong>This does not constitute a recommendation to install.</strong> No liability is assumed for any damages or consequential damages resulting from installation or use.</span></p>
+<p style="font-size:.85rem;margin-top:.5rem"><span class="de">→ <a href="https://docs.openclaw.ai" target="_blank">OpenClaw Dokumentation</a> · <a href="modul11.html">Modul 11: Security & Trust</a> · <a href="disclaimer.html">Haftungshinweis</a></span><span class="en">→ <a href="https://docs.openclaw.ai" target="_blank">OpenClaw Documentation</a> · <a href="modul11.html">Module 11: Security & Trust</a> · <a href="disclaimer.html">Disclaimer</a></span></p>
+</div>
 <pre style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:.75rem;font-size:.85rem;overflow-x:auto"><code># Global installieren
 npm i -g @anthropic/openclaw
 
@@ -237,7 +242,7 @@ exec: { security: "deny" }
 
 <footer role="contentinfo">
 <a href="https://github.com/planck-lab/agent-systems"><span class="de">Quellcode auf GitHub</span><span class="en">Source on GitHub</span></a> · Made with ❤️ <span class="de">und Neugier</span><span class="en">and curiosity</span>
-<br><span style="font-size:.7rem"><span class="de">Fragen? <a href="https://linkedin.com/in/janrummel">Schreib mir auf LinkedIn.</a> · Teil des <a href="https://janrummel.github.io/ai-learning/">AI Learning Ökosystems</a></span><span class="en">Questions? <a href="https://linkedin.com/in/janrummel">Message me on LinkedIn.</a> · Part of the <a href="https://janrummel.github.io/ai-learning/">AI Learning Ecosystem</a></span></span>
+<br><span style="font-size:.7rem"><span class="de">Fragen? <a href="https://linkedin.com/in/janrummel">Schreib mir auf LinkedIn.</a> · Teil des <a href="https://janrummel.github.io/ai-learning/">AI Learning Ökosystems</a> · <a href="disclaimer.html">Haftungshinweis</a></span><span class="en">Questions? <a href="https://linkedin.com/in/janrummel">Message me on LinkedIn.</a> · Part of the <a href="https://janrummel.github.io/ai-learning/">AI Learning Ecosystem</a> · <a href="disclaimer.html">Disclaimer</a></span></span>
 </footer>
 
 <script src="glossary.js"></script>
