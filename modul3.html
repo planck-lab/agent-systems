@@ -68,39 +68,47 @@
 
 <p style="color:var(--muted);font-size:.9rem"><span class="de">Jedes Agent-System — egal ob LangGraph, CrewAI oder OpenClaw — hat diese grundlegenden Schichten. Die Namen unterscheiden sich, das Prinzip bleibt gleich:</span><span class="en">Every agent system — whether LangGraph, CrewAI, or OpenClaw — has these fundamental layers. Names differ, but the principle stays the same:</span></p>
 
-<div class="arch-diagram"><span class="de">┌─────────────────────────────────────────────────────┐
-│  <strong>Schicht 1: CHANNELS</strong> (Input/Output)                  │
-│  Telegram · WhatsApp · Web-UI · CLI · API            │
-│  → Abstrahiert die Plattform                         │
-├─────────────────────────────────────────────────────┤
-│  <strong>Schicht 2: GATEWAY</strong> (Control Plane)                  │
-│  Routing · Auth · Rate-Limiting · DM-Policy          │
-│  → Entscheidet WER mit WELCHEM Agent spricht         │
-├─────────────────────────────────────────────────────┤
-│  <strong>Schicht 3: SESSIONS</strong> (State Management)              │
-│  Kontext-History · Memory · Isolation                │
-│  → Jede Konversation ist isoliert                    │
-├─────────────────────────────────────────────────────┤
-│  <strong>Schicht 4: RUNTIME</strong> (Execution)                     │
-│  LLM · Tools · Skills · Approval-Checks             │
-│  → Hier passiert die eigentliche Arbeit              │
-└─────────────────────────────────────────────────────┘</span><span class="en">┌─────────────────────────────────────────────────────┐
-│  <strong>Layer 1: CHANNELS</strong> (Input/Output)                    │
-│  Telegram · WhatsApp · Web UI · CLI · API            │
-│  → Abstracts the platform                            │
-├─────────────────────────────────────────────────────┤
-│  <strong>Layer 2: GATEWAY</strong> (Control Plane)                    │
-│  Routing · Auth · Rate limiting · DM policy          │
-│  → Decides WHO talks to WHICH agent                  │
-├─────────────────────────────────────────────────────┤
-│  <strong>Layer 3: SESSIONS</strong> (State Management)                │
-│  Context history · Memory · Isolation                │
-│  → Each conversation is isolated                     │
-├─────────────────────────────────────────────────────┤
-│  <strong>Layer 4: RUNTIME</strong> (Execution)                       │
-│  LLM · Tools · Skills · Approval checks             │
-│  → This is where the actual work happens             │
-└─────────────────────────────────────────────────────┘</span></div>
+<div style="display:flex;flex-direction:column;gap:0;margin:1.5rem 0">
+<div style="background:rgba(88,166,255,.12);border:1px solid rgba(88,166,255,.3);border-radius:12px 12px 0 0;padding:1rem 1.25rem">
+<div style="display:flex;align-items:center;gap:.75rem">
+<span style="background:var(--accent);color:var(--bg);font-weight:800;font-size:.8rem;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center">1</span>
+<div>
+<div style="font-weight:700;font-size:.95rem"><span class="de">CHANNELS</span><span class="en">CHANNELS</span> <span style="color:var(--muted);font-weight:400;font-size:.8rem">Input/Output</span></div>
+<div style="font-size:.8rem;color:var(--muted);margin-top:.15rem">Telegram · WhatsApp · Web UI · CLI · API</div>
+</div>
+</div>
+</div>
+<div style="text-align:center;background:var(--bg);padding:.15rem 0;font-size:.8rem;color:var(--border)">▼</div>
+<div style="background:rgba(63,185,80,.1);border:1px solid rgba(63,185,80,.25);padding:1rem 1.25rem">
+<div style="display:flex;align-items:center;gap:.75rem">
+<span style="background:var(--green);color:var(--bg);font-weight:800;font-size:.8rem;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center">2</span>
+<div>
+<div style="font-weight:700;font-size:.95rem"><span class="de">GATEWAY</span><span class="en">GATEWAY</span> <span style="color:var(--muted);font-weight:400;font-size:.8rem">Control Plane</span></div>
+<div style="font-size:.8rem;color:var(--muted);margin-top:.15rem"><span class="de">Routing · Auth · Rate-Limiting · DM-Policy</span><span class="en">Routing · Auth · Rate Limiting · DM Policy</span></div>
+</div>
+</div>
+</div>
+<div style="text-align:center;background:var(--bg);padding:.15rem 0;font-size:.8rem;color:var(--border)">▼</div>
+<div style="background:rgba(210,153,34,.1);border:1px solid rgba(210,153,34,.25);padding:1rem 1.25rem">
+<div style="display:flex;align-items:center;gap:.75rem">
+<span style="background:var(--orange);color:var(--bg);font-weight:800;font-size:.8rem;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center">3</span>
+<div>
+<div style="font-weight:700;font-size:.95rem"><span class="de">SESSIONS</span><span class="en">SESSIONS</span> <span style="color:var(--muted);font-weight:400;font-size:.8rem">State Management</span></div>
+<div style="font-size:.8rem;color:var(--muted);margin-top:.15rem"><span class="de">Kontext-History · Memory · Isolation</span><span class="en">Context History · Memory · Isolation</span></div>
+</div>
+</div>
+</div>
+<div style="text-align:center;background:var(--bg);padding:.15rem 0;font-size:.8rem;color:var(--border)">▼</div>
+<div style="background:rgba(137,87,229,.1);border:1px solid rgba(137,87,229,.25);border-radius:0 0 12px 12px;padding:1rem 1.25rem">
+<div style="display:flex;align-items:center;gap:.75rem">
+<span style="background:var(--purple);color:#fff;font-weight:800;font-size:.8rem;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center">4</span>
+<div>
+<div style="font-weight:700;font-size:.95rem"><span class="de">RUNTIME</span><span class="en">RUNTIME</span> <span style="color:var(--muted);font-weight:400;font-size:.8rem">Execution</span></div>
+<div style="font-size:.8rem;color:var(--muted);margin-top:.15rem"><span class="de">LLM · Tools · Skills · Approval-Checks</span><span class="en">LLM · Tools · Skills · Approval Checks</span></div>
+</div>
+</div>
+</div>
+</div>
 
 <div class="layer-grid">
 <div class="layer-card">
