@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Modul 0: Setup & Werkzeuge — Agent Systems</title>
+<meta name="description" content="Die Werkstatt einrichten: Terminal, Node.js, OpenClaw installieren und deinen ersten Agent starten.">
+<meta name="author" content="Jan Rummel">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>🤖</text></svg>">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<a href="#main-content" class="skip-link"><span class="de">Zum Inhalt springen</span><span class="en">Skip to content</span></a>
+<div class="lang-switch" role="navigation" aria-label="Language">
+<button class="lang-btn active" onclick="setLang('de')">DE</button>
+<button class="lang-btn" onclick="setLang('en')">EN</button>
+</div>
+
+<div class="progress-bar"><div class="progress-fill" style="width:0%"></div></div>
+
+<div class="container" id="main-content">
+<a href="curriculum.html" class="back-link">← <span class="de">Modulübersicht</span><span class="en">Module overview</span></a>
+
+<p style="color:var(--muted);font-size:.85rem"><span class="de">Modul 0 von 13</span><span class="en">Module 0 of 13</span> · <span class="meta-badge badge-track-both" style="font-size:.7rem;padding:.15rem .5rem;border-radius:10px;font-weight:600;background:rgba(88,166,255,.12);color:var(--accent)">🟠🔴</span> · <span style="color:var(--green)"><span class="de">Einfach</span><span class="en">Easy</span></span> · 60 min</p>
+
+<h1><span class="de">Setup & Werkzeuge</span><span class="en">Setup & Tools</span></h1>
+<p class="subtitle"><span class="de">Die Werkstatt einrichten — bevor du einen Agent bauen kannst, brauchst du das richtige Werkzeug.</span><span class="en">Setting up your workshop — before you can build an agent, you need the right tools.</span></p>
+
+<!-- SMART Learning Goal -->
+<div class="tip">
+<strong>🎯 <span class="de">Lernziel (SMART)</span><span class="en">Learning Goal (SMART)</span></strong><br>
+<span class="de">Innerhalb von 60 min: OpenClaw installiert, mit Telegram verbunden, erste Agent-Antwort erhalten.</span>
+<span class="en">Within 60 min: OpenClaw installed, connected to Telegram, first agent response received.</span>
+</div>
+
+<!-- Step 1: Terminal -->
+<div class="step">
+<div class="step-header">
+<div class="step-num">1</div>
+<div class="step-title"><span class="de">Terminal-Basics</span><span class="en">Terminal Basics</span></div>
+</div>
+<p style="color:var(--muted);font-size:.9rem"><span class="de">Das Terminal ist dein Hauptwerkzeug für den gesamten Kurs. Öffne es jetzt:</span><span class="en">The terminal is your main tool for the entire course. Open it now:</span></p>
+<ul style="color:var(--muted);font-size:.9rem;margin-top:.5rem">
+<li><strong>Mac:</strong> <code>Cmd + Space</code> → "Terminal"</li>
+<li><strong>Linux:</strong> <code>Ctrl + Alt + T</code></li>
+<li><strong>Windows:</strong> WSL2 <span class="de">installieren</span><span class="en">install</span> → Ubuntu Terminal</li>
+</ul>
+<p style="color:var(--muted);font-size:.9rem;margin-top:.75rem"><span class="de">Teste diese Befehle:</span><span class="en">Try these commands:</span></p>
+<pre style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:.75rem;font-size:.85rem;overflow-x:auto;margin-top:.5rem"><code>cd ~              # Home-Verzeichnis
+ls                # Dateien auflisten
+pwd               # Aktuelles Verzeichnis
+cat ~/.zshrc      # Datei anzeigen (Mac/Linux)</code></pre>
+<div class="checkpoint">✅ <span class="de">Du kannst im Terminal navigieren und Dateien anzeigen</span><span class="en">You can navigate the terminal and view files</span></div>
+</div>
+
+<!-- Step 2: JSON/YAML -->
+<div class="step">
+<div class="step-header">
+<div class="step-num">2</div>
+<div class="step-title"><span class="de">JSON & YAML verstehen</span><span class="en">Understanding JSON & YAML</span></div>
+</div>
+<p style="color:var(--muted);font-size:.9rem"><span class="de">Agent-Konfigurationen nutzen JSON und YAML. Du musst sie lesen und editieren können:</span><span class="en">Agent configurations use JSON and YAML. You need to read and edit them:</span></p>
+<div class="comparison" style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1rem 0">
+<div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:1rem">
+<strong style="font-size:.85rem">JSON</strong>
+<pre style="font-size:.8rem;margin-top:.5rem"><code>{
+  "name": "Planck",
+  "model": "sonnet",
+  "tools": ["read", "write"]
+}</code></pre>
+</div>
+<div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:1rem">
+<strong style="font-size:.85rem">YAML</strong>
+<pre style="font-size:.8rem;margin-top:.5rem"><code>name: Planck
+model: sonnet
+tools:
+  - read
+  - write</code></pre>
+</div>
+</div>
+<div class="checkpoint">✅ <span class="de">Du verstehst JSON- und YAML-Syntax</span><span class="en">You understand JSON and YAML syntax</span></div>
+</div>
+
+<!-- Step 3: Node.js -->
+<div class="step">
+<div class="step-header">
+<div class="step-num">3</div>
+<div class="step-title"><span class="de">Node.js & npm installieren</span><span class="en">Install Node.js & npm</span></div>
+</div>
+<p style="color:var(--muted);font-size:.9rem"><span class="de">OpenClaw läuft auf Node.js. Installiere die aktuelle LTS-Version:</span><span class="en">OpenClaw runs on Node.js. Install the current LTS version:</span></p>
+<pre style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:.75rem;font-size:.85rem;overflow-x:auto;margin-top:.5rem"><code># Mac (mit Homebrew)
+brew install node
+
+# Oder via nvm (empfohlen)
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
+nvm install --lts
+
+# Prüfen
+node --version    # z.B. v22.x.x
+npm --version     # z.B. 10.x.x</code></pre>
+<div class="checkpoint">✅ <code>node --version</code> <span class="de">zeigt eine Version ≥18</span><span class="en">shows a version ≥18</span></div>
+</div>
+
+<!-- Step 4: OpenClaw -->
+<div class="step">
+<div class="step-header">
+<div class="step-num">4</div>
+<div class="step-title"><span class="de">OpenClaw installieren</span><span class="en">Install OpenClaw</span></div>
+</div>
+<pre style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:.75rem;font-size:.85rem;overflow-x:auto"><code># Global installieren
+npm i -g @anthropic/openclaw
+
+# Setup starten
+openclaw onboard</code></pre>
+<p style="color:var(--muted);font-size:.9rem;margin-top:.75rem"><span class="de">Der Onboarding-Wizard fragt dich nach:</span><span class="en">The onboarding wizard will ask for:</span></p>
+<ol style="color:var(--muted);font-size:.9rem">
+<li><span class="de">API-Key (Anthropic oder OpenAI)</span><span class="en">API Key (Anthropic or OpenAI)</span></li>
+<li><span class="de">Bevorzugtes Modell (Haiku für günstig, Sonnet für besser)</span><span class="en">Preferred model (Haiku for cheap, Sonnet for better)</span></li>
+<li><span class="de">Channel-Auswahl (Telegram empfohlen)</span><span class="en">Channel selection (Telegram recommended)</span></li>
+</ol>
+
+<!-- Cost Transparency Box -->
+<div class="troubleshooting" style="margin-top:1rem">
+<strong>💰 <span class="de">Kosten-Transparenz</span><span class="en">Cost Transparency</span></strong>
+<p><span class="de">Ab jetzt kostet jeder Agent-Aufruf Geld. Haiku ≈ $0.001, Sonnet ≈ $0.01 pro Anfrage. Budget für den gesamten Kurs: $10–40 je nach Modell.</span><span class="en">From now on, every agent call costs money. Haiku ≈ $0.001, Sonnet ≈ $0.01 per request. Budget for the full course: $10–40 depending on model.</span></p>
+</div>
+
+<div class="checkpoint">✅ <code>openclaw --version</code> <span class="de">zeigt eine Version</span><span class="en">shows a version</span></div>
+</div>
+
+<!-- Step 5: Telegram Bot -->
+<div class="step">
+<div class="step-header">
+<div class="step-num">5</div>
+<div class="step-title"><span class="de">Telegram-Bot erstellen</span><span class="en">Create Telegram Bot</span></div>
+</div>
+<ol style="color:var(--muted);font-size:.9rem">
+<li><span class="de">Öffne Telegram und suche <strong>@BotFather</strong></span><span class="en">Open Telegram and search for <strong>@BotFather</strong></span></li>
+<li><span class="de">Sende <code>/newbot</code> und folge den Anweisungen</span><span class="en">Send <code>/newbot</code> and follow the instructions</span></li>
+<li><span class="de">Kopiere den Bot-Token</span><span class="en">Copy the bot token</span></li>
+<li><span class="de">Füge den Token in OpenClaw ein: <code>openclaw config set telegram.token YOUR_TOKEN</code></span><span class="en">Add the token to OpenClaw: <code>openclaw config set telegram.token YOUR_TOKEN</code></span></li>
+<li><span class="de">Starte den Gateway: <code>openclaw gateway start</code></span><span class="en">Start the gateway: <code>openclaw gateway start</code></span></li>
+<li><span class="de">Schreibe deinem Bot „Hallo" auf Telegram</span><span class="en">Send your bot "Hello" on Telegram</span></li>
+</ol>
+<div class="checkpoint">✅ <span class="de">Dein Agent antwortet auf „Hallo" in Telegram</span><span class="en">Your agent responds to "Hello" in Telegram</span></div>
+</div>
+
+<!-- Troubleshooting -->
+<h2><span class="de">🔧 Troubleshooting</span><span class="en">🔧 Troubleshooting</span></h2>
+
+<div class="troubleshooting">
+<strong><span class="de">Problem: „command not found: openclaw"</span><span class="en">Problem: "command not found: openclaw"</span></strong>
+<p><span class="de">→ Terminal neu starten oder <code>export PATH="$PATH:$(npm root -g)/.bin"</code> ausführen</span><span class="en">→ Restart terminal or run <code>export PATH="$PATH:$(npm root -g)/.bin"</code></span></p>
+</div>
+
+<div class="troubleshooting">
+<strong><span class="de">Problem: Node.js Version zu alt</span><span class="en">Problem: Node.js version too old</span></strong>
+<p><span class="de">→ <code>nvm install --lts && nvm use --lts</code></span><span class="en">→ <code>nvm install --lts && nvm use --lts</code></span></p>
+</div>
+
+<div class="troubleshooting">
+<strong><span class="de">Problem: API-Key wird nicht akzeptiert</span><span class="en">Problem: API key not accepted</span></strong>
+<p><span class="de">→ Prüfe auf Tippfehler. Key muss mit „sk-ant-" (Anthropic) oder „sk-" (OpenAI) beginnen.</span><span class="en">→ Check for typos. Key must start with "sk-ant-" (Anthropic) or "sk-" (OpenAI).</span></p>
+</div>
+
+<div class="troubleshooting">
+<strong><span class="de">Problem: Telegram-Bot antwortet nicht</span><span class="en">Problem: Telegram bot doesn't respond</span></strong>
+<p><span class="de">→ <code>openclaw gateway status</code> prüfen. Läuft der Gateway? Token korrekt?</span><span class="en">→ Check <code>openclaw gateway status</code>. Is the gateway running? Token correct?</span></p>
+</div>
+
+<div class="troubleshooting">
+<strong><span class="de">Problem: „Permission denied" bei npm install -g</span><span class="en">Problem: "Permission denied" on npm install -g</span></strong>
+<p><span class="de">→ Nutze <code>nvm</code> statt system-npm, oder <code>sudo npm i -g @anthropic/openclaw</code></span><span class="en">→ Use <code>nvm</code> instead of system npm, or <code>sudo npm i -g @anthropic/openclaw</code></span></p>
+</div>
+
+<!-- Self-Assessment -->
+<h2><span class="de">✅ Self-Assessment</span><span class="en">✅ Self-Assessment</span></h2>
+<div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.5rem">
+<p style="font-size:.9rem;color:var(--muted);margin-bottom:.75rem"><span class="de">Hake ab, was du geschafft hast:</span><span class="en">Check off what you've accomplished:</span></p>
+<label style="display:block;padding:.4rem 0;color:var(--muted);font-size:.9rem;cursor:pointer"><input type="checkbox" style="margin-right:.5rem"> <span class="de">Terminal navigiert (cd, ls, cat)</span><span class="en">Terminal navigated (cd, ls, cat)</span></label>
+<label style="display:block;padding:.4rem 0;color:var(--muted);font-size:.9rem;cursor:pointer"><input type="checkbox" style="margin-right:.5rem"> <span class="de">JSON/YAML gelesen und editiert</span><span class="en">JSON/YAML read and edited</span></label>
+<label style="display:block;padding:.4rem 0;color:var(--muted);font-size:.9rem;cursor:pointer"><input type="checkbox" style="margin-right:.5rem"> <span class="de">Node.js installiert (≥v18)</span><span class="en">Node.js installed (≥v18)</span></label>
+<label style="display:block;padding:.4rem 0;color:var(--muted);font-size:.9rem;cursor:pointer"><input type="checkbox" style="margin-right:.5rem"> <span class="de">OpenClaw installiert und konfiguriert</span><span class="en">OpenClaw installed and configured</span></label>
+<label style="display:block;padding:.4rem 0;color:var(--muted);font-size:.9rem;cursor:pointer"><input type="checkbox" style="margin-right:.5rem"> <span class="de">Agent antwortet auf Telegram</span><span class="en">Agent responds on Telegram</span></label>
+</div>
+
+<!-- Rubric -->
+<h2><span class="de">📊 Rubrik</span><span class="en">📊 Rubric</span></h2>
+<div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.5rem">
+<p style="margin-bottom:.5rem"><span style="color:var(--green)">✅ <strong>Basis:</strong></span> <span style="color:var(--muted);font-size:.9rem"><span class="de">OpenClaw installiert, Agent antwortet auf „Hallo", Terminal-Navigation funktioniert</span><span class="en">OpenClaw installed, agent responds to "Hello", terminal navigation works</span></span></p>
+<p style="margin-bottom:.5rem"><span style="color:var(--orange)">⭐ <strong><span class="de">Fortgeschritten:</span><span class="en">Advanced:</span></strong></span> <span style="color:var(--muted);font-size:.9rem"><span class="de">Zusätzlich: 2 Channels konfiguriert (Telegram + WhatsApp), eigene Troubleshooting-Checkliste</span><span class="en">Additionally: 2 channels configured (Telegram + WhatsApp), own troubleshooting checklist</span></span></p>
+<p><span style="color:var(--accent)">🏆 <strong><span class="de">Experte:</span><span class="en">Expert:</span></strong></span> <span style="color:var(--muted);font-size:.9rem"><span class="de">Setup auf anderem OS dokumentiert (z.B. WSL2-Unterschiede) ODER Setup-Fehler reproduziert und gefixt</span><span class="en">Setup documented on different OS (e.g. WSL2 differences) OR setup error reproduced and fixed</span></span></p>
+</div>
+
+<!-- Nav Footer -->
+<div class="nav-footer">
+<a href="curriculum.html" class="btn" style="background:var(--surface);color:var(--text);border:1px solid var(--border)">← <span class="de">Modulübersicht</span><span class="en">Module overview</span></a>
+<a href="modul1.html" class="btn"><span class="de">Modul 1: Was ist ein Agent? →</span><span class="en">Module 1: What is an Agent? →</span></a>
+</div>
+</div>
+
+<footer role="contentinfo">
+<a href="https://github.com/janrummel/agent-systems"><span class="de">Quellcode auf GitHub</span><span class="en">Source on GitHub</span></a> · Made with ❤️ <span class="de">und Neugier</span><span class="en">and curiosity</span>
+<br><span style="font-size:.7rem"><span class="de">Fragen? <a href="https://linkedin.com/in/janrummel">Schreib mir auf LinkedIn.</a> · Teil des <a href="https://janrummel.github.io/ai-learning/">AI Learning Ökosystems</a></span><span class="en">Questions? <a href="https://linkedin.com/in/janrummel">Message me on LinkedIn.</a> · Part of the <a href="https://janrummel.github.io/ai-learning/">AI Learning Ecosystem</a></span></span>
+</footer>
+
+<script src="glossary.js"></script>
+<script>
+function setLang(l){document.documentElement.lang=l;document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('active'));document.querySelector(`.lang-btn[onclick="setLang('${l}')"]`).classList.add('active');localStorage.setItem('lang',l);if(typeof initGlossary==='function')initGlossary()}
+const s=localStorage.getItem('lang');if(s)setLang(s);
+</script>
+</body></html>

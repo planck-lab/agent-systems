@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Modul 1: Was ist ein Agent? — Agent Systems</title>
+<meta name="description" content="Anatomie intelligenter Systeme: Die 5 Kernkomponenten eines AI Agents, das Autonomie-Spektrum und Andrew Ng's 4 Patterns.">
+<meta name="author" content="Jan Rummel">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>🤖</text></svg>">
+<link rel="stylesheet" href="style.css">
+<style>
+.spectrum{display:flex;align-items:stretch;margin:1.5rem 0;border-radius:12px;overflow:hidden;border:1px solid var(--border)}
+.spectrum-level{flex:1;padding:.75rem .5rem;text-align:center}
+.spectrum-level:not(:last-child){border-right:1px solid var(--border)}
+.spectrum-label{font-size:.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.2rem}
+.spectrum-icon{font-size:1.3rem;margin-bottom:.2rem}
+.spectrum-name{font-weight:700;font-size:.8rem}
+.spectrum-sub{font-size:.65rem;color:var(--muted);margin-top:.1rem}
+.spectrum-l0{background:rgba(88,166,255,.05)}.spectrum-l1{background:rgba(88,166,255,.08)}.spectrum-l2{background:rgba(63,185,80,.08)}.spectrum-l3{background:rgba(210,153,34,.08)}.spectrum-l4{background:rgba(248,81,73,.08)}
+.component-flow{display:flex;align-items:center;justify-content:center;gap:.25rem;flex-wrap:wrap;margin:1.5rem 0}
+.component-box{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:.75rem;text-align:center;min-width:80px}
+.component-box .c-icon{font-size:1.3rem;margin-bottom:.25rem}
+.component-box .c-name{font-weight:700;font-size:.8rem}
+.component-box .c-desc{font-size:.65rem;color:var(--muted);margin-top:.15rem}
+.component-arrow{color:var(--accent);font-size:1.2rem;font-weight:700}
+.pattern-grid{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin:1.5rem 0}
+.pattern-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1rem}
+.pattern-card .p-icon{font-size:1.2rem;margin-bottom:.35rem}
+.pattern-card .p-name{font-weight:700;font-size:.9rem;margin-bottom:.2rem}
+.pattern-card .p-desc{font-size:.8rem;color:var(--muted)}
+.pattern-card .p-module{font-size:.7rem;color:var(--accent);margin-top:.35rem;font-weight:600}
+@media(max-width:600px){.spectrum{flex-direction:column}.spectrum-level:not(:last-child){border-right:none;border-bottom:1px solid var(--border)}.pattern-grid{grid-template-columns:1fr}.component-flow{flex-direction:column}.component-arrow{transform:rotate(90deg)}}
+</style>
+</head>
+<body>
+<a href="#main-content" class="skip-link"><span class="de">Zum Inhalt springen</span><span class="en">Skip to content</span></a>
+<div class="lang-switch" role="navigation" aria-label="Language">
+<button class="lang-btn active" onclick="setLang('de')">DE</button>
+<button class="lang-btn" onclick="setLang('en')">EN</button>
+</div>
+
+<div class="progress-bar"><div class="progress-fill" style="width:7.7%"></div></div>
+
+<div class="container" id="main-content">
+<a href="curriculum.html" class="back-link">← <span class="de">Modulübersicht</span><span class="en">Module overview</span></a>
+
+<p style="color:var(--muted);font-size:.85rem"><span class="de">Modul 1 von 13</span><span class="en">Module 1 of 13</span> · <span style="font-size:.7rem;padding:.15rem .5rem;border-radius:10px;font-weight:600;background:rgba(88,166,255,.12);color:var(--accent)">🟠🔴</span> · <span style="color:var(--green)"><span class="de">Einfach</span><span class="en">Easy</span></span> · 45 min</p>
+
+<h1><span class="de">Was ist ein Agent?</span><span class="en">What is an Agent?</span></h1>
+<p class="subtitle"><span class="de">Anatomie intelligenter Systeme — vom Chatbot zum autonomen Multi-Agent-System.</span><span class="en">Anatomy of intelligent systems — from chatbot to autonomous multi-agent system.</span></p>
+
+<!-- SMART Learning Goal -->
+<div class="tip">
+<strong>🎯 <span class="de">Lernziel (SMART)</span><span class="en">Learning Goal (SMART)</span></strong><br>
+<span class="de">Innerhalb von 45 min: Die 5 Kernkomponenten eines AI Agents benennen und 3 reale Systeme auf dem Autonomie-Spektrum einordnen.</span>
+<span class="en">Within 45 min: Name the 5 core components of an AI agent and place 3 real systems on the autonomy spectrum.</span>
+</div>
+
+<!-- Before/After -->
+<div class="comparison" style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0">
+<div class="compare-card bad" style="background:var(--surface);border:1px solid rgba(248,81,73,.4);border-radius:12px;padding:1.25rem">
+<h4 style="font-size:.9rem;margin-bottom:.5rem"><span class="de">❌ Vorher</span><span class="en">❌ Before</span></h4>
+<p style="font-size:.85rem;color:var(--muted)"><span class="de">„Agent" und „Chatbot" sind das Gleiche.</span><span class="en">"Agent" and "chatbot" are the same thing.</span></p>
+</div>
+<div class="compare-card good" style="background:var(--surface);border:1px solid rgba(63,185,80,.4);border-radius:12px;padding:1.25rem">
+<h4 style="font-size:.9rem;margin-bottom:.5rem"><span class="de">✅ Nachher</span><span class="en">✅ After</span></h4>
+<p style="font-size:.85rem;color:var(--muted)"><span class="de">Du ordnest jedes AI-System auf dem Autonomie-Spektrum ein.</span><span class="en">You place any AI system on the autonomy spectrum.</span></p>
+</div>
+</div>
+
+<!-- Concept: Agent Definition -->
+<h2><span class="de">Was macht einen Agent zum Agent?</span><span class="en">What makes an agent an agent?</span></h2>
+
+<p><span class="de">Die klassische Definition nach <strong>Wooldridge & Jennings (1995)</strong> — immer noch die Grundlage:</span><span class="en">The classic definition by <strong>Wooldridge & Jennings (1995)</strong> — still the foundation:</span></p>
+
+<div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.5rem;margin:1rem 0">
+<p style="font-size:.9rem;margin-bottom:.5rem"><strong><span class="de">Autonomie</span><span class="en">Autonomy</span>:</strong> <span style="color:var(--muted)"><span class="de">Handelt ohne direkten Befehl</span><span class="en">Acts without direct command</span></span></p>
+<p style="font-size:.9rem;margin-bottom:.5rem"><strong><span class="de">Reaktivität</span><span class="en">Reactivity</span>:</strong> <span style="color:var(--muted)"><span class="de">Nimmt Umgebung wahr und reagiert</span><span class="en">Perceives environment and reacts</span></span></p>
+<p style="font-size:.9rem;margin-bottom:.5rem"><strong><span class="de">Pro-Aktivität</span><span class="en">Pro-activeness</span>:</strong> <span style="color:var(--muted)"><span class="de">Verfolgt eigene Ziele</span><span class="en">Pursues own goals</span></span></p>
+<p style="font-size:.9rem"><strong><span class="de">Soziale Fähigkeit</span><span class="en">Social ability</span>:</strong> <span style="color:var(--muted)"><span class="de">Interagiert mit anderen Agents/Menschen</span><span class="en">Interacts with other agents/humans</span></span></p>
+</div>
+
+<div class="source">📚 Wooldridge & Jennings (1995): "Intelligent Agents: Theory and Practice", <em>Knowledge Engineering Review</em> <span class="tier-badge tier-a" style="font-size:.65rem;padding:.1rem .4rem;border-radius:6px;font-weight:700;background:rgba(63,185,80,.2);color:var(--green)">Tier A</span></div>
+
+<!-- 5 Components -->
+<h2><span class="de">Die 5 Komponenten eines AI Agents</span><span class="en">The 5 Components of an AI Agent</span></h2>
+
+<div class="component-flow">
+<div class="component-box"><div class="c-icon">🎯</div><div class="c-name"><span class="de">Ziel</span><span class="en">Goal</span></div><div class="c-desc"><span class="de">Was soll erreicht werden?</span><span class="en">What should be achieved?</span></div></div>
+<div class="component-arrow">→</div>
+<div class="component-box"><div class="c-icon">👁️</div><div class="c-name"><span class="de">Wahrnehmung</span><span class="en">Perception</span></div><div class="c-desc"><span class="de">Input verarbeiten</span><span class="en">Process input</span></div></div>
+<div class="component-arrow">→</div>
+<div class="component-box"><div class="c-icon">🧠</div><div class="c-name">Reasoning</div><div class="c-desc"><span class="de">Denken & Planen</span><span class="en">Think & Plan</span></div></div>
+<div class="component-arrow">→</div>
+<div class="component-box"><div class="c-icon">⚡</div><div class="c-name"><span class="de">Aktion</span><span class="en">Action</span></div><div class="c-desc"><span class="de">Handeln & Tools</span><span class="en">Act & Tools</span></div></div>
+<div class="component-arrow">→</div>
+<div class="component-box"><div class="c-icon">💾</div><div class="c-name"><span class="de">Gedächtnis</span><span class="en">Memory</span></div><div class="c-desc"><span class="de">Erfahrung speichern</span><span class="en">Store experience</span></div></div>
+</div>
+
+<p style="color:var(--muted);font-size:.9rem"><span class="de"><strong>Xi et al. (2023)</strong> klassifizieren LLM-Agents in drei Dimensionen: Brain (LLM), Perception (Input), Action (Output). <strong>Wang et al. (2024)</strong> ergänzen dies mit einer konstruktionsorientierten Perspektive: Profiling (Rolle), Memory (Gedächtnis), Planning (Aufgaben-Zerlegung), Action (Tool-Ausführung) — die vier Bausteine, die sich als roter Faden durch unseren Kurs ziehen.</span><span class="en"><strong>Xi et al. (2023)</strong> classify LLM agents in three dimensions: Brain (LLM), Perception (Input), Action (Output). <strong>Wang et al. (2024)</strong> complement this with a construction-oriented perspective: Profiling (Role), Memory, Planning (Task Decomposition), Action (Tool Execution) — the four building blocks that run as a thread through our course.</span></p>
+
+<div class="source">📚 Xi et al. (2023): "The Rise and Potential of LLM Based Agents", arXiv:2309.07864 <span class="tier-badge tier-b" style="font-size:.65rem;padding:.1rem .4rem;border-radius:6px;font-weight:700;background:rgba(88,166,255,.15);color:var(--accent)">Tier B</span> · Wang et al. (2024): arXiv:2308.11432 <span class="tier-badge tier-b" style="font-size:.65rem;padding:.1rem .4rem;border-radius:6px;font-weight:700;background:rgba(88,166,255,.15);color:var(--accent)">Tier B</span></div>
+
+<!-- Autonomy Spectrum -->
+<h2><span class="de">Das Autonomie-Spektrum (L0–L4)</span><span class="en">The Autonomy Spectrum (L0–L4)</span></h2>
+
+<p style="color:var(--muted);font-size:.9rem;margin-bottom:1rem"><span class="de">Nicht jedes AI-System ist ein „Agent". Die entscheidende Frage: <strong>Wie viel Kontrolle hat das System?</strong></span><span class="en">Not every AI system is an "agent". The key question: <strong>How much control does the system have?</strong></span></p>
+
+<div class="spectrum">
+<div class="spectrum-level spectrum-l0"><div class="spectrum-label">L0</div><div class="spectrum-icon">💬</div><div class="spectrum-name">Chatbot</div><div class="spectrum-sub"><span class="de">Frage → Antwort</span><span class="en">Q → A</span></div></div>
+<div class="spectrum-level spectrum-l1"><div class="spectrum-label">L1</div><div class="spectrum-icon">🤝</div><div class="spectrum-name">Copilot</div><div class="spectrum-sub"><span class="de">Vorschläge</span><span class="en">Suggestions</span></div></div>
+<div class="spectrum-level spectrum-l2"><div class="spectrum-label">L2</div><div class="spectrum-icon">🛡️</div><div class="spectrum-name">HITL Agent</div><div class="spectrum-sub"><span class="de">Mit Freigabe</span><span class="en">With approval</span></div></div>
+<div class="spectrum-level spectrum-l3"><div class="spectrum-label">L3</div><div class="spectrum-icon">🤖</div><div class="spectrum-name"><span class="de">Autonom</span><span class="en">Autonomous</span></div><div class="spectrum-sub"><span class="de">Eigene Entscheidungen</span><span class="en">Own decisions</span></div></div>
+<div class="spectrum-level spectrum-l4"><div class="spectrum-label">L4</div><div class="spectrum-icon">🌐</div><div class="spectrum-name">Multi-Agent</div><div class="spectrum-sub"><span class="de">Koordiniert</span><span class="en">Coordinated</span></div></div>
+</div>
+
+<!-- Ng's 4 Patterns -->
+<h2><span class="de">Die 4 Kern-Patterns (Andrew Ng, 2024)</span><span class="en">The 4 Core Patterns (Andrew Ng, 2024)</span></h2>
+
+<p style="color:var(--muted);font-size:.9rem;margin-bottom:1rem"><span class="de">Diese vier Patterns sind die Roadmap für den gesamten Kurs. Jedes Pattern bekommt eigene Module:</span><span class="en">These four patterns are the roadmap for the entire course. Each pattern gets its own modules:</span></p>
+
+<div class="pattern-grid">
+<div class="pattern-card"><div class="p-icon">🪞</div><div class="p-name">Reflection</div><div class="p-desc"><span class="de">Agent evaluiert eigenen Output und iteriert</span><span class="en">Agent evaluates own output and iterates</span></div><div class="p-module">→ <span class="de">Modul 2</span><span class="en">Module 2</span></div></div>
+<div class="pattern-card"><div class="p-icon">🔧</div><div class="p-name">Tool Use</div><div class="p-desc"><span class="de">Agent ruft externe Werkzeuge auf</span><span class="en">Agent calls external tools</span></div><div class="p-module">→ <span class="de">Modul 4</span><span class="en">Module 4</span></div></div>
+<div class="pattern-card"><div class="p-icon">📋</div><div class="p-name">Planning</div><div class="p-desc"><span class="de">Agent zerlegt komplexe Aufgaben</span><span class="en">Agent decomposes complex tasks</span></div><div class="p-module">→ <span class="de">Modul 12</span><span class="en">Module 12</span></div></div>
+<div class="pattern-card"><div class="p-icon">👥</div><div class="p-name">Multi-Agent</div><div class="p-desc"><span class="de">Spezialisierte Agents für Teilaufgaben</span><span class="en">Specialized agents for sub-tasks</span></div><div class="p-module">→ <span class="de">Modul 9</span><span class="en">Module 9</span></div></div>
+</div>
+
+<div class="source">📚 Ng, Andrew (2024): "Agentic Design Patterns" <span class="tier-badge tier-c" style="font-size:.65rem;padding:.1rem .4rem;border-radius:6px;font-weight:700;background:rgba(210,153,34,.15);color:var(--orange)">Tier C</span> · Anthropic (2025): "Building Effective Agents" <span class="tier-badge tier-c" style="font-size:.65rem;padding:.1rem .4rem;border-radius:6px;font-weight:700;background:rgba(210,153,34,.15);color:var(--orange)">Tier C</span></div>
+
+<!-- Track Split: Hands-on -->
+<h2><span class="de">🛠️ Hands-on</span><span class="en">🛠️ Hands-on</span></h2>
+
+<div class="step">
+<div class="step-header">
+<div class="step-num" style="background:var(--orange)">🟠</div>
+<div class="step-title">Power-User</div>
+</div>
+<p style="color:var(--muted);font-size:.9rem"><span class="de">Ordne diese 5 Systeme auf dem Autonomie-Spektrum ein:</span><span class="en">Place these 5 systems on the autonomy spectrum:</span></p>
+<ol style="color:var(--muted);font-size:.9rem;margin-top:.5rem">
+<li><strong>ChatGPT</strong> (chat.openai.com)</li>
+<li><strong>GitHub Copilot</strong></li>
+<li><strong>OpenClaw</strong> (<span class="de">dein Agent aus Modul 0</span><span class="en">your agent from Module 0</span>)</li>
+<li><strong>Siri / Google Assistant</strong></li>
+<li><strong>AutoGPT / Devin</strong></li>
+</ol>
+<p style="color:var(--muted);font-size:.85rem;margin-top:.75rem"><span class="de">Erstelle eine einfache Tabelle: System | Level (L0–L4) | Begründung</span><span class="en">Create a simple table: System | Level (L0–L4) | Reasoning</span></p>
+</div>
+
+<div class="step">
+<div class="step-header">
+<div class="step-num" style="background:#f85149">🔴</div>
+<div class="step-title">Developer</div>
+</div>
+<p style="color:var(--muted);font-size:.9rem"><span class="de">Zusätzlich zur Power-User-Aufgabe: Schau dir die OpenClaw-Architektur im Source-Code an. Identifiziere die 5 Komponenten (Ziel, Wahrnehmung, Reasoning, Aktion, Gedächtnis) in der Codebase.</span><span class="en">In addition to the Power-User task: Look at the OpenClaw architecture in the source code. Identify the 5 components (Goal, Perception, Reasoning, Action, Memory) in the codebase.</span></p>
+</div>
+
+<!-- HITL Box -->
+<div style="background:rgba(63,185,80,.08);border:1px solid rgba(63,185,80,.3);border-radius:12px;padding:1.5rem;margin:2rem 0">
+<h3 style="color:var(--green);font-size:1rem;margin-bottom:.5rem">🟢 HITL <span class="de">in diesem Modul</span><span class="en">in this module</span></h3>
+<p style="color:var(--muted);font-size:.9rem"><span class="de">Das Autonomie-Spektrum existiert, weil Vertrauen aufgebaut wird — nicht geschaltet. <strong>Fahrlehrer-Phase: Erstmal zuschauen.</strong> Du lernst das Konzept, bevor du den Agent frei lässt.</span><span class="en">The autonomy spectrum exists because trust is built — not switched. <strong>Instructor phase: First, observe.</strong> You learn the concept before letting the agent loose.</span></p>
+</div>
+
+<!-- Rubric -->
+<h2><span class="de">📊 Rubrik</span><span class="en">📊 Rubric</span></h2>
+<div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.5rem">
+<p style="margin-bottom:.5rem"><span style="color:var(--green)">✅ <strong>Basis:</strong></span> <span style="color:var(--muted);font-size:.9rem"><span class="de">5 Komponenten benannt, 3 Systeme auf Autonomie-Spektrum eingeordnet</span><span class="en">5 components named, 3 systems placed on autonomy spectrum</span></span></p>
+<p style="margin-bottom:.5rem"><span style="color:var(--orange)">⭐ <strong><span class="de">Fortgeschritten:</span><span class="en">Advanced:</span></strong></span> <span style="color:var(--muted);font-size:.9rem"><span class="de">Eigenes Diagramm gezeichnet, 4 Ng-Patterns auf 2 reale Systeme abgebildet</span><span class="en">Own diagram drawn, 4 Ng patterns mapped to 2 real systems</span></span></p>
+<p><span style="color:var(--accent)">🏆 <strong><span class="de">Experte:</span><span class="en">Expert:</span></strong></span> <span style="color:var(--muted);font-size:.9rem"><span class="de">Agent-Taxonomie (Xi et al.) auf eigenes Projekt angewendet ODER kritischen Unterschied zwischen zwei Frameworks erklärt</span><span class="en">Agent taxonomy (Xi et al.) applied to own project OR critical difference between two frameworks explained</span></span></p>
+</div>
+
+<!-- Glossary Inline -->
+<h2><span class="de">📖 Begriffe in diesem Modul</span><span class="en">📖 Terms in this module</span></h2>
+<div class="glossary">
+<dl>
+<dt>Agent</dt><dd><span class="de">Software-Entität mit Ziel, Werkzeugen und Entscheidungsschleife — mehr als ein Chatbot.</span><span class="en">Software entity with a goal, tools, and a decision loop — more than a chatbot.</span></dd>
+<dt>Orchestrator</dt><dd><span class="de">System, das Agents koordiniert, routet und überwacht.</span><span class="en">System that coordinates, routes, and monitors agents.</span></dd>
+<dt>HITL (Human-in-the-Loop)</dt><dd><span class="de">Mensch als Kontrollinstanz im Agent-Workflow.</span><span class="en">Human as control authority in agent workflows.</span></dd>
+<dt><span class="de">Autonomie-Spektrum</span><span class="en">Autonomy Spectrum</span></dt><dd><span class="de">Skala von voll-manuell (L0) bis voll-autonom (L4).</span><span class="en">Scale from fully manual (L0) to fully autonomous (L4).</span></dd>
+</dl>
+</div>
+
+<!-- Sources -->
+<h2><span class="de">📚 Quellen</span><span class="en">📚 Sources</span></h2>
+<div class="source">Wooldridge & Jennings (1995): "Intelligent Agents", <em>Knowledge Engineering Review</em> <span class="tier-badge tier-a" style="font-size:.65rem;padding:.1rem .4rem;border-radius:6px;font-weight:700;background:rgba(63,185,80,.2);color:var(--green)">Tier A</span></div>
+<div class="source">Xi et al. (2023): "Rise and Potential of LLM Based Agents", arXiv:2309.07864 <span class="tier-badge tier-b" style="font-size:.65rem;padding:.1rem .4rem;border-radius:6px;font-weight:700;background:rgba(88,166,255,.15);color:var(--accent)">Tier B</span></div>
+<div class="source">Wang et al. (2024): "Survey on LLM based Autonomous Agents", arXiv:2308.11432 <span class="tier-badge tier-b" style="font-size:.65rem;padding:.1rem .4rem;border-radius:6px;font-weight:700;background:rgba(88,166,255,.15);color:var(--accent)">Tier B</span></div>
+<div class="source">Ng, Andrew (2024): "Agentic Design Patterns" <span class="tier-badge tier-c" style="font-size:.65rem;padding:.1rem .4rem;border-radius:6px;font-weight:700;background:rgba(210,153,34,.15);color:var(--orange)">Tier C</span></div>
+<div class="source">Anthropic (2025): "Building Effective Agents" <span class="tier-badge tier-c" style="font-size:.65rem;padding:.1rem .4rem;border-radius:6px;font-weight:700;background:rgba(210,153,34,.15);color:var(--orange)">Tier C</span></div>
+
+<!-- Nav Footer -->
+<div class="nav-footer">
+<a href="modul0.html" class="btn" style="background:var(--surface);color:var(--text);border:1px solid var(--border)">← <span class="de">Modul 0: Setup</span><span class="en">Module 0: Setup</span></a>
+<a href="curriculum.html" class="btn"><span class="de">Modul 2: Der Agent Loop →</span><span class="en">Module 2: The Agent Loop →</span></a>
+</div>
+</div>
+
+<footer role="contentinfo">
+<a href="https://github.com/janrummel/agent-systems"><span class="de">Quellcode auf GitHub</span><span class="en">Source on GitHub</span></a> · Made with ❤️ <span class="de">und Neugier</span><span class="en">and curiosity</span>
+<br><span style="font-size:.7rem"><span class="de">Fragen? <a href="https://linkedin.com/in/janrummel">Schreib mir auf LinkedIn.</a> · Teil des <a href="https://janrummel.github.io/ai-learning/">AI Learning Ökosystems</a></span><span class="en">Questions? <a href="https://linkedin.com/in/janrummel">Message me on LinkedIn.</a> · Part of the <a href="https://janrummel.github.io/ai-learning/">AI Learning Ecosystem</a></span></span>
+</footer>
+
+<script src="glossary.js"></script>
+<script>
+function setLang(l){document.documentElement.lang=l;document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('active'));document.querySelector(`.lang-btn[onclick="setLang('${l}')"]`).classList.add('active');localStorage.setItem('lang',l);if(typeof initGlossary==='function')initGlossary()}
+const s=localStorage.getItem('lang');if(s)setLang(s);
+</script>
+</body></html>
