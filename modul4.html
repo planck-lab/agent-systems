@@ -147,9 +147,12 @@
 <!-- Example Configs -->
 <h3><span class="de">Beispiel: Zwei Policy-Profile</span><span class="en">Example: Two Policy Profiles</span></h3>
 
+<p style="color:var(--muted);font-size:.85rem;margin-bottom:1rem"><span class="de">Je nach Vertrauenslevel konfigurierst du deinen Agent restriktiver oder offener. Hier zwei Extreme — in der Praxis startest du mit <strong>Paranoid</strong> und öffnest schrittweise Richtung <strong>Balanced</strong>, wenn du siehst dass der Agent verantwortungsvoll handelt.</span><span class="en">Depending on your trust level, you configure your agent more restrictively or more openly. Here are two extremes — in practice, you start with <strong>Paranoid</strong> and gradually open toward <strong>Balanced</strong> as you see the agent acting responsibly.</span></p>
+
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1rem 0">
 <div>
 <p style="font-size:.8rem;font-weight:700;color:#f85149;margin-bottom:.5rem"><span class="de">🔒 Paranoid-Profil</span><span class="en">🔒 Paranoid profile</span></p>
+<p style="font-size:.75rem;color:var(--muted);margin-bottom:.5rem"><span class="de">Kein Shell-Zugriff, nur Lesen. Der Agent kann nichts verändern — maximal sicher, minimal nützlich.</span><span class="en">No shell access, read-only. The agent can't change anything — maximum security, minimum utility.</span></p>
 <div class="config-block">{
   "exec": {
     "security": "deny"
@@ -164,6 +167,7 @@
 </div>
 <div>
 <p style="font-size:.8rem;font-weight:700;color:var(--green);margin-bottom:.5rem"><span class="de">⚖️ Balanced-Profil</span><span class="en">⚖️ Balanced profile</span></p>
+<p style="font-size:.75rem;color:var(--muted);margin-bottom:.5rem"><span class="de">Nur sichere Befehle erlaubt (Allowlist), Schreiben aktiviert. Der Agent kann arbeiten, aber keine destruktiven Befehle ausführen.</span><span class="en">Only safe commands allowed (allowlist), writing enabled. The agent can work but cannot execute destructive commands.</span></p>
 <div class="config-block">{
   "exec": {
     "security": "allowlist",
