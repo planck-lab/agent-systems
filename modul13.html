@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Modul 13: Production Readiness — Agent Systems</title>
+<meta name="description" content="Vom Prototyp zum Alltags-System: Health Monitoring, Backup, Runbooks, Agent-Benchmarking und der 24h-Stabilitätstest.">
+<meta name="author" content="Jan Rummel">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>🤖</text></svg>">
+<link rel="stylesheet" href="style.css">
+<style>
+.monitor-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.75rem;margin:1.5rem 0}
+.monitor-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1rem;text-align:center}
+.monitor-card .m-icon{font-size:1.3rem;margin-bottom:.35rem}
+.monitor-card .m-name{font-weight:700;font-size:.85rem;margin-bottom:.2rem}
+.monitor-card .m-desc{font-size:.75rem;color:var(--muted)}
+.benchmark-table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:.85rem}
+.benchmark-table th,.benchmark-table td{padding:.6rem .75rem;text-align:left;border-bottom:1px solid var(--border)}
+.benchmark-table th{color:var(--accent);font-weight:700;font-size:.75rem;text-transform:uppercase;letter-spacing:.05em}
+.benchmark-table td{color:var(--muted)}
+.checklist{list-style:none;padding:0;margin:1rem 0}
+.checklist li{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:.6rem 1rem;margin-bottom:.4rem;font-size:.85rem;color:var(--muted)}
+.checklist li strong{color:var(--text)}
+.celebration{background:linear-gradient(135deg,rgba(88,166,255,.08),rgba(63,185,80,.08),rgba(210,153,34,.08));border:2px solid rgba(63,185,80,.3);border-radius:16px;padding:2rem;margin:2rem 0;text-align:center}
+.celebration h2{font-size:1.5rem;margin-bottom:.5rem}
+.celebration p{color:var(--muted);font-size:.95rem}
+.ecosystem-grid{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin:1.5rem 0}
+.ecosystem-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1rem}
+.ecosystem-card .e-name{font-weight:700;font-size:.9rem;margin-bottom:.2rem}
+.ecosystem-card .e-desc{font-size:.8rem;color:var(--muted)}
+.ecosystem-card .e-link{font-size:.75rem;color:var(--accent);margin-top:.3rem;display:block}
+@media(max-width:600px){.monitor-grid{grid-template-columns:1fr}.ecosystem-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<a href="#main-content" class="skip-link"><span class="de">Zum Inhalt springen</span><span class="en">Skip to content</span></a>
+<div class="lang-switch" role="navigation" aria-label="Language">
+<button class="lang-btn active" onclick="setLang('de')">DE</button>
+<button class="lang-btn" onclick="setLang('en')">EN</button>
+</div>
+
+<div class="progress-bar"><div class="progress-fill" style="width:100%"></div></div>
+
+<div class="container" id="main-content">
+<a href="curriculum.html" class="back-link">← <span class="de">Modulübersicht</span><span class="en">Module overview</span></a>
+
+<p style="color:var(--muted);font-size:.85rem"><span class="de">Modul 13 von 13</span><span class="en">Module 13 of 13</span> · <span style="font-size:.7rem;padding:.15rem .5rem;border-radius:10px;font-weight:600;background:rgba(88,166,255,.12);color:var(--accent)">🟠🔴</span> · <span style="color:#f85149"><span class="de">Experte</span><span class="en">Expert</span></span> · 90 min</p>
+
+<h1><span class="de">Production Readiness</span><span class="en">Production Readiness</span></h1>
+<p class="subtitle"><span class="de">Vom Prototyp zum Alltags-System — Monitoring, Backups, Runbooks und der ultimative Stabilitätstest.</span><span class="en">From prototype to daily driver — monitoring, backups, runbooks, and the ultimate stability test.</span></p>
+
+<!-- SMART Learning Goal -->
+<div class="tip">
+<strong>🎯 <span class="de">Lernziel (SMART)</span><span class="en">Learning Goal (SMART)</span></strong><br>
+<span class="de">Innerhalb von 90 min: Prototyp in produktionsreifes System transformieren mit Health-Monitoring, Backup und Runbook. (24h-Stabilitätstest als Hausaufgabe.)</span>
+<span class="en">Within 90 min: Transform prototype into production-ready system with health monitoring, backup, and runbook. (24h stability test as homework.)</span>
+</div>
+
+<!-- Before/After -->
+<div class="comparison" style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0">
+<div class="compare-card bad" style="background:var(--surface);border:1px solid rgba(248,81,73,.4);border-radius:12px;padding:1.25rem">
+<h4 style="font-size:.9rem;margin-bottom:.5rem"><span class="de">❌ Vorher</span><span class="en">❌ Before</span></h4>
+<p style="font-size:.85rem;color:var(--muted)"><span class="de">Agent läuft als Experiment — bei Problemen hilflos.</span><span class="en">Agent runs as experiment — helpless when problems arise.</span></p>
+</div>
+<div class="compare-card good" style="background:var(--surface);border:1px solid rgba(63,185,80,.4);border-radius:12px;padding:1.25rem">
+<h4 style="font-size:.9rem;margin-bottom:.5rem"><span class="de">✅ Nachher</span><span class="en">✅ After</span></h4>
+<p style="font-size:.85rem;color:var(--muted)"><span class="de">Stabiles System mit Monitoring, Backups, Runbooks, Update-Strategie.</span><span class="en">Stable system with monitoring, backups, runbooks, update strategy.</span></p>
+</div>
+</div>
+
+<!-- Health Monitoring -->
+<h2><span class="de">Health Monitoring</span><span class="en">Health Monitoring</span></h2>
+
+<p style="color:var(--muted);font-size:.9rem;margin-bottom:1rem"><span class="de">Drei Säulen der Observability — angelehnt an <strong>Google SRE Principles (2016)</strong>:</span><span class="en">Three pillars of observability — based on <strong>Google SRE Principles (2016)</strong>:</span></p>
+
+<div class="monitor-grid">
+<div class="monitor-card"><div class="m-icon">📋</div><div class="m-name">Logs</div><div class="m-desc"><span class="de">Was ist passiert? Agent-Aktionen, Fehler, Tool-Aufrufe</span><span class="en">What happened? Agent actions, errors, tool calls</span></div></div>
+<div class="monitor-card"><div class="m-icon">📊</div><div class="m-name"><span class="de">Metriken</span><span class="en">Metrics</span></div><div class="m-desc"><span class="de">Wie performt das System? Latenz, Kosten, Success-Rate</span><span class="en">How is the system performing? Latency, cost, success rate</span></div></div>
+<div class="monitor-card"><div class="m-icon">🚨</div><div class="m-name">Alerting</div><div class="m-desc"><span class="de">Wann muss ich eingreifen? Thresholds, Anomalien, Ausfälle</span><span class="en">When must I intervene? Thresholds, anomalies, outages</span></div></div>
+</div>
+
+<div class="source">📚 Google (2016): <em>Site Reliability Engineering</em> — Monitoring & Alerting Principles <span class="tier-badge tier-c" style="font-size:.65rem;padding:.1rem .4rem;border-radius:6px;font-weight:700;background:rgba(210,153,34,.15);color:var(--orange)">Tier C</span></div>
+
+<!-- Backup & Recovery -->
+<h2><span class="de">Backup & Recovery</span><span class="en">Backup & Recovery</span></h2>
+
+<div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.5rem;margin:1rem 0">
+<p style="font-size:.9rem;margin-bottom:.5rem"><strong><span class="de">Was sichern?</span><span class="en">What to back up?</span></strong></p>
+<ul style="color:var(--muted);font-size:.85rem;margin:.5rem 0;padding-left:1.5rem">
+<li><span class="de">Workspace: SOUL.md, AGENTS.md, IDENTITY.md, USER.md, TOOLS.md</span><span class="en">Workspace: SOUL.md, AGENTS.md, IDENTITY.md, USER.md, TOOLS.md</span></li>
+<li><span class="de">Memory: memory/*.md, MEMORY.md</span><span class="en">Memory: memory/*.md, MEMORY.md</span></li>
+<li><span class="de">Skills: skills/ (SKILL.md + Scripts)</span><span class="en">Skills: skills/ (SKILL.md + scripts)</span></li>
+<li><span class="de">Config: openclaw.json, .env (verschlüsselt!)</span><span class="en">Config: openclaw.json, .env (encrypted!)</span></li>
+</ul>
+<p style="font-size:.9rem;margin-top:.75rem"><strong><span class="de">Wie oft?</span><span class="en">How often?</span></strong> <span style="color:var(--muted)"><span class="de">Täglich automatisiert (Git-Commit oder rsync). Config-Änderungen sofort.</span><span class="en">Daily automated (Git commit or rsync). Config changes immediately.</span></span></p>
+<p style="font-size:.9rem;margin-top:.5rem"><strong><span class="de">Recovery-Test:</span><span class="en">Recovery test:</span></strong> <span style="color:var(--muted)"><span class="de">Mindestens 1x pro Monat: Backup auf frisches System restoren und prüfen.</span><span class="en">At least once per month: restore backup to fresh system and verify.</span></span></p>
+</div>
+
+<!-- Agent Benchmarking -->
+<h2><span class="de">Agent-Benchmarking: Systematische Evaluation</span><span class="en">Agent Benchmarking: Systematic Evaluation</span></h2>
+
+<p style="color:var(--muted);font-size:.9rem;margin-bottom:1rem"><span class="de">Die Metriken aus Modul 8 — jetzt über Zeit messen:</span><span class="en">The metrics from Module 8 — now tracked over time:</span></p>
+
+<table class="benchmark-table">
+<thead><tr>
+<th><span class="de">Metrik</span><span class="en">Metric</span></th>
+<th><span class="de">Messung</span><span class="en">Measurement</span></th>
+<th><span class="de">Zielwert</span><span class="en">Target</span></th>
+<th><span class="de">Frequenz</span><span class="en">Frequency</span></th>
+</tr></thead>
+<tbody>
+<tr><td><strong>Task-Completion</strong></td><td><span class="de">Erfolgsrate über 50 Tasks</span><span class="en">Success rate over 50 tasks</span></td><td>≥ 85%</td><td><span class="de">Wöchentlich</span><span class="en">Weekly</span></td></tr>
+<tr><td><strong><span class="de">Kosten</span><span class="en">Cost</span></strong></td><td><span class="de">$/Tag, $/Task (Durchschnitt)</span><span class="en">$/day, $/task (average)</span></td><td><span class="de">Budget-konform</span><span class="en">Within budget</span></td><td><span class="de">Täglich</span><span class="en">Daily</span></td></tr>
+<tr><td><strong><span class="de">Latenz</span><span class="en">Latency</span></strong></td><td><span class="de">p50, p95, p99 Antwortzeit</span><span class="en">p50, p95, p99 response time</span></td><td>p95 < 30s</td><td><span class="de">Täglich</span><span class="en">Daily</span></td></tr>
+<tr><td><strong><span class="de">Fehlerrate</span><span class="en">Error Rate</span></strong></td><td><span class="de">Fehlermodi pro 100 Tasks</span><span class="en">Failure modes per 100 tasks</span></td><td>< 5%</td><td><span class="de">Wöchentlich</span><span class="en">Weekly</span></td></tr>
+</tbody>
+</table>
+
+<!-- Runbook -->
+<h2><span class="de">Runbook: Wenn etwas schiefgeht</span><span class="en">Runbook: When Things Go Wrong</span></h2>
+
+<div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.5rem;margin:1rem 0">
+<h3 style="font-size:.95rem;margin-bottom:.75rem"><span class="de">Runbook-Template</span><span class="en">Runbook Template</span></h3>
+<div style="font-family:monospace;font-size:.8rem;color:var(--muted);line-height:1.6">
+<span class="de">
+<strong style="color:#f85149">🔴 Agent antwortet nicht:</strong><br>
+&nbsp;&nbsp;1. openclaw gateway status<br>
+&nbsp;&nbsp;2. Logs prüfen: openclaw logs --tail 50<br>
+&nbsp;&nbsp;3. Gateway neustarten: openclaw gateway restart<br>
+&nbsp;&nbsp;4. Wenn weiterhin tot → API-Key prüfen<br><br>
+<strong style="color:var(--orange)">🟡 Agent antwortet langsam (>30s):</strong><br>
+&nbsp;&nbsp;1. Metriken prüfen: Kontext-Größe, Modell<br>
+&nbsp;&nbsp;2. Memory bereinigen (alte Sessions löschen)<br>
+&nbsp;&nbsp;3. Ggf. auf schnelleres Modell wechseln (Haiku)<br><br>
+<strong style="color:var(--green)">🟢 Regelmäßige Wartung:</strong><br>
+&nbsp;&nbsp;1. openclaw doctor (wöchentlich)<br>
+&nbsp;&nbsp;2. Backup prüfen (täglich automatisiert)<br>
+&nbsp;&nbsp;3. Kosten-Report checken (wöchentlich)<br>
+&nbsp;&nbsp;4. Security Audit (monatlich)
+</span>
+<span class="en">
+<strong style="color:#f85149">🔴 Agent not responding:</strong><br>
+&nbsp;&nbsp;1. openclaw gateway status<br>
+&nbsp;&nbsp;2. Check logs: openclaw logs --tail 50<br>
+&nbsp;&nbsp;3. Restart gateway: openclaw gateway restart<br>
+&nbsp;&nbsp;4. If still dead → check API key<br><br>
+<strong style="color:var(--orange)">🟡 Agent responding slowly (>30s):</strong><br>
+&nbsp;&nbsp;1. Check metrics: context size, model<br>
+&nbsp;&nbsp;2. Clean up memory (delete old sessions)<br>
+&nbsp;&nbsp;3. Optionally switch to faster model (Haiku)<br><br>
+<strong style="color:var(--green)">🟢 Regular maintenance:</strong><br>
+&nbsp;&nbsp;1. openclaw doctor (weekly)<br>
+&nbsp;&nbsp;2. Check backup (daily automated)<br>
+&nbsp;&nbsp;3. Review cost report (weekly)<br>
+&nbsp;&nbsp;4. Security audit (monthly)
+</span>
+</div>
+</div>
+
+<!-- 24h Stability Test -->
+<h2><span class="de">🏠 Hausaufgabe: 24h-Stabilitätstest</span><span class="en">🏠 Homework: 24h Stability Test</span></h2>
+
+<div style="background:rgba(210,153,34,.08);border:1px solid rgba(210,153,34,.3);border-radius:12px;padding:1.5rem;margin:1rem 0">
+<p style="color:var(--muted);font-size:.9rem"><span class="de">Lass dein System <strong>24 Stunden unbeaufsichtigt laufen</strong>. Dokumentiere:</span><span class="en">Let your system run <strong>unattended for 24 hours</strong>. Document:</span></p>
+<ol style="color:var(--muted);font-size:.9rem;margin-top:.5rem">
+<li><span class="de">Uptime (Gateway + Agent stabil?)</span><span class="en">Uptime (Gateway + Agent stable?)</span></li>
+<li><span class="de">Cron-Jobs (haben alle ausgelöst?)</span><span class="en">Cron jobs (did all trigger?)</span></li>
+<li><span class="de">Fehler-Log (welche Fehler traten auf?)</span><span class="en">Error log (what errors occurred?)</span></li>
+<li><span class="de">Kosten-Report (Gesamtkosten für 24h)</span><span class="en">Cost report (total cost for 24h)</span></li>
+<li><span class="de">Lessons Learned (was würdest du ändern?)</span><span class="en">Lessons learned (what would you change?)</span></li>
+</ol>
+</div>
+
+<!-- Track Split: Hands-on -->
+<h2><span class="de">🛠️ Hands-on</span><span class="en">🛠️ Hands-on</span></h2>
+
+<div class="step">
+<div class="step-header">
+<div class="step-num" style="background:var(--orange)">🟠</div>
+<div class="step-title">Power-User</div>
+</div>
+<ol style="color:var(--muted);font-size:.9rem;margin-top:.5rem">
+<li><span class="de"><code>openclaw doctor</code> ausführen und Report analysieren</span><span class="en">Run <code>openclaw doctor</code> and analyze the report</span></li>
+<li><span class="de">Healthcheck-Cron konfigurieren (tägliche Prüfung)</span><span class="en">Configure healthcheck cron (daily check)</span></li>
+<li><span class="de">Backup-Config einrichten (Git-basiert)</span><span class="en">Set up backup config (Git-based)</span></li>
+<li><span class="de">Runbook schreiben (min. 3 Szenarien)</span><span class="en">Write runbook (min. 3 scenarios)</span></li>
+</ol>
+<p style="color:var(--muted);font-size:.85rem;margin-top:.75rem"><a href="#" class="btn" style="background: var(--orange);">Open in Colab →</a></p>
+</div>
+
+<div class="step">
+<div class="step-header">
+<div class="step-num" style="background:#f85149">🔴</div>
+<div class="step-title">Developer</div>
+</div>
+<p style="color:var(--muted);font-size:.9rem"><span class="de">Zusätzlich zur Power-User-Aufgabe:</span><span class="en">In addition to the Power-User task:</span></p>
+<ol style="color:var(--muted);font-size:.9rem;margin-top:.5rem">
+<li><span class="de"><strong>Custom Health-Monitoring:</strong> Script, das Gateway-Status, Agent-Verfügbarkeit und MCP-Server prüft.</span><span class="en"><strong>Custom health monitoring:</strong> Script that checks gateway status, agent availability, and MCP servers.</span></li>
+<li><span class="de"><strong>Performance-Dashboard:</strong> Kosten/Tag, Tasks/Tag, Latenz als einfaches CLI-Dashboard.</span><span class="en"><strong>Performance dashboard:</strong> Cost/day, tasks/day, latency as simple CLI dashboard.</span></li>
+<li><span class="de"><strong>Automatisierte Backups:</strong> Git-basiert mit Cron + Rotation.</span><span class="en"><strong>Automated backups:</strong> Git-based with cron + rotation.</span></li>
+</ol>
+</div>
+
+<!-- HITL Box -->
+<div style="background:rgba(63,185,80,.08);border:1px solid rgba(63,185,80,.3);border-radius:12px;padding:1.5rem;margin:2rem 0">
+<h3 style="color:var(--green);font-size:1rem;margin-bottom:.5rem">🟢 HITL <span class="de">in diesem Modul</span><span class="en">in this module</span></h3>
+<p style="color:var(--muted);font-size:.9rem"><span class="de">Production HITL = Monitoring + Alerting + Eskalation. System informiert Mensch proaktiv. <strong>Eigenständig unterwegs — Dashcam für den Notfall.</strong></span><span class="en">Production HITL = monitoring + alerting + escalation. System proactively informs human. <strong>Driving independently — dashcam for emergencies.</strong></span></p>
+</div>
+
+<!-- Knowledge Check 4 -->
+<h2><span class="de">🔖 Knowledge-Check 4</span><span class="en">🔖 Knowledge-Check 4</span></h2>
+<p style="color:var(--muted);font-size:.85rem;margin-bottom:1rem"><span class="de">Abschluss-Assessment nach Modul 10–13. Beantworte diese 5 Fragen:</span><span class="en">Final assessment after modules 10–13. Answer these 5 questions:</span></p>
+
+<div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.5rem">
+<ol style="color:var(--muted);font-size:.9rem;line-height:1.8">
+<li><span class="de">Erkläre den Unterschied zwischen Cron-Job, Webhook und Standing Order.</span><span class="en">Explain the difference between cron job, webhook, and standing order.</span></li>
+<li><span class="de">Was ist ein Autonomie-Budget und warum brauchen automatisierte Tasks striktere Policies?</span><span class="en">What is an autonomy budget and why do automated tasks need stricter policies?</span></li>
+<li><span class="de">Nenne 3 Bedrohungsvektoren für Agent-Systeme und je eine Gegenmaßnahme.</span><span class="en">Name 3 threat vectors for agent systems and one countermeasure each.</span></li>
+<li><span class="de">Beschreibe das Orchestrator-Worker-Pattern und nenne 2 Fehler-Strategien (Error-Handling).</span><span class="en">Describe the orchestrator-worker pattern and name 2 error handling strategies.</span></li>
+<li><span class="de">Welche 3 Säulen der Observability sind nötig für Production Readiness?</span><span class="en">What are the 3 pillars of observability needed for production readiness?</span></li>
+</ol>
+</div>
+
+<!-- Rubric -->
+<h2><span class="de">📊 Rubrik</span><span class="en">📊 Rubric</span></h2>
+<div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.5rem">
+<p style="margin-bottom:.5rem"><span style="color:var(--green)">✅ <strong>Basis:</strong></span> <span style="color:var(--muted);font-size:.9rem"><span class="de">Healthcheck-Cron, Backup-Config, Runbook erstellt, 24h-Stabilitätstest bestanden</span><span class="en">Healthcheck cron, backup config, runbook created, 24h stability test passed</span></span></p>
+<p style="margin-bottom:.5rem"><span style="color:var(--orange)">⭐ <strong><span class="de">Fortgeschritten:</span><span class="en">Advanced:</span></strong></span> <span style="color:var(--muted);font-size:.9rem"><span class="de">Custom Health-Monitoring, Performance-Dashboard, automatisierte Backups</span><span class="en">Custom health monitoring, performance dashboard, automated backups</span></span></p>
+<p><span style="color:var(--accent)">🏆 <strong><span class="de">Experte:</span><span class="en">Expert:</span></strong></span> <span style="color:var(--muted);font-size:.9rem"><span class="de">Production-Setup auf anderes System übertragen ODER SLA-Definition mit Monitoring-Strategie dokumentiert</span><span class="en">Production setup transferred to another system OR SLA definition with monitoring strategy documented</span></span></p>
+</div>
+
+<!-- 🏆 Capstone Completion Checklist -->
+<h2>🏆 <span class="de">Capstone Completion Checklist</span><span class="en">Capstone Completion Checklist</span></h2>
+
+<p style="color:var(--muted);font-size:.9rem;margin-bottom:1rem"><span class="de">Du hast alle 15 Module abgeschlossen? Prüfe dich selbst:</span><span class="en">You've completed all 15 modules? Check yourself:</span></p>
+
+<ul class="checklist">
+<li>☐ <strong>M0:</strong> <span class="de">OpenClaw installiert, Agent antwortet</span><span class="en">OpenClaw installed, agent responds</span></li>
+<li>☐ <strong>M1:</strong> <span class="de">5 Komponenten benannt, Autonomie-Spektrum verstanden</span><span class="en">5 components named, autonomy spectrum understood</span></li>
+<li>☐ <strong>M2:</strong> <span class="de">ReAct-Loop in Logs annotiert, Reflection erklärt</span><span class="en">ReAct loop annotated in logs, reflection explained</span></li>
+<li>☐ <strong>M3:</strong> <span class="de">4 Architektur-Schichten zugeordnet</span><span class="en">4 architecture layers mapped</span></li>
+<li>☐ <strong>M4:</strong> <span class="de">2 Tool-Policies konfiguriert und getestet</span><span class="en">2 tool policies configured and tested</span></li>
+<li>☐ <strong>M5:</strong> <span class="de">Persona-Workspace erstellt, Konsistenz getestet</span><span class="en">Persona workspace created, consistency tested</span></li>
+<li>☐ <strong>M6:</strong> <span class="de">3-stufiges Memory-System implementiert</span><span class="en">3-level memory system implemented</span></li>
+<li>☐ <strong>M7a:</strong> <span class="de">2 Skills installiert und per natürlicher Sprache aufgerufen</span><span class="en">2 skills installed and invoked via natural language</span></li>
+<li>☐ <strong>M7b:</strong> <span class="de">Eigenen Skill gebaut (Developer) / Skill-Aufbau verstanden (Power-User)</span><span class="en">Custom skill built (Developer) / Skill structure understood (Power-User)</span></li>
+<li>☐ <strong>M8:</strong> <span class="de">3 Fehlermodi debuggt, Ethik-Checkliste erstellt</span><span class="en">3 failure modes debugged, ethics checklist created</span></li>
+<li>☐ <strong>M9:</strong> <span class="de">2-Agent-Setup mit Session-Isolation</span><span class="en">2-agent setup with session isolation</span></li>
+<li>☐ <strong>M10:</strong> <span class="de">Cron + Hook konfiguriert, HITL-Eskalation implementiert</span><span class="en">Cron + hook configured, HITL escalation implemented</span></li>
+<li>☐ <strong>M11:</strong> <span class="de">Security Audit, Threat Model dokumentiert</span><span class="en">Security audit, threat model documented</span></li>
+<li>☐ <strong>M12:</strong> <span class="de">Orchestrator-Worker-Pattern implementiert (Developer) / Patterns verstanden (Power-User)</span><span class="en">Orchestrator-worker pattern implemented (Developer) / Patterns understood (Power-User)</span></li>
+<li>☐ <strong>M13:</strong> <span class="de">Production-Ready: Monitoring, Backup, Runbook, 24h-Test bestanden</span><span class="en">Production-ready: Monitoring, backup, runbook, 24h test passed</span></li>
+</ul>
+
+<!-- Cross-Links -->
+<h2><span class="de">🌐 Weiter im Ökosystem</span><span class="en">🌐 Continue in the Ecosystem</span></h2>
+
+<p style="color:var(--muted);font-size:.9rem;margin-bottom:1rem"><span class="de">Dieser Kurs ist Teil des <strong>AI Learning Ökosystems</strong>. Hier geht's weiter:</span><span class="en">This course is part of the <strong>AI Learning Ecosystem</strong>. Continue here:</span></p>
+
+<div class="ecosystem-grid">
+<div class="ecosystem-card">
+<div class="e-name"><span class="de">🧠 AI Fundamentals</span><span class="en">🧠 AI Fundamentals</span></div>
+<div class="e-desc"><span class="de">Grundlagen der KI — Transformer, Training, Evaluation</span><span class="en">AI basics — Transformers, training, evaluation</span></div>
+<a href="https://janrummel.github.io/ai-learning/" class="e-link"><span class="de">Zum Kurs →</span><span class="en">Go to course →</span></a>
+</div>
+<div class="ecosystem-card">
+<div class="e-name"><span class="de">🔧 Prompt Engineering</span><span class="en">🔧 Prompt Engineering</span></div>
+<div class="e-desc"><span class="de">Effektive Prompts schreiben — Chain-of-Thought, Few-Shot, Structured Output</span><span class="en">Writing effective prompts — Chain-of-Thought, few-shot, structured output</span></div>
+<a href="https://janrummel.github.io/ai-learning/" class="e-link"><span class="de">Zum Kurs →</span><span class="en">Go to course →</span></a>
+</div>
+<div class="ecosystem-card">
+<div class="e-name">🤖 Agent Systems</div>
+<div class="e-desc"><span class="de">Du bist hier! ✅ Abgeschlossen.</span><span class="en">You are here! ✅ Completed.</span></div>
+<a href="curriculum.html" class="e-link"><span class="de">Zur Modulübersicht →</span><span class="en">Module overview →</span></a>
+</div>
+<div class="ecosystem-card">
+<div class="e-name"><span class="de">🔬 Community & Showcase</span><span class="en">🔬 Community & Showcase</span></div>
+<div class="e-desc"><span class="de">Zeig dein Setup, lerne von anderen, bleib am Ball</span><span class="en">Show your setup, learn from others, stay current</span></div>
+<a href="https://discord.gg/openclaw" class="e-link">Discord →</a>
+</div>
+</div>
+
+<!-- Celebration -->
+<div class="celebration">
+<h2>🏆🎉 <span class="de">Glückwunsch!</span><span class="en">Congratulations!</span></h2>
+<p style="font-size:1.1rem;margin-bottom:.5rem"><span class="de"><strong>Du hast den Agent Systems Kurs abgeschlossen.</strong></span><span class="en"><strong>You've completed the Agent Systems course.</strong></span></p>
+<p><span class="de">Von „Was ist ein Agent?" bis „Production Readiness" — du verstehst jetzt die Konzepte, Patterns und Werkzeuge, um AI Agents zu konfigurieren, zu orchestrieren und sicher zu betreiben.</span><span class="en">From "What is an Agent?" to "Production Readiness" — you now understand the concepts, patterns, and tools to configure, orchestrate, and safely operate AI agents.</span></p>
+<p style="margin-top:1rem;font-size:.9rem"><span class="de">🚀 <strong>Nächster Schritt:</strong> Teile dein Setup in der <a href="https://discord.gg/openclaw" style="color:var(--accent)">Community</a> und hilf anderen Lernenden.</span><span class="en">🚀 <strong>Next step:</strong> Share your setup in the <a href="https://discord.gg/openclaw" style="color:var(--accent)">community</a> and help other learners.</span></p>
+</div>
+
+<!-- Glossary Inline -->
+<h2><span class="de">📖 Begriffe in diesem Modul</span><span class="en">📖 Terms in this module</span></h2>
+<div class="glossary">
+<dl>
+<dt>Observability</dt><dd><span class="de">Fähigkeit, den internen Zustand eines Systems über seine Outputs (Logs, Metriken, Traces) zu verstehen.</span><span class="en">Ability to understand the internal state of a system through its outputs (logs, metrics, traces).</span></dd>
+<dt>Runbook</dt><dd><span class="de">Dokumentierte Anleitung für typische Fehler-Szenarien und deren Behebung.</span><span class="en">Documented guide for typical failure scenarios and their resolution.</span></dd>
+<dt>SRE (Site Reliability Engineering)</dt><dd><span class="de">Google-Methodik zur Sicherstellung von System-Zuverlässigkeit durch Automatisierung und Monitoring.</span><span class="en">Google methodology for ensuring system reliability through automation and monitoring.</span></dd>
+<dt>SLA (Service Level Agreement)</dt><dd><span class="de">Vereinbarung über Verfügbarkeit, Antwortzeit und Qualität eines Services.</span><span class="en">Agreement on availability, response time, and quality of a service.</span></dd>
+</dl>
+</div>
+
+<!-- Sources -->
+<h2><span class="de">📚 Quellen</span><span class="en">📚 Sources</span></h2>
+<div class="source">Google (2016): <em>Site Reliability Engineering</em> — Monitoring & Alerting Principles <span class="tier-badge tier-c" style="font-size:.65rem;padding:.1rem .4rem;border-radius:6px;font-weight:700;background:rgba(210,153,34,.15);color:var(--orange)">Tier C</span></div>
+<div class="source">Anthropic (2025): "Responsible Scaling" <span class="tier-badge tier-c" style="font-size:.65rem;padding:.1rem .4rem;border-radius:6px;font-weight:700;background:rgba(210,153,34,.15);color:var(--orange)">Tier C</span></div>
+<div class="source">Dang et al. (2024): "HULA: Human-in-the-Loop Agents", arXiv:2411.12924 <span class="tier-badge tier-b" style="font-size:.65rem;padding:.1rem .4rem;border-radius:6px;font-weight:700;background:rgba(88,166,255,.15);color:var(--accent)">Tier B</span></div>
+
+<!-- Nav Footer -->
+<div class="nav-footer">
+<a href="modul12.html" class="btn" style="background:var(--surface);color:var(--text);border:1px solid var(--border)">← <span class="de">Modul 12: Eigene Orchestrierung</span><span class="en">Module 12: Building Orchestration</span></a>
+<a href="curriculum.html" class="btn"><span class="de">Modulübersicht →</span><span class="en">Module Overview →</span></a>
+</div>
+</div>
+
+<footer role="contentinfo">
+<a href="https://github.com/janrummel/agent-systems"><span class="de">Quellcode auf GitHub</span><span class="en">Source on GitHub</span></a> · Made with ❤️ <span class="de">und Neugier</span><span class="en">and curiosity</span>
+<br><span style="font-size:.7rem"><span class="de">Fragen? <a href="https://linkedin.com/in/janrummel">Schreib mir auf LinkedIn.</a> · Teil des <a href="https://janrummel.github.io/ai-learning/">AI Learning Ökosystems</a></span><span class="en">Questions? <a href="https://linkedin.com/in/janrummel">Message me on LinkedIn.</a> · Part of the <a href="https://janrummel.github.io/ai-learning/">AI Learning Ecosystem</a></span></span>
+</footer>
+
+<script src="glossary.js"></script>
+<script>
+function setLang(l){document.documentElement.lang=l;document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('active'));document.querySelector(`.lang-btn[onclick="setLang('${l}')"]`).classList.add('active');localStorage.setItem('lang',l);if(typeof initGlossary==='function')initGlossary()}
+const s=localStorage.getItem('lang');if(s)setLang(s);
+</script>
+<script src="progress.js"></script>
+</body></html>

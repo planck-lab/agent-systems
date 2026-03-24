@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Modul 11: Sicherheit & Trust — Agent Systems</title>
+<meta name="description" content="Trust Model, Prompt Injection Defense, AI Control und strukturiertes Threat Modeling für Agent-Systeme.">
+<meta name="author" content="Jan Rummel">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>🤖</text></svg>">
+<link rel="stylesheet" href="style.css">
+<style>
+.threat-grid{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin:1.5rem 0}
+.threat-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1rem}
+.threat-card .th-icon{font-size:1.2rem;margin-bottom:.35rem}
+.threat-card .th-name{font-weight:700;font-size:.9rem;margin-bottom:.2rem}
+.threat-card .th-desc{font-size:.8rem;color:var(--muted)}
+.threat-card .th-defense{font-size:.7rem;color:var(--green);margin-top:.35rem;font-weight:600}
+.trust-flow{display:flex;align-items:center;justify-content:center;gap:.25rem;flex-wrap:wrap;margin:1.5rem 0}
+.trust-box{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:.75rem;text-align:center;min-width:100px}
+.trust-box .tr-icon{font-size:1.3rem;margin-bottom:.25rem}
+.trust-box .tr-name{font-weight:700;font-size:.8rem}
+.trust-box .tr-desc{font-size:.65rem;color:var(--muted);margin-top:.15rem}
+.trust-arrow{color:var(--accent);font-size:1.2rem;font-weight:700}
+.audit-step{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:.75rem 1rem;margin-bottom:.5rem;font-size:.9rem;color:var(--muted)}
+.audit-step strong{color:var(--text)}
+@media(max-width:600px){.threat-grid{grid-template-columns:1fr}.trust-flow{flex-direction:column}.trust-arrow{transform:rotate(90deg)}}
+</style>
+</head>
+<body>
+<a href="#main-content" class="skip-link"><span class="de">Zum Inhalt springen</span><span class="en">Skip to content</span></a>
+<div class="lang-switch" role="navigation" aria-label="Language">
+<button class="lang-btn active" onclick="setLang('de')">DE</button>
+<button class="lang-btn" onclick="setLang('en')">EN</button>
+</div>
+
+<div class="progress-bar"><div class="progress-fill" style="width:85%"></div></div>
+
+<div class="container" id="main-content">
+<a href="curriculum.html" class="back-link">← <span class="de">Modulübersicht</span><span class="en">Module overview</span></a>
+
+<p style="color:var(--muted);font-size:.85rem"><span class="de">Modul 11 von 13</span><span class="en">Module 11 of 13</span> · <span style="font-size:.7rem;padding:.15rem .5rem;border-radius:10px;font-weight:600;background:rgba(88,166,255,.12);color:var(--accent)">🟠🔴</span> · <span style="color:var(--orange)"><span class="de">Fortgeschritten</span><span class="en">Advanced</span></span> · 75 min</p>
+
+<h1><span class="de">Sicherheit & Trust</span><span class="en">Security & Trust</span></h1>
+<p class="subtitle"><span class="de">Agents unter Kontrolle halten — strukturiertes Threat Modeling, nicht blindes Vertrauen.</span><span class="en">Keeping agents under control — structured threat modeling, not blind trust.</span></p>
+
+<!-- SMART Learning Goal -->
+<div class="tip">
+<strong>🎯 <span class="de">Lernziel (SMART)</span><span class="en">Learning Goal (SMART)</span></strong><br>
+<span class="de">Innerhalb von 75 min: Security Audit durchführen, 3 Risiken identifizieren, Gegenmaßnahmen implementieren, Threat Model dokumentieren.</span>
+<span class="en">Within 75 min: Run a security audit, identify 3 risks, implement countermeasures, document a threat model.</span>
+</div>
+
+<!-- Before/After -->
+<div class="comparison" style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0">
+<div class="compare-card bad" style="background:var(--surface);border:1px solid rgba(248,81,73,.4);border-radius:12px;padding:1.25rem">
+<h4 style="font-size:.9rem;margin-bottom:.5rem"><span class="de">❌ Vorher</span><span class="en">❌ Before</span></h4>
+<p style="font-size:.85rem;color:var(--muted)"><span class="de">Blindes Vertrauen oder diffuse Angst.</span><span class="en">Blind trust or vague fear.</span></p>
+</div>
+<div class="compare-card good" style="background:var(--surface);border:1px solid rgba(63,185,80,.4);border-radius:12px;padding:1.25rem">
+<h4 style="font-size:.9rem;margin-bottom:.5rem"><span class="de">✅ Nachher</span><span class="en">✅ After</span></h4>
+<p style="font-size:.85rem;color:var(--muted)"><span class="de">Strukturiertes Threat Model, konkrete Angriffsvektoren, messbare Gegenmaßnahmen.</span><span class="en">Structured threat model, concrete attack vectors, measurable countermeasures.</span></p>
+</div>
+</div>
+
+<!-- Trust Model -->
+<h2><span class="de">Trust Model: Personal Assistant Security</span><span class="en">Trust Model: Personal Assistant Security</span></h2>
+
+<p style="color:var(--muted);font-size:.9rem;margin-bottom:1rem"><span class="de">Ein persönlicher Agent hat ein einzigartiges Security-Profil: Er hat Zugriff auf deine Dateien, Nachrichten, APIs — und handelt in deinem Namen. Das erfordert ein <strong>Trust Model</strong>, das diese drei Schichten absichert:</span><span class="en">A personal agent has a unique security profile: it has access to your files, messages, APIs — and acts on your behalf. This requires a <strong>trust model</strong> that secures these three layers:</span></p>
+
+<div class="trust-flow">
+<div class="trust-box"><div class="tr-icon">🔐</div><div class="tr-name"><span class="de">Zugang</span><span class="en">Access</span></div><div class="tr-desc"><span class="de">Wer darf den Agent nutzen?</span><span class="en">Who may use the agent?</span></div></div>
+<div class="trust-arrow">→</div>
+<div class="trust-box"><div class="tr-icon">🛡️</div><div class="tr-name"><span class="de">Fähigkeiten</span><span class="en">Capabilities</span></div><div class="tr-desc"><span class="de">Was darf der Agent tun?</span><span class="en">What may the agent do?</span></div></div>
+<div class="trust-arrow">→</div>
+<div class="trust-box"><div class="tr-icon">👁️</div><div class="tr-name"><span class="de">Überwachung</span><span class="en">Monitoring</span></div><div class="tr-desc"><span class="de">Wie wird kontrolliert?</span><span class="en">How is it monitored?</span></div></div>
+</div>
+
+<!-- Threat Vectors -->
+<h2><span class="de">Bedrohungsvektoren</span><span class="en">Threat Vectors</span></h2>
+
+<div class="threat-grid">
+<div class="threat-card">
+<div class="th-icon">💉</div>
+<div class="th-name"><span class="de">Direkte Prompt Injection</span><span class="en">Direct Prompt Injection</span></div>
+<div class="th-desc"><span class="de">Nutzer gibt manipulierten Prompt ein, um System-Instruktionen zu überschreiben.</span><span class="en">User enters manipulated prompt to override system instructions.</span></div>
+<div class="th-defense"><span class="de">Defense: Input-Sanitization, feste System-Prompt-Grenzen</span><span class="en">Defense: Input sanitization, fixed system prompt boundaries</span></div>
+</div>
+<div class="threat-card">
+<div class="th-icon">🕸️</div>
+<div class="th-name"><span class="de">Indirekte Prompt Injection</span><span class="en">Indirect Prompt Injection</span></div>
+<div class="th-desc"><span class="de">Externe Inhalte (Webseiten, E-Mails) enthalten versteckte Instruktionen, die der Agent ausführt.</span><span class="en">External content (web pages, emails) contains hidden instructions that the agent executes.</span></div>
+<div class="th-defense"><span class="de">Defense: Content-Isolation, Output-Validierung (Greshake et al.)</span><span class="en">Defense: Content isolation, output validation (Greshake et al.)</span></div>
+</div>
+<div class="threat-card">
+<div class="th-icon">📂</div>
+<div class="th-name"><span class="de">Daten-Exfiltration</span><span class="en">Data Exfiltration</span></div>
+<div class="th-desc"><span class="de">Agent leitet sensible Daten (API-Keys, persönliche Infos) nach außen weiter.</span><span class="en">Agent leaks sensitive data (API keys, personal info) to external parties.</span></div>
+<div class="th-defense"><span class="de">Defense: Gesperrte Pfade, Output-Filter, Allowlists</span><span class="en">Defense: Blocked paths, output filters, allowlists</span></div>
+</div>
+<div class="threat-card">
+<div class="th-icon">🔄</div>
+<div class="th-name"><span class="de">Privilege Escalation</span><span class="en">Privilege Escalation</span></div>
+<div class="th-desc"><span class="de">Agent versucht, seine Berechtigungen zu erweitern (z.B. Shell-Escape, Policy-Änderung).</span><span class="en">Agent attempts to expand its permissions (e.g., shell escape, policy change).</span></div>
+<div class="th-defense"><span class="de">Defense: Sandboxing, immutable Policies, Approval für Änderungen</span><span class="en">Defense: Sandboxing, immutable policies, approval for changes</span></div>
+</div>
+</div>
+
+<div class="source">📚 Greshake et al. (2023): "Not What You've Signed Up For: Compromising Real-World LLM-Integrated Applications with Indirect Prompt Injection", <em>AISec 2023</em> <span class="tier-badge tier-a" style="font-size:.65rem;padding:.1rem .4rem;border-radius:6px;font-weight:700;background:rgba(63,185,80,.2);color:var(--green)">Tier A</span></div>
+
+<!-- AI Control -->
+<h2><span class="de">AI Control: Sicherheit auch bei intentionaler Subversion</span><span class="en">AI Control: Safety Even Under Intentional Subversion</span></h2>
+
+<p style="color:var(--muted);font-size:.9rem"><span class="de"><strong>Greenblatt et al. (2024)</strong> argumentieren radikal: Selbst wenn ein Agent <em>absichtlich</em> gegen seine Instruktionen arbeitet (z.B. durch Training-Artefakte oder Manipulation), müssen Kontrollmechanismen greifen. Zwei Kernstrategien:</span><span class="en"><strong>Greenblatt et al. (2024)</strong> argue radically: Even if an agent <em>intentionally</em> works against its instructions (e.g., through training artifacts or manipulation), control mechanisms must hold. Two core strategies:</span></p>
+
+<div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.5rem;margin:1rem 0">
+<p style="font-size:.9rem;margin-bottom:.5rem"><strong>🔍 Monitoring:</strong> <span style="color:var(--muted)"><span class="de">Alle Aktionen loggen und auf Anomalien prüfen. Nicht vertrauen — verifizieren.</span><span class="en">Log all actions and check for anomalies. Don't trust — verify.</span></span></p>
+<p style="font-size:.9rem"><strong>⏸️ Pausing:</strong> <span style="color:var(--muted)"><span class="de">Bei Verdacht sofort pausieren. Lieber eine valide Aktion blockieren als eine schädliche durchlassen.</span><span class="en">Pause immediately on suspicion. Better to block a valid action than to let a harmful one through.</span></span></p>
+</div>
+
+<div class="source">📚 Greenblatt et al. (2024): "AI Control: Improving Safety Despite Intentional Subversion", arXiv:2312.06942 <span class="tier-badge tier-b" style="font-size:.65rem;padding:.1rem .4rem;border-radius:6px;font-weight:700;background:rgba(88,166,255,.15);color:var(--accent)">Tier B</span></div>
+
+<!-- Security Audit -->
+<h2><span class="de">Security Audit durchführen</span><span class="en">Running a Security Audit</span></h2>
+
+<p style="color:var(--muted);font-size:.9rem;margin-bottom:1rem"><span class="de">Ein strukturierter Audit in 4 Schritten:</span><span class="en">A structured audit in 4 steps:</span></p>
+
+<div class="audit-step"><strong><span class="de">1. Inventur:</span><span class="en">1. Inventory:</span></strong> <span class="de">Welche Tools, Pfade, APIs hat der Agent? <code>openclaw security audit</code></span><span class="en">Which tools, paths, APIs does the agent have? <code>openclaw security audit</code></span></div>
+<div class="audit-step"><strong><span class="de">2. Risiko-Bewertung:</span><span class="en">2. Risk Assessment:</span></strong> <span class="de">Pro Zugriff: Was kann schiefgehen? (Ampel: 🟢🟡🔴)</span><span class="en">Per access: What can go wrong? (Traffic light: 🟢🟡🔴)</span></div>
+<div class="audit-step"><strong><span class="de">3. Gegenmaßnahmen:</span><span class="en">3. Countermeasures:</span></strong> <span class="de">Allowlists verschärfen, Pfade sperren, Policies anpassen</span><span class="en">Tighten allowlists, block paths, adjust policies</span></div>
+<div class="audit-step"><strong><span class="de">4. Verifikation:</span><span class="en">4. Verification:</span></strong> <span class="de">Audit erneut ausführen, alle 🔴 müssen 🟢 oder 🟡 sein</span><span class="en">Run audit again, all 🔴 must be 🟢 or 🟡</span></div>
+
+<!-- Threat Model Template -->
+<h2><span class="de">Threat Model erstellen</span><span class="en">Creating a Threat Model</span></h2>
+
+<div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.5rem;margin:1rem 0">
+<h3 style="font-size:.95rem;margin-bottom:.75rem"><span class="de">Template: Threat Model</span><span class="en">Template: Threat Model</span></h3>
+<div style="font-family:monospace;font-size:.8rem;color:var(--muted);line-height:1.8">
+<span class="de">
+<strong style="color:var(--text)">Asset:</strong> Agent-Workspace (SOUL.md, Memory, API-Keys)<br>
+<strong style="color:var(--text)">Threat:</strong> Indirekte Prompt Injection via Web-Suche<br>
+<strong style="color:var(--text)">Impact:</strong> 🔴 Hoch — Agent führt fremde Instruktionen aus<br>
+<strong style="color:var(--text)">Mitigation:</strong> Content-Isolation, Output-Filter, Verdacht → STOPP<br>
+<strong style="color:var(--text)">Status:</strong> ✅ Implementiert (AGENTS.md Regel aktiv)
+</span>
+<span class="en">
+<strong style="color:var(--text)">Asset:</strong> Agent workspace (SOUL.md, Memory, API keys)<br>
+<strong style="color:var(--text)">Threat:</strong> Indirect prompt injection via web search<br>
+<strong style="color:var(--text)">Impact:</strong> 🔴 High — Agent executes foreign instructions<br>
+<strong style="color:var(--text)">Mitigation:</strong> Content isolation, output filter, suspicion → STOP<br>
+<strong style="color:var(--text)">Status:</strong> ✅ Implemented (AGENTS.md rule active)
+</span>
+</div>
+</div>
+
+<!-- Track Split: Hands-on -->
+<h2><span class="de">🛠️ Hands-on</span><span class="en">🛠️ Hands-on</span></h2>
+
+<div class="step">
+<div class="step-header">
+<div class="step-num" style="background:var(--orange)">🟠</div>
+<div class="step-title">Power-User</div>
+</div>
+<p style="color:var(--muted);font-size:.9rem"><span class="de"><strong>Aufgabe:</strong> Security Audit und Threat Model erstellen.</span><span class="en"><strong>Task:</strong> Run security audit and create threat model.</span></p>
+<ol style="color:var(--muted);font-size:.9rem;margin-top:.5rem">
+<li><span class="de"><code>openclaw security audit</code> ausführen und Report analysieren</span><span class="en">Run <code>openclaw security audit</code> and analyze the report</span></li>
+<li><span class="de">3 Risiken identifizieren und Ampel-Bewertung vergeben</span><span class="en">Identify 3 risks and assign traffic light ratings</span></li>
+<li><span class="de">Gegenmaßnahmen implementieren (Allowlists, gesperrte Pfade)</span><span class="en">Implement countermeasures (allowlists, blocked paths)</span></li>
+<li><span class="de">Threat Model im Template-Format dokumentieren</span><span class="en">Document threat model using the template format</span></li>
+</ol>
+<p style="color:var(--muted);font-size:.85rem;margin-top:.75rem"><a href="#" class="btn" style="background: var(--orange);">Open in Colab →</a></p>
+</div>
+
+<div class="step">
+<div class="step-header">
+<div class="step-num" style="background:#f85149">🔴</div>
+<div class="step-title">Developer</div>
+</div>
+<p style="color:var(--muted);font-size:.9rem"><span class="de">Zusätzlich zur Power-User-Aufgabe:</span><span class="en">In addition to the Power-User task:</span></p>
+<ol style="color:var(--muted);font-size:.9rem;margin-top:.5rem">
+<li><span class="de"><strong>Custom Audit-Script:</strong> Automatisiertes Script, das gesperrte Pfade, API-Key-Exposition und Policy-Lücken prüft.</span><span class="en"><strong>Custom audit script:</strong> Automated script that checks blocked paths, API key exposure, and policy gaps.</span></li>
+<li><span class="de"><strong>Prompt-Injection-Test:</strong> Indirekte Injection simulieren und dokumentieren, ob die Defenses greifen.</span><span class="en"><strong>Prompt injection test:</strong> Simulate indirect injection and document whether defenses hold.</span></li>
+</ol>
+</div>
+
+<!-- HITL Box -->
+<div style="background:rgba(63,185,80,.08);border:1px solid rgba(63,185,80,.3);border-radius:12px;padding:1.5rem;margin:2rem 0">
+<h3 style="color:var(--green);font-size:1rem;margin-bottom:.5rem">🟢 HITL <span class="de">in diesem Modul</span><span class="en">in this module</span></h3>
+<p style="color:var(--muted);font-size:.9rem"><span class="de">Security IST HITL-Design. <strong>Dashcam + Notbremse — immer aktiv.</strong></span><span class="en">Security IS HITL design. <strong>Dashcam + emergency brake — always active.</strong></span></p>
+</div>
+
+<!-- Rubric -->
+<h2><span class="de">📊 Rubrik</span><span class="en">📊 Rubric</span></h2>
+<div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.5rem">
+<p style="margin-bottom:.5rem"><span style="color:var(--green)">✅ <strong>Basis:</strong></span> <span style="color:var(--muted);font-size:.9rem"><span class="de">Security Audit durchgeführt, 3 Risiken identifiziert, Gegenmaßnahmen implementiert, Threat Model dokumentiert</span><span class="en">Security audit completed, 3 risks identified, countermeasures implemented, threat model documented</span></span></p>
+<p style="margin-bottom:.5rem"><span style="color:var(--orange)">⭐ <strong><span class="de">Fortgeschritten:</span><span class="en">Advanced:</span></strong></span> <span style="color:var(--muted);font-size:.9rem"><span class="de">Custom Audit-Script gebaut, automatisierte Security-Checks (z.B. gesperrte-Pfade-Test)</span><span class="en">Custom audit script built, automated security checks (e.g., blocked-paths test)</span></span></p>
+<p><span style="color:var(--accent)">🏆 <strong><span class="de">Experte:</span><span class="en">Expert:</span></strong></span> <span style="color:var(--muted);font-size:.9rem"><span class="de">Prompt-Injection-Angriff reproduziert und dokumentiert ODER Security-Konzept auf Multi-Agent übertragen</span><span class="en">Prompt injection attack reproduced and documented OR security concept transferred to multi-agent</span></span></p>
+</div>
+
+<!-- Glossary Inline -->
+<h2><span class="de">📖 Begriffe in diesem Modul</span><span class="en">📖 Terms in this module</span></h2>
+<div class="glossary">
+<dl>
+<dt>Prompt Injection</dt><dd><span class="de">Angriff, bei dem Nutzer-Eingaben oder externe Inhalte die Agent-Instruktionen manipulieren (direkt oder indirekt).</span><span class="en">Attack where user input or external content manipulates agent instructions (direct or indirect).</span></dd>
+<dt>Threat Model</dt><dd><span class="de">Strukturierte Dokumentation von Assets, Bedrohungen, Auswirkungen und Gegenmaßnahmen.</span><span class="en">Structured documentation of assets, threats, impacts, and countermeasures.</span></dd>
+<dt><span class="de">Daten-Exfiltration</span><span class="en">Data Exfiltration</span></dt><dd><span class="de">Ungewollte Weitergabe sensibler Daten an externe Systeme.</span><span class="en">Unwanted transfer of sensitive data to external systems.</span></dd>
+<dt>Sandboxing</dt><dd><span class="de">Isolierte Ausführungsumgebung, die den Agent-Zugriff auf Systemressourcen begrenzt.</span><span class="en">Isolated execution environment that limits agent access to system resources.</span></dd>
+</dl>
+</div>
+
+<!-- Sources -->
+<h2><span class="de">📚 Quellen</span><span class="en">📚 Sources</span></h2>
+<div class="source">Greshake et al. (2023): "Not What You've Signed Up For: Compromising Real-World LLM-Integrated Applications with Indirect Prompt Injection", <em>AISec 2023</em> <span class="tier-badge tier-a" style="font-size:.65rem;padding:.1rem .4rem;border-radius:6px;font-weight:700;background:rgba(63,185,80,.2);color:var(--green)">Tier A</span></div>
+<div class="source">Greenblatt et al. (2024): "AI Control: Improving Safety Despite Intentional Subversion", arXiv:2312.06942 <span class="tier-badge tier-b" style="font-size:.65rem;padding:.1rem .4rem;border-radius:6px;font-weight:700;background:rgba(88,166,255,.15);color:var(--accent)">Tier B</span></div>
+<div class="source">Anthropic (2025): "Building Effective Agents" <span class="tier-badge tier-c" style="font-size:.65rem;padding:.1rem .4rem;border-radius:6px;font-weight:700;background:rgba(210,153,34,.15);color:var(--orange)">Tier C</span></div>
+
+<!-- Nav Footer -->
+<div class="nav-footer">
+<a href="modul10.html" class="btn" style="background:var(--surface);color:var(--text);border:1px solid var(--border)">← <span class="de">Modul 10: Automatisierung</span><span class="en">Module 10: Automation</span></a>
+<a href="modul12.html" class="btn"><span class="de">Modul 12: Eigene Orchestrierung →</span><span class="en">Module 12: Building Orchestration →</span></a>
+</div>
+</div>
+
+<footer role="contentinfo">
+<a href="https://github.com/janrummel/agent-systems"><span class="de">Quellcode auf GitHub</span><span class="en">Source on GitHub</span></a> · Made with ❤️ <span class="de">und Neugier</span><span class="en">and curiosity</span>
+<br><span style="font-size:.7rem"><span class="de">Fragen? <a href="https://linkedin.com/in/janrummel">Schreib mir auf LinkedIn.</a> · Teil des <a href="https://janrummel.github.io/ai-learning/">AI Learning Ökosystems</a></span><span class="en">Questions? <a href="https://linkedin.com/in/janrummel">Message me on LinkedIn.</a> · Part of the <a href="https://janrummel.github.io/ai-learning/">AI Learning Ecosystem</a></span></span>
+</footer>
+
+<script src="glossary.js"></script>
+<script>
+function setLang(l){document.documentElement.lang=l;document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('active'));document.querySelector(`.lang-btn[onclick="setLang('${l}')"]`).classList.add('active');localStorage.setItem('lang',l);if(typeof initGlossary==='function')initGlossary()}
+const s=localStorage.getItem('lang');if(s)setLang(s);
+</script>
+<script src="progress.js"></script>
+</body></html>

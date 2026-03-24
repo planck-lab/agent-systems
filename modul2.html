@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Modul 2: Der Agent Loop — Agent Systems</title>
+<meta name="description" content="ReAct Pattern, Reflection und der Agent Loop: Denken, Handeln, Reflektieren — wie AI Agents Schritt für Schritt arbeiten.">
+<meta name="author" content="Jan Rummel">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>🤖</text></svg>">
+<link rel="stylesheet" href="style.css">
+<style>
+.loop-visual{display:flex;align-items:center;justify-content:center;gap:.5rem;flex-wrap:wrap;margin:2rem 0}
+.loop-step{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1rem;text-align:center;min-width:100px;position:relative}
+.loop-step .l-icon{font-size:1.5rem;margin-bottom:.3rem}
+.loop-step .l-name{font-weight:700;font-size:.85rem}
+.loop-step .l-desc{font-size:.7rem;color:var(--muted);margin-top:.15rem}
+.loop-arrow{color:var(--accent);font-size:1.3rem;font-weight:700}
+.loop-back{display:block;text-align:center;color:var(--orange);font-size:.8rem;font-weight:600;margin-top:.5rem}
+.fw-table{width:100%;border-collapse:collapse;margin:1.5rem 0;font-size:.85rem}
+.fw-table th,.fw-table td{padding:.6rem .8rem;text-align:left;border-bottom:1px solid var(--border)}
+.fw-table th{color:var(--accent);font-weight:700;font-size:.75rem;text-transform:uppercase;letter-spacing:.05em}
+.fw-table td{color:var(--muted)}
+.fw-table tr:hover td{background:rgba(88,166,255,.04)}
+.log-block{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.25rem;margin:1rem 0;font-family:'SF Mono',Monaco,Consolas,monospace;font-size:.8rem;line-height:1.6;overflow-x:auto;white-space:pre-wrap}
+.log-thought{color:var(--orange)}
+.log-action{color:var(--accent)}
+.log-observation{color:var(--green)}
+.log-reflection{color:#d2a8ff}
+.cycle-badge{display:inline-block;font-size:.65rem;padding:.1rem .5rem;border-radius:8px;font-weight:700;margin-right:.5rem}
+.cycle-1{background:rgba(88,166,255,.15);color:var(--accent)}
+.cycle-2{background:rgba(63,185,80,.15);color:var(--green)}
+.cycle-3{background:rgba(210,153,34,.15);color:var(--orange)}
+@media(max-width:600px){.loop-visual{flex-direction:column}.loop-arrow{transform:rotate(90deg)}}
+</style>
+</head>
+<body>
+<a href="#main-content" class="skip-link"><span class="de">Zum Inhalt springen</span><span class="en">Skip to content</span></a>
+<div class="lang-switch" role="navigation" aria-label="Language">
+<button class="lang-btn active" onclick="setLang('de')">DE</button>
+<button class="lang-btn" onclick="setLang('en')">EN</button>
+</div>
+
+<div class="progress-bar"><div class="progress-fill" style="width:15%"></div></div>
+
+<div class="container" id="main-content">
+<a href="curriculum.html" class="back-link">← <span class="de">Modulübersicht</span><span class="en">Module overview</span></a>
+
+<p style="color:var(--muted);font-size:.85rem"><span class="de">Modul 2 von 13</span><span class="en">Module 2 of 13</span> · <span style="font-size:.7rem;padding:.15rem .5rem;border-radius:10px;font-weight:600;background:rgba(88,166,255,.12);color:var(--accent)">🟠🔴</span> · <span style="color:var(--green)"><span class="de">Einfach</span><span class="en">Easy</span></span> · 60 min</p>
+
+<h1><span class="de">Der Agent Loop: Denken, Handeln, Reflektieren</span><span class="en">The Agent Loop: Think, Act, Reflect</span></h1>
+<p class="subtitle"><span class="de">Wie AI Agents Schritt für Schritt arbeiten — und warum das besser ist als ein einziger Schuss.</span><span class="en">How AI agents work step by step — and why that's better than a single shot.</span></p>
+
+<!-- SMART Learning Goal -->
+<div class="tip">
+<strong>🎯 <span class="de">Lernziel (SMART)</span><span class="en">Learning Goal (SMART)</span></strong><br>
+<span class="de">Innerhalb von 60 min: Den ReAct-Loop in Agent-Logs identifizieren (3 Zyklen annotieren) UND das Reflection-Pattern an einem Beispiel erklären.</span>
+<span class="en">Within 60 min: Identify the ReAct loop in agent logs (annotate 3 cycles) AND explain the Reflection pattern with an example.</span>
+</div>
+
+<!-- Before/After -->
+<div class="comparison" style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0">
+<div class="compare-card bad" style="background:var(--surface);border:1px solid rgba(248,81,73,.4);border-radius:12px;padding:1.25rem">
+<h4 style="font-size:.9rem;margin-bottom:.5rem"><span class="de">❌ Vorher</span><span class="en">❌ Before</span></h4>
+<p style="font-size:.85rem;color:var(--muted)"><span class="de">Agent = Black Box. Man gibt etwas rein, es kommt etwas raus.</span><span class="en">Agent = black box. Something goes in, something comes out.</span></p>
+</div>
+<div class="compare-card good" style="background:var(--surface);border:1px solid rgba(63,185,80,.4);border-radius:12px;padding:1.25rem">
+<h4 style="font-size:.9rem;margin-bottom:.5rem"><span class="de">✅ Nachher</span><span class="en">✅ After</span></h4>
+<p style="font-size:.85rem;color:var(--muted)"><span class="de">Du liest Agent-Logs Schritt für Schritt und verstehst, wann der Agent denkt, handelt und sein eigenes Ergebnis hinterfragt.</span><span class="en">You read agent logs step by step and understand when the agent thinks, acts, and questions its own result.</span></p>
+</div>
+</div>
+
+<!-- ReAct Pattern -->
+<h2><span class="de">Das ReAct-Pattern: Thought → Action → Observation</span><span class="en">The ReAct Pattern: Thought → Action → Observation</span></h2>
+
+<p style="color:var(--muted);font-size:.9rem"><span class="de"><strong>Yao et al. (2023)</strong> zeigen in ihrem ICLR-Paper: Wenn man Reasoning-Traces (Gedankenketten) mit konkreten Aktionen verbindet, steigt die Task-Success-Rate um <strong>20–30%</strong> gegenüber reinem Chain-of-Thought. Der Trick: Der Agent <em>denkt laut</em>, <em>handelt</em> und <em>beobachtet das Ergebnis</em> — in einer Schleife.</span><span class="en"><strong>Yao et al. (2023)</strong> show in their ICLR paper: When you combine reasoning traces with concrete actions, the task success rate increases by <strong>20–30%</strong> over pure chain-of-thought. The trick: The agent <em>thinks aloud</em>, <em>acts</em>, and <em>observes the result</em> — in a loop.</span></p>
+
+<div class="loop-visual">
+<div class="loop-step"><div class="l-icon">💭</div><div class="l-name">Thought</div><div class="l-desc"><span class="de">Was will ich? Was weiß ich?</span><span class="en">What do I want? What do I know?</span></div></div>
+<div class="loop-arrow">→</div>
+<div class="loop-step"><div class="l-icon">⚡</div><div class="l-name">Action</div><div class="l-desc"><span class="de">Tool aufrufen, suchen, schreiben</span><span class="en">Call tool, search, write</span></div></div>
+<div class="loop-arrow">→</div>
+<div class="loop-step"><div class="l-icon">👁️</div><div class="l-name">Observation</div><div class="l-desc"><span class="de">Ergebnis lesen, bewerten</span><span class="en">Read result, evaluate</span></div></div>
+</div>
+<div class="loop-back">↩ <span class="de">Zurück zu Thought — bis das Ziel erreicht ist</span><span class="en">Back to Thought — until the goal is reached</span></div>
+
+<div class="source">📚 Yao et al. (2023): "ReAct: Synergizing Reasoning and Acting in Language Models", <em>ICLR 2023</em> <span class="tier-badge tier-a" style="font-size:.65rem;padding:.1rem .4rem;border-radius:6px;font-weight:700;background:rgba(63,185,80,.2);color:var(--green)">Tier A</span></div>
+
+<!-- ReAct Example Log -->
+<h3><span class="de">Beispiel: 3 Zyklen eines ReAct-Loops</span><span class="en">Example: 3 Cycles of a ReAct Loop</span></h3>
+
+<p style="color:var(--muted);font-size:.85rem"><span class="de">So sieht ein Agent-Log aus, wenn du <code>--verbose</code> aktivierst. Jeder Zyklus hat Thought → Action → Observation:</span><span class="en">This is what an agent log looks like with <code>--verbose</code> enabled. Each cycle has Thought → Action → Observation:</span></p>
+
+<div class="log-block"><span class="cycle-badge cycle-1"><span class="de">Zyklus 1</span><span class="en">Cycle 1</span></span>
+<span class="log-thought">💭 Thought: <span class="de">User fragt nach dem Wetter in Berlin. Ich brauche aktuelle Daten — mein Wissen ist nicht aktuell genug.</span><span class="en">User asks about weather in Berlin. I need current data — my knowledge isn't up to date.</span></span>
+<span class="log-action">⚡ Action: web_search("Wetter Berlin heute")</span>
+<span class="log-observation">👁️ Observation: <span class="de">Berlin: 14°C, bewölkt, Regen ab 16 Uhr</span><span class="en">Berlin: 14°C, cloudy, rain from 4pm</span></span>
+
+<span class="cycle-badge cycle-2"><span class="de">Zyklus 2</span><span class="en">Cycle 2</span></span>
+<span class="log-thought">💭 Thought: <span class="de">Ich habe das Wetter. Aber der User hat gestern erwähnt, dass er joggen will. Soll ich das einbeziehen?</span><span class="en">I have the weather. But the user mentioned wanting to jog yesterday. Should I factor that in?</span></span>
+<span class="log-action">⚡ Action: memory_search("joggen")</span>
+<span class="log-observation">👁️ Observation: <span class="de">2026-03-23: User plant Joggen am Dienstag</span><span class="en">2026-03-23: User plans to jog on Tuesday</span></span>
+
+<span class="cycle-badge cycle-3"><span class="de">Zyklus 3</span><span class="en">Cycle 3</span></span>
+<span class="log-thought">💭 Thought: <span class="de">Perfekt — ich kann Wetter + Joggen-Empfehlung kombinieren. Vor 16 Uhr ist trocken.</span><span class="en">Perfect — I can combine weather + jogging recommendation. Dry before 4pm.</span></span>
+<span class="log-action">⚡ Action: send_message(<span class="de">"Berlin: 14°C, bewölkt. Regen ab 16 Uhr — zum Joggen am besten vor 15 Uhr gehen! 🏃‍♂️"</span><span class="en">"Berlin: 14°C, cloudy. Rain from 4pm — best to jog before 3pm! 🏃‍♂️"</span>)</span>
+<span class="log-observation">👁️ Observation: <span class="de">Nachricht gesendet ✅</span><span class="en">Message sent ✅</span></span></div>
+
+<!-- Reflection Pattern -->
+<h2><span class="de">Reflection: Pattern 1 von 4 (nach Ng)</span><span class="en">Reflection: Pattern 1 of 4 (per Ng)</span></h2>
+
+<p style="color:var(--muted);font-size:.9rem"><span class="de"><strong>Shinn et al. (2023)</strong> demonstrieren mit „Reflexion": Wenn ein Agent sein eigenes Ergebnis evaluiert und aus Fehlern lernt, steigert das die Performance auf Coding-Tasks um <strong>20%</strong>. Der Trick: Nicht nur einmal antworten, sondern <em>die eigene Antwort hinterfragen</em> und iterieren.</span><span class="en"><strong>Shinn et al. (2023)</strong> demonstrate with "Reflexion": When an agent evaluates its own output and learns from mistakes, performance on coding tasks improves by <strong>20%</strong>. The trick: Don't just answer once, but <em>question your own answer</em> and iterate.</span></p>
+
+<div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.5rem;margin:1.5rem 0">
+<p style="font-size:.9rem;margin-bottom:.5rem"><strong>1. <span class="de">Generieren</span><span class="en">Generate</span>:</strong> <span style="color:var(--muted)"><span class="de">Agent erstellt eine Antwort/Lösung</span><span class="en">Agent creates an answer/solution</span></span></p>
+<p style="font-size:.9rem;margin-bottom:.5rem"><strong>2. <span class="de">Evaluieren</span><span class="en">Evaluate</span>:</strong> <span style="color:var(--muted)"><span class="de">Agent prüft: Ist das korrekt? Vollständig? Klar?</span><span class="en">Agent checks: Is this correct? Complete? Clear?</span></span></p>
+<p style="font-size:.9rem;margin-bottom:.5rem"><strong>3. <span class="de">Reflektieren</span><span class="en">Reflect</span>:</strong> <span style="color:var(--muted)"><span class="de">Agent identifiziert Schwächen und formuliert Verbesserungen</span><span class="en">Agent identifies weaknesses and formulates improvements</span></span></p>
+<p style="font-size:.9rem"><strong>4. <span class="de">Iterieren</span><span class="en">Iterate</span>:</strong> <span style="color:var(--muted)"><span class="de">Agent verbessert die Antwort — bis sie gut genug ist</span><span class="en">Agent improves the answer — until it's good enough</span></span></p>
+</div>
+
+<div class="log-block"><span class="log-reflection">🪞 Reflection: <span class="de">"Meine Antwort enthält die Wetterinfos, aber ich habe keine Quelle angegeben. Außerdem fehlt die Windgeschwindigkeit, die für Jogger relevant ist. Ich verbessere..."</span><span class="en">"My answer contains weather info, but I didn't cite a source. Also, wind speed is missing, which is relevant for joggers. I'll improve..."</span></span></div>
+
+<div class="source">📚 Shinn et al. (2023): "Reflexion: Language Agents with Verbal Reinforcement Learning", arXiv:2303.11366 <span class="tier-badge tier-b" style="font-size:.65rem;padding:.1rem .4rem;border-radius:6px;font-weight:700;background:rgba(88,166,255,.15);color:var(--accent)">Tier B</span></div>
+
+<!-- Framework Comparison -->
+<h2><span class="de">Vergleich: ReAct in 4 Frameworks</span><span class="en">Comparison: ReAct in 4 Frameworks</span></h2>
+
+<p style="color:var(--muted);font-size:.85rem;margin-bottom:1rem"><span class="de">Das ReAct-Pattern ist framework-agnostisch — aber jede Plattform implementiert es anders:</span><span class="en">The ReAct pattern is framework-agnostic — but each platform implements it differently:</span></p>
+
+<table class="fw-table">
+<thead>
+<tr>
+<th></th>
+<th>LangChain</th>
+<th>CrewAI</th>
+<th>AutoGen</th>
+<th>OpenClaw</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong><span class="de">Loop-Mechanismus</span><span class="en">Loop mechanism</span></strong></td>
+<td>AgentExecutor</td>
+<td>Task Loop</td>
+<td>ConversableAgent</td>
+<td>Session Loop</td>
+</tr>
+<tr>
+<td><strong><span class="de">Thought sichtbar?</span><span class="en">Thought visible?</span></strong></td>
+<td><span class="de">Ja (verbose)</span><span class="en">Yes (verbose)</span></td>
+<td><span class="de">Ja (Logs)</span><span class="en">Yes (logs)</span></td>
+<td><span class="de">Ja (Chat-History)</span><span class="en">Yes (chat history)</span></td>
+<td><span class="de">Ja (--verbose)</span><span class="en">Yes (--verbose)</span></td>
+</tr>
+<tr>
+<td><strong><span class="de">Reflection eingebaut?</span><span class="en">Reflection built-in?</span></strong></td>
+<td><span class="de">Nein (custom)</span><span class="en">No (custom)</span></td>
+<td><span class="de">Optional</span><span class="en">Optional</span></td>
+<td><span class="de">Via Multi-Agent</span><span class="en">Via multi-agent</span></td>
+<td><span class="de">Via AGENTS.md</span><span class="en">Via AGENTS.md</span></td>
+</tr>
+<tr>
+<td><strong><span class="de">Max Zyklen</span><span class="en">Max cycles</span></strong></td>
+<td>max_iterations</td>
+<td>max_iter</td>
+<td>max_consecutive_auto_reply</td>
+<td><span class="de">Session-basiert</span><span class="en">Session-based</span></td>
+</tr>
+<tr>
+<td><strong><span class="de">HITL im Loop</span><span class="en">HITL in loop</span></strong></td>
+<td>HumanApprovalCallbackHandler</td>
+<td>human_input=True</td>
+<td>human_input_mode</td>
+<td>Approval Policy</td>
+</tr>
+</tbody>
+</table>
+
+<!-- Hands-on -->
+<h2><span class="de">🛠️ Hands-on</span><span class="en">🛠️ Hands-on</span></h2>
+
+<div class="step">
+<div class="step-header">
+<div class="step-num" style="background:var(--orange)">🟠</div>
+<div class="step-title">Power-User</div>
+</div>
+<p style="color:var(--muted);font-size:.9rem"><span class="de"><strong>Agent-Logs lesen und annotieren:</strong></span><span class="en"><strong>Read and annotate agent logs:</strong></span></p>
+<ol style="color:var(--muted);font-size:.9rem;margin-top:.5rem">
+<li><span class="de">Agent mit <code>--verbose</code> starten (oder im Web-UI Verbose-Modus aktivieren)</span><span class="en">Start agent with <code>--verbose</code> (or enable verbose mode in web UI)</span></li>
+<li><span class="de">3 Tool-Aufrufe provozieren: z.B. „Suche nach X, speichere das Ergebnis, fasse zusammen"</span><span class="en">Trigger 3 tool calls: e.g., "Search for X, save the result, summarize"</span></li>
+<li><span class="de">Die 3 Zyklen im Log markieren: Thought (💭), Action (⚡), Observation (👁️)</span><span class="en">Mark the 3 cycles in the log: Thought (💭), Action (⚡), Observation (👁️)</span></li>
+<li><span class="de">Bonus: Wo hätte eine Reflection den Output verbessert?</span><span class="en">Bonus: Where would a reflection have improved the output?</span></li>
+</ol>
+
+<a href="#" class="btn" style="background: var(--orange);">Open in Colab →</a>
+</div>
+
+<div class="step">
+<div class="step-header">
+<div class="step-num" style="background:#f85149">🔴</div>
+<div class="step-title">Developer</div>
+</div>
+<p style="color:var(--muted);font-size:.9rem"><span class="de"><strong>Reflection-Prompt in AGENTS.md einbauen:</strong></span><span class="en"><strong>Build a reflection prompt into AGENTS.md:</strong></span></p>
+<ol style="color:var(--muted);font-size:.9rem;margin-top:.5rem">
+<li><span class="de">Füge in <code>AGENTS.md</code> eine Regel hinzu:</span><span class="en">Add a rule to <code>AGENTS.md</code>:</span></li>
+</ol>
+<div class="log-block" style="margin:.75rem 0"><span class="de">## Reflection Rule
+Bevor du eine Antwort sendest:
+1. Prüfe: Ist die Antwort korrekt und vollständig?
+2. Prüfe: Habe ich Quellen angegeben wo nötig?
+3. Wenn nein: Verbessere die Antwort bevor du sendest.</span><span class="en">## Reflection Rule
+Before sending an answer:
+1. Check: Is the answer correct and complete?
+2. Check: Did I cite sources where needed?
+3. If not: Improve the answer before sending.</span></div>
+<ol start="2" style="color:var(--muted);font-size:.9rem">
+<li><span class="de">Teste mit 5 Prompts: Ist die Qualität messbar besser? (A/B-Vergleich)</span><span class="en">Test with 5 prompts: Is quality measurably better? (A/B comparison)</span></li>
+<li><span class="de">Dokumentiere: Welche Prompts profitierten am meisten?</span><span class="en">Document: Which prompts benefited most?</span></li>
+</ol>
+</div>
+
+<!-- HITL Box -->
+<div style="background:rgba(63,185,80,.08);border:1px solid rgba(63,185,80,.3);border-radius:12px;padding:1.5rem;margin:2rem 0">
+<h3 style="color:var(--green);font-size:1rem;margin-bottom:.5rem">🟢 HITL <span class="de">in diesem Modul</span><span class="en">in this module</span></h3>
+<p style="color:var(--muted);font-size:.9rem"><span class="de">Approval-Punkte im Loop — der Mensch kann nach jedem „Act" eingreifen. <strong>Fahrlehrer: „Halt, schau nochmal links!"</strong> Je mehr du dem Agent vertraust, desto seltener greifst du ein — aber die Möglichkeit bleibt immer.</span><span class="en">Approval points in the loop — the human can intervene after each "Act." <strong>Instructor: "Wait, check left again!"</strong> The more you trust the agent, the less you intervene — but the option always remains.</span></p>
+</div>
+
+<!-- Rubric -->
+<h2><span class="de">📊 Rubrik</span><span class="en">📊 Rubric</span></h2>
+<div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.5rem">
+<p style="margin-bottom:.5rem"><span style="color:var(--green)">✅ <strong>Basis:</strong></span> <span style="color:var(--muted);font-size:.9rem"><span class="de">3 ReAct-Zyklen in Logs annotiert, Reflection-Pattern erklärt</span><span class="en">3 ReAct cycles annotated in logs, Reflection pattern explained</span></span></p>
+<p style="margin-bottom:.5rem"><span style="color:var(--orange)">⭐ <strong><span class="de">Fortgeschritten:</span><span class="en">Advanced:</span></strong></span> <span style="color:var(--muted);font-size:.9rem"><span class="de">Reflection-Prompt in AGENTS.md eingebaut, Agent zeigt messbar bessere Ergebnisse (A/B-Test)</span><span class="en">Reflection prompt built into AGENTS.md, agent shows measurably better results (A/B test)</span></span></p>
+<p><span style="color:var(--accent)">🏆 <strong><span class="de">Experte:</span><span class="en">Expert:</span></strong></span> <span style="color:var(--muted);font-size:.9rem"><span class="de">ReAct-Loop in anderem Framework (LangChain/CrewAI) nachvollzogen ODER Fehlerfall dokumentiert (Loop-Bruch, Context-Overflow)</span><span class="en">ReAct loop traced in another framework (LangChain/CrewAI) OR failure case documented (loop break, context overflow)</span></span></p>
+</div>
+
+<!-- Glossary -->
+<h2><span class="de">📖 Begriffe in diesem Modul</span><span class="en">📖 Terms in this module</span></h2>
+<div class="glossary">
+<dl>
+<dt>ReAct</dt><dd><span class="de">Reasoning + Acting Schleife: Thought → Action → Observation (Yao et al., 2023).</span><span class="en">Reasoning + Acting loop: Thought → Action → Observation (Yao et al., 2023).</span></dd>
+<dt>Reflection</dt><dd><span class="de">Agent evaluiert eigenen Output und iteriert — Pattern 1 von 4 nach Ng (2024).</span><span class="en">Agent evaluates own output and iterates — Pattern 1 of 4 per Ng (2024).</span></dd>
+<dt>Thought</dt><dd><span class="de">Der „Denk-Schritt" im ReAct-Loop — der Agent plant seine nächste Aktion.</span><span class="en">The "thinking step" in the ReAct loop — the agent plans its next action.</span></dd>
+<dt>Observation</dt><dd><span class="de">Das Ergebnis einer Aktion, das der Agent als Input für den nächsten Thought-Schritt nutzt.</span><span class="en">The result of an action that the agent uses as input for the next thought step.</span></dd>
+</dl>
+</div>
+
+<!-- Sources -->
+<h2><span class="de">📚 Quellen</span><span class="en">📚 Sources</span></h2>
+<div class="source">Yao et al. (2023): "ReAct: Synergizing Reasoning and Acting in Language Models", <em>ICLR 2023</em> <span class="tier-badge tier-a" style="font-size:.65rem;padding:.1rem .4rem;border-radius:6px;font-weight:700;background:rgba(63,185,80,.2);color:var(--green)">Tier A</span></div>
+<div class="source">Shinn et al. (2023): "Reflexion: Language Agents with Verbal Reinforcement Learning", arXiv:2303.11366 <span class="tier-badge tier-b" style="font-size:.65rem;padding:.1rem .4rem;border-radius:6px;font-weight:700;background:rgba(88,166,255,.15);color:var(--accent)">Tier B</span></div>
+<div class="source">Ng, Andrew (2024): "Agentic Design Patterns" <span class="tier-badge tier-c" style="font-size:.65rem;padding:.1rem .4rem;border-radius:6px;font-weight:700;background:rgba(210,153,34,.15);color:var(--orange)">Tier C</span></div>
+
+<!-- Nav Footer -->
+<div class="nav-footer">
+<a href="modul1.html" class="btn" style="background:var(--surface);color:var(--text);border:1px solid var(--border)">← <span class="de">Modul 1: Was ist ein Agent?</span><span class="en">Module 1: What is an Agent?</span></a>
+<a href="modul3.html" class="btn"><span class="de">Modul 3: Architektur →</span><span class="en">Module 3: Architecture →</span></a>
+</div>
+</div>
+
+<footer role="contentinfo">
+<a href="https://github.com/janrummel/agent-systems"><span class="de">Quellcode auf GitHub</span><span class="en">Source on GitHub</span></a> · Made with ❤️ <span class="de">und Neugier</span><span class="en">and curiosity</span>
+<br><span style="font-size:.7rem"><span class="de">Fragen? <a href="https://linkedin.com/in/janrummel">Schreib mir auf LinkedIn.</a> · Teil des <a href="https://janrummel.github.io/ai-learning/">AI Learning Ökosystems</a></span><span class="en">Questions? <a href="https://linkedin.com/in/janrummel">Message me on LinkedIn.</a> · Part of the <a href="https://janrummel.github.io/ai-learning/">AI Learning Ecosystem</a></span></span>
+</footer>
+
+<script src="glossary.js"></script>
+<script>
+function setLang(l){document.documentElement.lang=l;document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('active'));document.querySelector(`.lang-btn[onclick="setLang('${l}')"]`).classList.add('active');localStorage.setItem('lang',l);if(typeof initGlossary==='function')initGlossary()}
+const s=localStorage.getItem('lang');if(s)setLang(s);
+</script>
+<script src="progress.js"></script>
+</body></html>

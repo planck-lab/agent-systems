@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Modul 9: Multi-Agent Systeme & A2A — Agent Systems</title>
+<meta name="description" content="Multi-Agent als Kern-Pattern: A2A-Protokoll, Agent Cards, Orchestration Patterns und 2-Agent-Setup.">
+<meta name="author" content="Jan Rummel">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>🤖</text></svg>">
+<link rel="stylesheet" href="style.css">
+<style>
+.pattern-grid{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin:1.5rem 0}
+.pattern-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1rem}
+.pattern-card .p-icon{font-size:1.2rem;margin-bottom:.35rem}
+.pattern-card .p-name{font-weight:700;font-size:.9rem;margin-bottom:.2rem}
+.pattern-card .p-desc{font-size:.8rem;color:var(--muted)}
+.pattern-card .p-example{font-size:.7rem;color:var(--accent);margin-top:.35rem;font-weight:600}
+.a2a-flow{display:flex;align-items:center;justify-content:center;gap:.25rem;flex-wrap:wrap;margin:1.5rem 0}
+.a2a-box{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:.75rem;text-align:center;min-width:100px}
+.a2a-box .a-icon{font-size:1.3rem;margin-bottom:.25rem}
+.a2a-box .a-name{font-weight:700;font-size:.8rem}
+.a2a-box .a-desc{font-size:.65rem;color:var(--muted);margin-top:.15rem}
+.a2a-arrow{color:var(--accent);font-size:1.2rem;font-weight:700}
+.ascii-diagram{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.25rem;margin:1rem 0;font-family:monospace;font-size:.8rem;line-height:1.5;color:var(--muted);white-space:pre;overflow-x:auto}
+@media(max-width:600px){.pattern-grid{grid-template-columns:1fr}.a2a-flow{flex-direction:column}.a2a-arrow{transform:rotate(90deg)}}
+</style>
+</head>
+<body>
+<a href="#main-content" class="skip-link"><span class="de">Zum Inhalt springen</span><span class="en">Skip to content</span></a>
+<div class="lang-switch" role="navigation" aria-label="Language">
+<button class="lang-btn active" onclick="setLang('de')">DE</button>
+<button class="lang-btn" onclick="setLang('en')">EN</button>
+</div>
+
+<div class="progress-bar"><div class="progress-fill" style="width:69%"></div></div>
+
+<div class="container" id="main-content">
+<a href="curriculum.html" class="back-link">← <span class="de">Modulübersicht</span><span class="en">Module overview</span></a>
+
+<p style="color:var(--muted);font-size:.85rem"><span class="de">Modul 9 von 13</span><span class="en">Module 9 of 13</span> · <span style="font-size:.7rem;padding:.15rem .5rem;border-radius:10px;font-weight:600;background:rgba(88,166,255,.12);color:var(--accent)">🟠🔴</span> · <span style="color:var(--orange)"><span class="de">Fortgeschritten</span><span class="en">Advanced</span></span> · 90 min</p>
+
+<h1><span class="de">Multi-Agent Systeme & A2A</span><span class="en">Multi-Agent Systems & A2A</span></h1>
+<p class="subtitle"><span class="de">Spezialisierte Agents koordinieren — vom Einzel-Agent zum Team.</span><span class="en">Coordinating specialized agents — from single agent to team.</span></p>
+
+<!-- SMART Learning Goal -->
+<div class="tip">
+<strong>🎯 <span class="de">Lernziel (SMART)</span><span class="en">Learning Goal (SMART)</span></strong><br>
+<span class="de">Innerhalb von 90 min: 2-Agent-Setup mit getrennten Workspaces konfigurieren, Session-Isolation anhand von 5 Tests nachweisen.</span>
+<span class="en">Within 90 min: Configure a 2-agent setup with separate workspaces, verify session isolation with 5 tests.</span>
+</div>
+
+<!-- Before/After -->
+<div class="comparison" style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0">
+<div class="compare-card bad" style="background:var(--surface);border:1px solid rgba(248,81,73,.4);border-radius:12px;padding:1.25rem">
+<h4 style="font-size:.9rem;margin-bottom:.5rem"><span class="de">❌ Vorher</span><span class="en">❌ Before</span></h4>
+<p style="font-size:.85rem;color:var(--muted)"><span class="de">Ein Agent = ein System.</span><span class="en">One agent = one system.</span></p>
+</div>
+<div class="compare-card good" style="background:var(--surface);border:1px solid rgba(63,185,80,.4);border-radius:12px;padding:1.25rem">
+<h4 style="font-size:.9rem;margin-bottom:.5rem"><span class="de">✅ Nachher</span><span class="en">✅ After</span></h4>
+<p style="font-size:.85rem;color:var(--muted)"><span class="de">Mehrere isolierte Agents, Channel-Routing, Orchestration Patterns.</span><span class="en">Multiple isolated agents, channel routing, orchestration patterns.</span></p>
+</div>
+</div>
+
+<!-- Multi-Agent as Pattern -->
+<h2><span class="de">Multi-Agent: Kern-Pattern 4/4 (Ng, 2024)</span><span class="en">Multi-Agent: Core Pattern 4/4 (Ng, 2024)</span></h2>
+
+<p style="color:var(--muted);font-size:.9rem"><span class="de">Andrew Ng definiert Multi-Agent als viertes und komplexestes der agentic Design Patterns. Die Idee: <strong>Spezialisierte Agents für Teilaufgaben</strong> — wie ein Team, in dem jeder seine Stärke einbringt.</span><span class="en">Andrew Ng defines multi-agent as the fourth and most complex agentic design pattern. The idea: <strong>Specialized agents for sub-tasks</strong> — like a team where everyone contributes their strength.</span></p>
+
+<p style="color:var(--muted);font-size:.9rem;margin-top:.75rem"><span class="de"><strong>Wu et al. (2023, AutoGen)</strong> formalisieren dies als ConversableAgent-Pattern: Agents konversieren miteinander, lösen Teilaufgaben und geben Ergebnisse weiter. <strong>Hong et al. (2024, MetaGPT)</strong> gehen einen Schritt weiter mit rollen-basierter Koordination — Agents übernehmen spezifische Rollen (Researcher, Coder, Reviewer) in einem strukturierten Workflow.</span><span class="en"><strong>Wu et al. (2023, AutoGen)</strong> formalize this as the ConversableAgent pattern: agents converse with each other, solve sub-tasks, and pass on results. <strong>Hong et al. (2024, MetaGPT)</strong> go a step further with role-based coordination — agents take specific roles (Researcher, Coder, Reviewer) in a structured workflow.</span></p>
+
+<div class="source">📚 Ng (2024): "Agentic Design Patterns" <span class="tier-badge tier-c" style="font-size:.65rem;padding:.1rem .4rem;border-radius:6px;font-weight:700;background:rgba(210,153,34,.15);color:var(--orange)">Tier C</span> · Wu et al. (2023): "AutoGen", arXiv:2308.08155 <span class="tier-badge tier-b" style="font-size:.65rem;padding:.1rem .4rem;border-radius:6px;font-weight:700;background:rgba(88,166,255,.15);color:var(--accent)">Tier B</span> · Hong et al. (2024): "MetaGPT", <em>ICLR 2024</em> <span class="tier-badge tier-a" style="font-size:.65rem;padding:.1rem .4rem;border-radius:6px;font-weight:700;background:rgba(63,185,80,.2);color:var(--green)">Tier A</span></div>
+
+<!-- A2A Protocol -->
+<h2><span class="de">A2A — Agent-to-Agent Protocol</span><span class="en">A2A — Agent-to-Agent Protocol</span></h2>
+
+<p style="color:var(--muted);font-size:.9rem;margin-bottom:1rem"><span class="de"><strong>A2A ist für Agents, was HTTP für Webserver ist.</strong> Ein Industriestandard (Google, 2025) für die Kommunikation zwischen Agents — auch über Framework-Grenzen hinweg.</span><span class="en"><strong>A2A is for agents what HTTP is for web servers.</strong> An industry standard (Google, 2025) for communication between agents — even across framework boundaries.</span></p>
+
+<div class="a2a-flow">
+<div class="a2a-box"><div class="a-icon">🪪</div><div class="a-name">Agent Card</div><div class="a-desc"><span class="de">Fähigkeiten beschreiben</span><span class="en">Describe capabilities</span></div></div>
+<div class="a2a-arrow">→</div>
+<div class="a2a-box"><div class="a-icon">📤</div><div class="a-name">Task Delegation</div><div class="a-desc"><span class="de">Aufgabe übergeben</span><span class="en">Delegate task</span></div></div>
+<div class="a2a-arrow">→</div>
+<div class="a2a-box"><div class="a-icon">⚙️</div><div class="a-name"><span class="de">Ausführung</span><span class="en">Execution</span></div><div class="a-desc"><span class="de">Agent B arbeitet</span><span class="en">Agent B works</span></div></div>
+<div class="a2a-arrow">→</div>
+<div class="a2a-box"><div class="a-icon">📥</div><div class="a-name"><span class="de">Ergebnis</span><span class="en">Result</span></div><div class="a-desc"><span class="de">Rückgabe an Agent A</span><span class="en">Return to Agent A</span></div></div>
+</div>
+
+<div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.5rem;margin:1rem 0">
+<h3 style="font-size:.95rem;margin-bottom:.5rem"><span class="de">Agent Card — Beispiel</span><span class="en">Agent Card — Example</span></h3>
+<div style="font-family:monospace;font-size:.8rem;color:var(--muted);line-height:1.6">
+{<br>
+&nbsp;&nbsp;"name": "Research-Agent",<br>
+&nbsp;&nbsp;"description": "<span class="de">Spezialisiert auf Web-Recherche</span><span class="en">Specialized in web research</span>",<br>
+&nbsp;&nbsp;"capabilities": ["web_search", "summarize"],<br>
+&nbsp;&nbsp;"endpoint": "https://agent-b.example.com/a2a"<br>
+}
+</div>
+</div>
+
+<div class="source">📚 A2A Protocol (Google, 2025): Agent-to-Agent Protocol — <a href="https://github.com/google/A2A" style="color:var(--accent)">github.com/google/A2A</a> <span class="tier-badge tier-c" style="font-size:.65rem;padding:.1rem .4rem;border-radius:6px;font-weight:700;background:rgba(210,153,34,.15);color:var(--orange)">Tier C</span></div>
+
+<!-- Orchestration Patterns -->
+<h2><span class="de">Orchestration Patterns</span><span class="en">Orchestration Patterns</span></h2>
+
+<p style="color:var(--muted);font-size:.9rem;margin-bottom:1rem"><span class="de">Vier Grundmuster, wie Agents zusammenarbeiten:</span><span class="en">Four basic patterns for how agents collaborate:</span></p>
+
+<div class="pattern-grid">
+<div class="pattern-card">
+<div class="p-icon">➡️</div>
+<div class="p-name">Sequential</div>
+<div class="p-desc"><span class="de">Agent A → Agent B → Agent C. Jeder baut auf dem Vorgänger auf.</span><span class="en">Agent A → Agent B → Agent C. Each builds on the predecessor.</span></div>
+<div class="p-example"><span class="de">Research → Zusammenfassung → Formatierung</span><span class="en">Research → Summary → Formatting</span></div>
+</div>
+<div class="pattern-card">
+<div class="p-icon">⚡</div>
+<div class="p-name">Concurrent</div>
+<div class="p-desc"><span class="de">Agent A ∥ Agent B ∥ Agent C → Merge. Parallele Bearbeitung, danach Synthese.</span><span class="en">Agent A ∥ Agent B ∥ Agent C → Merge. Parallel processing, then synthesis.</span></div>
+<div class="p-example"><span class="de">3 Quellen parallel recherchieren → zusammenführen</span><span class="en">Research 3 sources in parallel → merge</span></div>
+</div>
+<div class="pattern-card">
+<div class="p-icon">🤝</div>
+<div class="p-name">Handoff</div>
+<div class="p-desc"><span class="de">Agent A delegiert Teilaufgabe an Agent B mit vollem Kontext.</span><span class="en">Agent A delegates sub-task to Agent B with full context.</span></div>
+<div class="p-example"><span class="de">Main-Agent → Spezial-Agent für Code-Review</span><span class="en">Main agent → Specialist agent for code review</span></div>
+</div>
+<div class="pattern-card">
+<div class="p-icon">👔</div>
+<div class="p-name">Orchestrator-Worker</div>
+<div class="p-desc"><span class="de">Ein Orchestrator zerlegt die Aufgabe und verteilt an Worker-Agents.</span><span class="en">An orchestrator decomposes the task and distributes to worker agents.</span></div>
+<div class="p-example"><span class="de">Manager-Agent → 3 Research-Worker → Synthese</span><span class="en">Manager agent → 3 research workers → synthesis</span></div>
+</div>
+</div>
+
+<div class="ascii-diagram"><span class="de"><strong>Sequential:</strong></span><span class="en"><strong>Sequential:</strong></span>
+  ┌─────────┐    ┌─────────┐    ┌─────────┐
+  │ Agent A │───▶│ Agent B │───▶│ Agent C │
+  └─────────┘    └─────────┘    └─────────┘
+
+<span class="de"><strong>Concurrent:</strong></span><span class="en"><strong>Concurrent:</strong></span>
+  ┌─────────┐
+  │ Agent A │──┐
+  └─────────┘  │   ┌─────────┐
+  ┌─────────┐  ├──▶│  Merge  │
+  │ Agent B │──┤   └─────────┘
+  └─────────┘  │
+  ┌─────────┐  │
+  │ Agent C │──┘
+  └─────────┘
+
+<span class="de"><strong>Orchestrator-Worker:</strong></span><span class="en"><strong>Orchestrator-Worker:</strong></span>
+               ┌──────────────┐
+               │ Orchestrator │
+               └──────┬───────┘
+            ┌─────────┼─────────┐
+            ▼         ▼         ▼
+       ┌────────┐┌────────┐┌────────┐
+       │Worker 1││Worker 2││Worker 3│
+       └────┬───┘└────┬───┘└────┬───┘
+            └─────────┼─────────┘
+                      ▼
+               ┌──────────────┐
+               │   Synthese   │
+               └──────────────┘</div>
+
+<!-- Track Split: Hands-on -->
+<h2><span class="de">🛠️ Hands-on: 2-Agent-Setup</span><span class="en">🛠️ Hands-on: 2-Agent Setup</span></h2>
+
+<div class="step">
+<div class="step-header">
+<div class="step-num" style="background:var(--orange)">🟠</div>
+<div class="step-title">Power-User</div>
+</div>
+<p style="color:var(--muted);font-size:.9rem"><span class="de"><strong>Aufgabe:</strong> 2-Agent-Setup konfigurieren ("Work" + "Personal").</span><span class="en"><strong>Task:</strong> Configure a 2-agent setup ("Work" + "Personal").</span></p>
+<ol style="color:var(--muted);font-size:.9rem;margin-top:.5rem">
+<li><span class="de">Zwei getrennte Workspaces erstellen (je mit eigenem SOUL.md, AGENTS.md)</span><span class="en">Create two separate workspaces (each with its own SOUL.md, AGENTS.md)</span></li>
+<li><span class="de">Channel-Bindings konfigurieren: Welcher Agent bedient welchen Channel?</span><span class="en">Configure channel bindings: Which agent serves which channel?</span></li>
+<li><span class="de">Session-Isolation testen: 5 Tests, die nachweisen, dass die Agents sich nicht „sehen"</span><span class="en">Test session isolation: 5 tests that verify agents can't "see" each other</span></li>
+<li><span class="de">Routing-Diagramm zeichnen</span><span class="en">Draw a routing diagram</span></li>
+</ol>
+<p style="color:var(--muted);font-size:.85rem;margin-top:.75rem"><a href="#" class="btn" style="background: var(--orange);">Open in Colab →</a></p>
+</div>
+
+<div class="step">
+<div class="step-header">
+<div class="step-num" style="background:#f85149">🔴</div>
+<div class="step-title">Developer</div>
+</div>
+<p style="color:var(--muted);font-size:.9rem"><span class="de">Zusätzlich zur Power-User-Aufgabe:</span><span class="en">In addition to the Power-User task:</span></p>
+<ol style="color:var(--muted);font-size:.9rem;margin-top:.5rem">
+<li><span class="de"><strong>Sub-Agent Spawning:</strong> <code>sessions_spawn</code> nutzen, um Research-Aufgabe parallel an 2 Sub-Agents zu delegieren.</span><span class="en"><strong>Sub-Agent Spawning:</strong> Use <code>sessions_spawn</code> to delegate a research task to 2 sub-agents in parallel.</span></li>
+<li><span class="de"><strong>Ergebnis-Synthese:</strong> Haupt-Agent konsolidiert die Ergebnisse automatisch.</span><span class="en"><strong>Result Synthesis:</strong> Main agent consolidates results automatically.</span></li>
+</ol>
+</div>
+
+<!-- HITL Box -->
+<div style="background:rgba(63,185,80,.08);border:1px solid rgba(63,185,80,.3);border-radius:12px;padding:1.5rem;margin:2rem 0">
+<h3 style="color:var(--green);font-size:1rem;margin-bottom:.5rem">🟢 HITL <span class="de">in diesem Modul</span><span class="en">in this module</span></h3>
+<p style="color:var(--muted);font-size:.9rem"><span class="de">Routing = HITL-Layer. Du bestimmst, welcher Agent welche Channels bedient. <strong>Fahrschüler darf jetzt allein fahren — aber nur auf bekannten Strecken.</strong></span><span class="en">Routing = HITL layer. You determine which agent serves which channels. <strong>Student driver can now drive alone — but only on familiar routes.</strong></span></p>
+</div>
+
+<!-- Rubric -->
+<h2><span class="de">📊 Rubrik</span><span class="en">📊 Rubric</span></h2>
+<div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.5rem">
+<p style="margin-bottom:.5rem"><span style="color:var(--green)">✅ <strong>Basis:</strong></span> <span style="color:var(--muted);font-size:.9rem"><span class="de">2-Agent-Setup funktioniert, Session-Isolation getestet (5 Tests)</span><span class="en">2-agent setup works, session isolation tested (5 tests)</span></span></p>
+<p style="margin-bottom:.5rem"><span style="color:var(--orange)">⭐ <strong><span class="de">Fortgeschritten:</span><span class="en">Advanced:</span></strong></span> <span style="color:var(--muted);font-size:.9rem"><span class="de">Routing-Diagramm mit Channel-Bindings, Sub-Agent-Spawning getestet</span><span class="en">Routing diagram with channel bindings, sub-agent spawning tested</span></span></p>
+<p><span style="color:var(--accent)">🏆 <strong><span class="de">Experte:</span><span class="en">Expert:</span></strong></span> <span style="color:var(--muted);font-size:.9rem"><span class="de">A2A-Konzept auf 2 verschiedene Frameworks angewendet ODER Orchestration-Pattern dokumentiert (Sequential/Concurrent)</span><span class="en">A2A concept applied to 2 different frameworks OR orchestration pattern documented (sequential/concurrent)</span></span></p>
+</div>
+
+<!-- Glossary Inline -->
+<h2><span class="de">📖 Begriffe in diesem Modul</span><span class="en">📖 Terms in this module</span></h2>
+<div class="glossary">
+<dl>
+<dt>A2A (Agent-to-Agent Protocol)</dt><dd><span class="de">Industriestandard für die Kommunikation zwischen Agents verschiedener Frameworks (Google, 2025).</span><span class="en">Industry standard for communication between agents of different frameworks (Google, 2025).</span></dd>
+<dt>Agent Card</dt><dd><span class="de">Maschinenlesbare Beschreibung der Fähigkeiten eines Agents (Name, Capabilities, Endpoint).</span><span class="en">Machine-readable description of an agent's capabilities (name, capabilities, endpoint).</span></dd>
+<dt>Orchestration Pattern</dt><dd><span class="de">Architekturmuster für die Zusammenarbeit mehrerer Agents (Sequential, Concurrent, Handoff, Orchestrator-Worker).</span><span class="en">Architecture pattern for multi-agent collaboration (Sequential, Concurrent, Handoff, Orchestrator-Worker).</span></dd>
+<dt>Session-Isolation</dt><dd><span class="de">Garantie, dass verschiedene Agents/Sessions keine Daten teilen.</span><span class="en">Guarantee that different agents/sessions don't share data.</span></dd>
+</dl>
+</div>
+
+<!-- Sources -->
+<h2><span class="de">📚 Quellen</span><span class="en">📚 Sources</span></h2>
+<div class="source">Hong et al. (2024): "MetaGPT: Meta Programming for Multi-Agent Collaborative Framework", <em>ICLR 2024</em> <span class="tier-badge tier-a" style="font-size:.65rem;padding:.1rem .4rem;border-radius:6px;font-weight:700;background:rgba(63,185,80,.2);color:var(--green)">Tier A</span></div>
+<div class="source">Wu et al. (2023): "AutoGen: Enabling Next-Gen LLM Applications via Multi-Agent Conversation", arXiv:2308.08155 <span class="tier-badge tier-b" style="font-size:.65rem;padding:.1rem .4rem;border-radius:6px;font-weight:700;background:rgba(88,166,255,.15);color:var(--accent)">Tier B</span></div>
+<div class="source">A2A Protocol (Google, 2025): Agent-to-Agent Protocol <span class="tier-badge tier-c" style="font-size:.65rem;padding:.1rem .4rem;border-radius:6px;font-weight:700;background:rgba(210,153,34,.15);color:var(--orange)">Tier C</span></div>
+<div class="source">Ng (2024): "Agentic Design Patterns" <span class="tier-badge tier-c" style="font-size:.65rem;padding:.1rem .4rem;border-radius:6px;font-weight:700;background:rgba(210,153,34,.15);color:var(--orange)">Tier C</span></div>
+<div class="source">Microsoft (2025): Multi-Agent Orchestration Patterns Documentation <span class="tier-badge tier-c" style="font-size:.65rem;padding:.1rem .4rem;border-radius:6px;font-weight:700;background:rgba(210,153,34,.15);color:var(--orange)">Tier C</span></div>
+
+<!-- Nav Footer -->
+<div class="nav-footer">
+<a href="modul8.html" class="btn" style="background:var(--surface);color:var(--text);border:1px solid var(--border)">← <span class="de">Modul 8: Fehler & Ethik</span><span class="en">Module 8: Failures & Ethics</span></a>
+<a href="modul10.html" class="btn"><span class="de">Modul 10: Automatisierung →</span><span class="en">Module 10: Automation →</span></a>
+</div>
+</div>
+
+<footer role="contentinfo">
+<a href="https://github.com/janrummel/agent-systems"><span class="de">Quellcode auf GitHub</span><span class="en">Source on GitHub</span></a> · Made with ❤️ <span class="de">und Neugier</span><span class="en">and curiosity</span>
+<br><span style="font-size:.7rem"><span class="de">Fragen? <a href="https://linkedin.com/in/janrummel">Schreib mir auf LinkedIn.</a> · Teil des <a href="https://janrummel.github.io/ai-learning/">AI Learning Ökosystems</a></span><span class="en">Questions? <a href="https://linkedin.com/in/janrummel">Message me on LinkedIn.</a> · Part of the <a href="https://janrummel.github.io/ai-learning/">AI Learning Ecosystem</a></span></span>
+</footer>
+
+<script src="glossary.js"></script>
+<script>
+function setLang(l){document.documentElement.lang=l;document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('active'));document.querySelector(`.lang-btn[onclick="setLang('${l}')"]`).classList.add('active');localStorage.setItem('lang',l);if(typeof initGlossary==='function')initGlossary()}
+const s=localStorage.getItem('lang');if(s)setLang(s);
+</script>
+<script src="progress.js"></script>
+</body></html>

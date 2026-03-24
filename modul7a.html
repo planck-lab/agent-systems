@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Modul 7a: Skills nutzen — Agent Systems</title>
+<meta name="description" content="Skills installieren und nutzen: Tool Learning nach Qin et al., ClawHub, Skill-Routing in AGENTS.md.">
+<meta name="author" content="Jan Rummel">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>🤖</text></svg>">
+<link rel="stylesheet" href="style.css">
+<style>
+.skill-flow{display:flex;align-items:center;justify-content:center;gap:.5rem;flex-wrap:wrap;margin:2rem 0}
+.skill-step{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1rem;text-align:center;min-width:110px}
+.skill-step .s-icon{font-size:1.3rem;margin-bottom:.3rem}
+.skill-step .s-name{font-weight:700;font-size:.8rem}
+.skill-step .s-desc{font-size:.65rem;color:var(--muted);margin-top:.15rem}
+.skill-arrow{color:var(--accent);font-size:1.2rem;font-weight:700}
+.skill-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.25rem;margin:.75rem 0}
+.skill-card .sk-name{font-weight:700;font-size:.9rem;margin-bottom:.3rem}
+.skill-card .sk-desc{font-size:.85rem;color:var(--muted);margin-bottom:.3rem}
+.skill-card .sk-trigger{font-size:.75rem;color:var(--accent);font-family:'SF Mono',Monaco,Consolas,monospace}
+.config-block{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.25rem;margin:1rem 0;font-family:'SF Mono',Monaco,Consolas,monospace;font-size:.8rem;line-height:1.6;overflow-x:auto;white-space:pre-wrap}
+.routing-table{width:100%;border-collapse:collapse;margin:1.5rem 0;font-size:.85rem}
+.routing-table th,.routing-table td{padding:.6rem .8rem;text-align:left;border-bottom:1px solid var(--border)}
+.routing-table th{color:var(--accent);font-weight:700;font-size:.75rem;text-transform:uppercase;letter-spacing:.05em}
+.routing-table td{color:var(--muted)}
+.routing-table tr:hover td{background:rgba(88,166,255,.04)}
+@media(max-width:600px){.skill-flow{flex-direction:column}.skill-arrow{transform:rotate(90deg)}}
+</style>
+</head>
+<body>
+<a href="#main-content" class="skip-link"><span class="de">Zum Inhalt springen</span><span class="en">Skip to content</span></a>
+<div class="lang-switch" role="navigation" aria-label="Language">
+<button class="lang-btn active" onclick="setLang('de')">DE</button>
+<button class="lang-btn" onclick="setLang('en')">EN</button>
+</div>
+
+<div class="progress-bar"><div class="progress-fill" style="width:54%"></div></div>
+
+<div class="container" id="main-content">
+<a href="curriculum.html" class="back-link">← <span class="de">Modulübersicht</span><span class="en">Module overview</span></a>
+
+<p style="color:var(--muted);font-size:.85rem"><span class="de">Modul 7a von 13</span><span class="en">Module 7a of 13</span> · <span style="font-size:.7rem;padding:.15rem .5rem;border-radius:10px;font-weight:600;background:rgba(88,166,255,.12);color:var(--accent)">🟠🔴</span> · <span style="color:var(--orange)"><span class="de">Mittel</span><span class="en">Medium</span></span> · 60 min</p>
+
+<h1><span class="de">Skills nutzen — Fähigkeiten installieren</span><span class="en">Using Skills — Installing Capabilities</span></h1>
+<p class="subtitle"><span class="de">Modulare Erweiterbarkeit — deinem Agent neue Fähigkeiten beibringen, ohne Code zu schreiben.</span><span class="en">Modular extensibility — teach your agent new capabilities without writing code.</span></p>
+
+<!-- SMART Learning Goal -->
+<div class="tip">
+<strong>🎯 <span class="de">Lernziel (SMART)</span><span class="en">Learning Goal (SMART)</span></strong><br>
+<span class="de">Innerhalb von 60 min: 2 Skills installieren und per natürlichsprachlichem Aufruf nutzen.</span>
+<span class="en">Within 60 min: Install 2 skills and use them via natural language invocation.</span>
+</div>
+
+<!-- Before/After -->
+<div class="comparison" style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0">
+<div class="compare-card bad" style="background:var(--surface);border:1px solid rgba(248,81,73,.4);border-radius:12px;padding:1.25rem">
+<h4 style="font-size:.9rem;margin-bottom:.5rem"><span class="de">❌ Vorher</span><span class="en">❌ Before</span></h4>
+<p style="font-size:.85rem;color:var(--muted)"><span class="de">Agent kann nur das, was eingebaut ist. Neue Fähigkeiten = Programmieren.</span><span class="en">Agent can only do what's built in. New capabilities = programming.</span></p>
+</div>
+<div class="compare-card good" style="background:var(--surface);border:1px solid rgba(63,185,80,.4);border-radius:12px;padding:1.25rem">
+<h4 style="font-size:.9rem;margin-bottom:.5rem"><span class="de">✅ Nachher</span><span class="en">✅ After</span></h4>
+<p style="font-size:.85rem;color:var(--muted)"><span class="de">Skills installieren, Routing konfigurieren, natürlichsprachlich aufrufen. Plug & Play.</span><span class="en">Install skills, configure routing, invoke via natural language. Plug & play.</span></p>
+</div>
+</div>
+
+<!-- Tool Learning Framework -->
+<h2><span class="de">Tool Learning: Von Discovery bis Creation</span><span class="en">Tool Learning: From Discovery to Creation</span></h2>
+
+<p style="color:var(--muted);font-size:.9rem"><span class="de"><strong>Qin et al. (2023)</strong> systematisieren den gesamten Lebenszyklus von Tool-Nutzung durch LLMs in 4 Phasen. Modul 7a behandelt Phase 1–3, Modul 7b geht in Phase 4 (Creation):</span><span class="en"><strong>Qin et al. (2023)</strong> systematize the entire lifecycle of tool usage by LLMs in 4 phases. Module 7a covers phases 1–3, Module 7b goes into phase 4 (Creation):</span></p>
+
+<div class="skill-flow">
+<div class="skill-step" style="border-color:rgba(88,166,255,.4)">
+<div class="s-icon">🔍</div>
+<div class="s-name">Discovery</div>
+<div class="s-desc"><span class="de">Welche Tools gibt es?</span><span class="en">What tools exist?</span></div>
+</div>
+<div class="skill-arrow">→</div>
+<div class="skill-step" style="border-color:rgba(210,153,34,.4)">
+<div class="s-icon">🎯</div>
+<div class="s-name">Selection</div>
+<div class="s-desc"><span class="de">Welches passt?</span><span class="en">Which one fits?</span></div>
+</div>
+<div class="skill-arrow">→</div>
+<div class="skill-step" style="border-color:rgba(63,185,80,.4)">
+<div class="s-icon">⚡</div>
+<div class="s-name">Usage</div>
+<div class="s-desc"><span class="de">Tool korrekt aufrufen</span><span class="en">Call tool correctly</span></div>
+</div>
+<div class="skill-arrow">→</div>
+<div class="skill-step" style="border-color:rgba(248,81,73,.4)">
+<div class="s-icon">🔧</div>
+<div class="s-name">Creation</div>
+<div class="s-desc"><span class="de">→ Modul 7b</span><span class="en">→ Module 7b</span></div>
+</div>
+</div>
+
+<div class="source">📚 Qin et al. (2023): "Tool Learning with Foundation Models", arXiv:2304.08354 <span class="tier-badge tier-b" style="font-size:.65rem;padding:.1rem .4rem;border-radius:6px;font-weight:700;background:rgba(88,166,255,.15);color:var(--accent)">Tier B</span></div>
+
+<!-- Skills in Practice -->
+<h2><span class="de">Skills in der Praxis: ClawHub</span><span class="en">Skills in Practice: ClawHub</span></h2>
+
+<p style="color:var(--muted);font-size:.9rem"><span class="de">Skills sind wiederverwendbare Fähigkeits-Definitionen: Eine <code>SKILL.md</code>-Datei mit Instruktionen + optionale Scripts. Der Agent liest die Datei und weiß, was zu tun ist. <strong>ClawHub</strong> ist der Marktplatz dafür.</span><span class="en">Skills are reusable capability definitions: A <code>SKILL.md</code> file with instructions + optional scripts. The agent reads the file and knows what to do. <strong>ClawHub</strong> is the marketplace for them.</span></p>
+
+<h3><span class="de">Beispiel-Skills</span><span class="en">Example Skills</span></h3>
+
+<div class="skill-card">
+<div class="sk-name">📰 deep-research</div>
+<div class="sk-desc"><span class="de">Mehrstufige Web-Recherche mit wissenschaftlicher Methodik, Quellen-Bewertung und strukturiertem Output.</span><span class="en">Multi-step web research with scientific methodology, source evaluation, and structured output.</span></div>
+<div class="sk-trigger"><span class="de">Trigger: „Recherchiere...", „Deep Research", „/research"</span><span class="en">Trigger: "Research...", "Deep Research", "/research"</span></div>
+</div>
+
+<div class="skill-card">
+<div class="sk-name">✅ quality-gate</div>
+<div class="sk-desc"><span class="de">Qualitäts-Check für Agent-Outputs: Fakten, Quellen, Bias, Vollständigkeit prüfen.</span><span class="en">Quality check for agent outputs: verify facts, sources, bias, completeness.</span></div>
+<div class="sk-trigger"><span class="de">Trigger: „Qualitätscheck", „/qcheck", „Quality Gate"</span><span class="en">Trigger: "Quality check", "/qcheck", "Quality Gate"</span></div>
+</div>
+
+<div class="skill-card">
+<div class="sk-name">📝 create-content</div>
+<div class="sk-desc"><span class="de">Content-Erstellung für LinkedIn, Blog, etc. mit Persona-konsistentem Stil.</span><span class="en">Content creation for LinkedIn, blog, etc. with persona-consistent style.</span></div>
+<div class="sk-trigger"><span class="de">Trigger: „LinkedIn Post", „Content zu..."</span><span class="en">Trigger: "LinkedIn post", "Content about..."</span></div>
+</div>
+
+<!-- Skill Routing -->
+<h2><span class="de">Skill-Routing in AGENTS.md</span><span class="en">Skill Routing in AGENTS.md</span></h2>
+
+<p style="color:var(--muted);font-size:.9rem;margin-bottom:1rem"><span class="de">Der Agent braucht eine Routing-Tabelle: Welche Absicht → Welcher Skill? Das definierst du in <code>AGENTS.md</code>:</span><span class="en">The agent needs a routing table: Which intent → Which skill? You define this in <code>AGENTS.md</code>:</span></p>
+
+<div class="config-block"><span class="de">### Skill-Routing (automatisch)
+Wenn eine Nachricht zu einem Skill passt, lies die
+Instruction-Datei und folge ihr — ohne Rückfrage.
+
+| Absicht                    | Skill            |
+|----------------------------|------------------|
+| "Recherchiere", "/research"| deep-research/   |
+| "Qualitätscheck", "/qcheck"| quality-gate/    |
+| "LinkedIn Post", "Content" | create-content/  |
+| "Bewerte Quelle"           | quellen-check/   |
+| "Paper zu...", "arXiv"     | paper-reader/    |</span><span class="en">### Skill Routing (automatic)
+When a message matches a skill, read the
+instruction file and follow it — without asking.
+
+| Intent                      | Skill            |
+|-----------------------------|------------------|
+| "Research", "/research"     | deep-research/   |
+| "Quality check", "/qcheck" | quality-gate/    |
+| "LinkedIn post", "Content"  | create-content/  |
+| "Evaluate source"           | source-check/    |
+| "Paper about...", "arXiv"   | paper-reader/    |</span></div>
+
+<p style="color:var(--muted);font-size:.85rem"><span class="de"><strong>Prinzip:</strong> Absicht erkennen → Datei lesen → Schritten folgen. Nicht fragen, einfach machen.</span><span class="en"><strong>Principle:</strong> Recognize intent → read file → follow steps. Don't ask, just do it.</span></p>
+
+<!-- Installation -->
+<h2><span class="de">Skills installieren: 3 Schritte</span><span class="en">Installing Skills: 3 Steps</span></h2>
+
+<div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.5rem;margin:1.5rem 0">
+<p style="font-size:.9rem;margin-bottom:.75rem"><strong><span class="de">Schritt 1: Skill von ClawHub holen</span><span class="en">Step 1: Get skill from ClawHub</span></strong></p>
+<div class="config-block" style="margin:.5rem 0">openclaw skill install deep-research</div>
+
+<p style="font-size:.9rem;margin-bottom:.75rem;margin-top:1rem"><strong><span class="de">Schritt 2: Routing in AGENTS.md ergänzen</span><span class="en">Step 2: Add routing to AGENTS.md</span></strong></p>
+<div class="config-block" style="margin:.5rem 0"><span class="de">| "Recherchiere", "/research" | deep-research/ |</span><span class="en">| "Research", "/research" | deep-research/ |</span></div>
+
+<p style="font-size:.9rem;margin-bottom:.75rem;margin-top:1rem"><strong><span class="de">Schritt 3: Testen</span><span class="en">Step 3: Test</span></strong></p>
+<div class="config-block" style="margin:.5rem 0"><span class="de">User: „Recherchiere: Aktuelle Entwicklungen bei AI Agents 2026"
+Agent: [liest deep-research/SKILL.md → führt Recherche-Schritte aus]</span><span class="en">User: "Research: Current developments in AI agents 2026"
+Agent: [reads deep-research/SKILL.md → executes research steps]</span></div>
+</div>
+
+<!-- Hands-on -->
+<h2><span class="de">🛠️ Hands-on</span><span class="en">🛠️ Hands-on</span></h2>
+
+<div class="step">
+<div class="step-header">
+<div class="step-num" style="background:var(--orange)">🟠</div>
+<div class="step-title">Power-User</div>
+</div>
+<p style="color:var(--muted);font-size:.9rem"><span class="de"><strong>2 Skills installieren, Routing konfigurieren, testen:</strong></span><span class="en"><strong>Install 2 skills, configure routing, test:</strong></span></p>
+<ol style="color:var(--muted);font-size:.9rem;margin-top:.5rem">
+<li><span class="de">Installiere 2 Skills von ClawHub (z.B. deep-research + quality-gate)</span><span class="en">Install 2 skills from ClawHub (e.g. deep-research + quality-gate)</span></li>
+<li><span class="de">Füge Routing-Einträge in AGENTS.md hinzu</span><span class="en">Add routing entries to AGENTS.md</span></li>
+<li><span class="de">Teste jeden Skill mit einem natürlichsprachlichen Aufruf</span><span class="en">Test each skill with a natural language invocation</span></li>
+<li><span class="de">Dokumentiere: Wurde der Skill korrekt geroutet? Ergebnis-Qualität?</span><span class="en">Document: Was the skill correctly routed? Result quality?</span></li>
+</ol>
+
+<a href="#" class="btn" style="background: var(--orange);">Open in Colab →</a>
+</div>
+
+<div class="step">
+<div class="step-header">
+<div class="step-num" style="background:#f85149">🔴</div>
+<div class="step-title">Developer</div>
+</div>
+<p style="color:var(--muted);font-size:.9rem"><span class="de"><strong>Skill-Precedence analysieren und Override testen:</strong></span><span class="en"><strong>Analyze skill precedence and test override:</strong></span></p>
+<ol style="color:var(--muted);font-size:.9rem;margin-top:.5rem">
+<li><span class="de">Installiere 2 Skills mit überlappenden Triggern</span><span class="en">Install 2 skills with overlapping triggers</span></li>
+<li><span class="de">Dokumentiere: Welcher Skill gewinnt bei Konflikten?</span><span class="en">Document: Which skill wins in conflicts?</span></li>
+<li><span class="de">Implementiere ein Override: Eigener Skill überschreibt ClawHub-Skill</span><span class="en">Implement an override: Custom skill overrides ClawHub skill</span></li>
+<li><span class="de">Bonus: Analysiere die SKILL.md-Struktur eines Skills</span><span class="en">Bonus: Analyze the SKILL.md structure of a skill</span></li>
+</ol>
+</div>
+
+<!-- HITL Box -->
+<div style="background:rgba(63,185,80,.08);border:1px solid rgba(63,185,80,.3);border-radius:12px;padding:1.5rem;margin:2rem 0">
+<h3 style="color:var(--green);font-size:1rem;margin-bottom:.5rem">🟢 HITL <span class="de">in diesem Modul</span><span class="en">in this module</span></h3>
+<p style="color:var(--muted);font-size:.9rem"><span class="de">Du bestimmst, welche Skills installiert werden und wie sie geroutet werden. <strong>Führerschein bestanden — aber du entscheidest welche Apps auf dem Navi landen.</strong> Der Agent führt aus, du kuratierst die Fähigkeiten.</span><span class="en">You determine which skills get installed and how they're routed. <strong>License obtained — but you decide which apps go on the GPS.</strong> The agent executes, you curate the capabilities.</span></p>
+</div>
+
+<!-- Rubric -->
+<h2><span class="de">📊 Rubrik</span><span class="en">📊 Rubric</span></h2>
+<div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.5rem">
+<p style="margin-bottom:.5rem"><span style="color:var(--green)">✅ <strong>Basis:</strong></span> <span style="color:var(--muted);font-size:.9rem"><span class="de">2 Skills installiert, Routing funktioniert, natürlichsprachlicher Aufruf erfolgreich</span><span class="en">2 skills installed, routing works, natural language invocation successful</span></span></p>
+<p style="margin-bottom:.5rem"><span style="color:var(--orange)">⭐ <strong><span class="de">Fortgeschritten:</span><span class="en">Advanced:</span></strong></span> <span style="color:var(--muted);font-size:.9rem"><span class="de">Skill-Precedence angepasst, eigenes Override-Szenario dokumentiert</span><span class="en">Skill precedence adjusted, custom override scenario documented</span></span></p>
+<p><span style="color:var(--accent)">🏆 <strong><span class="de">Experte:</span><span class="en">Expert:</span></strong></span> <span style="color:var(--muted);font-size:.9rem"><span class="de">Skill von ClawHub auf anderes Framework portiert (z.B. LangChain Tool) ODER Routing-Konflikt dokumentiert</span><span class="en">Skill from ClawHub ported to another framework (e.g. LangChain Tool) OR routing conflict documented</span></span></p>
+</div>
+
+<!-- Glossary -->
+<h2><span class="de">📖 Begriffe in diesem Modul</span><span class="en">📖 Terms in this module</span></h2>
+<div class="glossary">
+<dl>
+<dt>Skill</dt><dd><span class="de">Wiederverwendbare Fähigkeits-Definition: SKILL.md (Instruktionen) + optionale Scripts.</span><span class="en">Reusable capability definition: SKILL.md (instructions) + optional scripts.</span></dd>
+<dt>Skill-Routing</dt><dd><span class="de">Zuordnung von Nutzer-Absichten zu Skills in AGENTS.md.</span><span class="en">Mapping of user intents to skills in AGENTS.md.</span></dd>
+<dt>ClawHub</dt><dd><span class="de">Marktplatz für OpenClaw-Skills — installieren, teilen, entdecken.</span><span class="en">Marketplace for OpenClaw skills — install, share, discover.</span></dd>
+<dt>Tool Learning</dt><dd><span class="de">Systematischer Lebenszyklus: Discovery → Selection → Usage → Creation (Qin et al., 2023).</span><span class="en">Systematic lifecycle: Discovery → Selection → Usage → Creation (Qin et al., 2023).</span></dd>
+</dl>
+</div>
+
+<!-- Sources -->
+<h2><span class="de">📚 Quellen</span><span class="en">📚 Sources</span></h2>
+<div class="source">Qin et al. (2023): "Tool Learning with Foundation Models", arXiv:2304.08354 <span class="tier-badge tier-b" style="font-size:.65rem;padding:.1rem .4rem;border-radius:6px;font-weight:700;background:rgba(88,166,255,.15);color:var(--accent)">Tier B</span></div>
+
+<!-- Nav Footer -->
+<div class="nav-footer">
+<a href="modul6.html" class="btn" style="background:var(--surface);color:var(--text);border:1px solid var(--border)">← <span class="de">Modul 6: Gedächtnis & Kontext</span><span class="en">Module 6: Memory & Context</span></a>
+<a href="modul7b.html" class="btn"><span class="de">Modul 7b: Skills bauen →</span><span class="en">Module 7b: Building Skills →</span></a>
+</div>
+</div>
+
+<footer role="contentinfo">
+<a href="https://github.com/janrummel/agent-systems"><span class="de">Quellcode auf GitHub</span><span class="en">Source on GitHub</span></a> · Made with ❤️ <span class="de">und Neugier</span><span class="en">and curiosity</span>
+<br><span style="font-size:.7rem"><span class="de">Fragen? <a href="https://linkedin.com/in/janrummel">Schreib mir auf LinkedIn.</a> · Teil des <a href="https://janrummel.github.io/ai-learning/">AI Learning Ökosystems</a></span><span class="en">Questions? <a href="https://linkedin.com/in/janrummel">Message me on LinkedIn.</a> · Part of the <a href="https://janrummel.github.io/ai-learning/">AI Learning Ecosystem</a></span></span>
+</footer>
+
+<script src="glossary.js"></script>
+<script>
+function setLang(l){document.documentElement.lang=l;document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('active'));document.querySelector(`.lang-btn[onclick="setLang('${l}')"]`).classList.add('active');localStorage.setItem('lang',l);if(typeof initGlossary==='function')initGlossary()}
+const s=localStorage.getItem('lang');if(s)setLang(s);
+</script>
+<script src="progress.js"></script>
+</body></html>

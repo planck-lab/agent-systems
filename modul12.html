@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Modul 12: Eigene Orchestrierung — Agent Systems</title>
+<meta name="description" content="Developer only: Planning-Pattern, Orchestration im Detail, Task Decomposition, Sub-Agent Spawning und Ergebnis-Synthese.">
+<meta name="author" content="Jan Rummel">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>🤖</text></svg>">
+<link rel="stylesheet" href="style.css">
+<style>
+.dev-badge{display:inline-block;background:rgba(248,81,73,.15);color:#f85149;font-size:.85rem;font-weight:700;padding:.4rem 1rem;border-radius:20px;border:2px solid rgba(248,81,73,.4);margin-bottom:1rem}
+.orch-flow{display:flex;align-items:center;justify-content:center;gap:.25rem;flex-wrap:wrap;margin:1.5rem 0}
+.orch-box{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:.75rem;text-align:center;min-width:100px}
+.orch-box .o-icon{font-size:1.3rem;margin-bottom:.25rem}
+.orch-box .o-name{font-weight:700;font-size:.8rem}
+.orch-box .o-desc{font-size:.65rem;color:var(--muted);margin-top:.15rem}
+.orch-arrow{color:var(--accent);font-size:1.2rem;font-weight:700}
+.ascii-diagram{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.25rem;margin:1rem 0;font-family:monospace;font-size:.8rem;line-height:1.5;color:var(--muted);white-space:pre;overflow-x:auto}
+.phase-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1rem;margin-bottom:.75rem}
+.phase-card .ph-num{display:inline-block;width:28px;height:28px;line-height:28px;text-align:center;border-radius:50%;background:#f85149;color:white;font-weight:700;font-size:.8rem;margin-right:.5rem}
+.phase-card .ph-name{font-weight:700;font-size:.9rem}
+.phase-card .ph-desc{font-size:.85rem;color:var(--muted);margin-top:.35rem}
+@media(max-width:600px){.orch-flow{flex-direction:column}.orch-arrow{transform:rotate(90deg)}}
+</style>
+</head>
+<body>
+<a href="#main-content" class="skip-link"><span class="de">Zum Inhalt springen</span><span class="en">Skip to content</span></a>
+<div class="lang-switch" role="navigation" aria-label="Language">
+<button class="lang-btn active" onclick="setLang('de')">DE</button>
+<button class="lang-btn" onclick="setLang('en')">EN</button>
+</div>
+
+<div class="progress-bar"><div class="progress-fill" style="width:92%"></div></div>
+
+<div class="container" id="main-content">
+<a href="curriculum.html" class="back-link">← <span class="de">Modulübersicht</span><span class="en">Module overview</span></a>
+
+<p style="color:var(--muted);font-size:.85rem"><span class="de">Modul 12 von 13</span><span class="en">Module 12 of 13</span> · <span class="dev-badge">🔴 Developer only</span> · <span style="color:#f85149"><span class="de">Experte</span><span class="en">Expert</span></span> · 90 min</p>
+
+<h1><span class="de">Eigene Orchestrierung</span><span class="en">Building Your Own Orchestration</span></h1>
+<p class="subtitle"><span class="de">Patterns & Implementierung — Aufgaben zerlegen, Agents koordinieren, Ergebnisse zusammenführen.</span><span class="en">Patterns & implementation — decompose tasks, coordinate agents, synthesize results.</span></p>
+
+<!-- Developer Badge prominent -->
+<div style="background:rgba(248,81,73,.08);border:2px solid rgba(248,81,73,.4);border-radius:12px;padding:1.5rem;margin:1rem 0">
+<h3 style="color:#f85149;font-size:1rem;margin-bottom:.5rem">🔴 <span class="de">Developer-Modul</span><span class="en">Developer Module</span></h3>
+<p style="color:var(--muted);font-size:.9rem"><span class="de">Dieses Modul ist primär Developer-Territorium. <strong>Power-User</strong> können die Patterns konzeptionell verstehen und bestehende Orchestrierungen <strong>konfigurieren/anpassen</strong> — aber nicht from scratch bauen.</span><span class="en">This module is primarily developer territory. <strong>Power users</strong> can understand the patterns conceptually and <strong>configure/adjust</strong> existing orchestrations — but not build from scratch.</span></p>
+</div>
+
+<!-- SMART Learning Goal -->
+<div class="tip">
+<strong>🎯 <span class="de">Lernziel (SMART)</span><span class="en">Learning Goal (SMART)</span></strong><br>
+<span class="de">Innerhalb von 90 min: Orchestrator-Worker-Pattern implementieren, das 2+ Agents über eine gemeinsame Aufgabe koordiniert.</span>
+<span class="en">Within 90 min: Implement an orchestrator-worker pattern that coordinates 2+ agents on a shared task.</span>
+</div>
+
+<!-- Before/After -->
+<div class="comparison" style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0">
+<div class="compare-card bad" style="background:var(--surface);border:1px solid rgba(248,81,73,.4);border-radius:12px;padding:1.25rem">
+<h4 style="font-size:.9rem;margin-bottom:.5rem"><span class="de">❌ Vorher</span><span class="en">❌ Before</span></h4>
+<p style="font-size:.85rem;color:var(--muted)"><span class="de">Orchestrierung = Black Box.</span><span class="en">Orchestration = black box.</span></p>
+</div>
+<div class="compare-card good" style="background:var(--surface);border:1px solid rgba(63,185,80,.4);border-radius:12px;padding:1.25rem">
+<h4 style="font-size:.9rem;margin-bottom:.5rem"><span class="de">✅ Nachher</span><span class="en">✅ After</span></h4>
+<p style="font-size:.85rem;color:var(--muted)"><span class="de">Du baust eigene Orchestrierungen — Aufgaben-Zerlegung, parallele Spawns, Ergebnis-Synthese.</span><span class="en">You build your own orchestrations — task decomposition, parallel spawns, result synthesis.</span></p>
+</div>
+</div>
+
+<!-- Planning as Pattern 3/4 -->
+<h2><span class="de">Planning: Kern-Pattern 3/4 (Ng, 2024)</span><span class="en">Planning: Core Pattern 3/4 (Ng, 2024)</span></h2>
+
+<p style="color:var(--muted);font-size:.9rem"><span class="de">Andrew Ng's drittes agentic Design Pattern: <strong>Planning</strong> — der Agent zerlegt komplexe Aufgaben in Teilschritte, bevor er handelt. Das ist die Grundlage jeder Orchestrierung.</span><span class="en">Andrew Ng's third agentic design pattern: <strong>Planning</strong> — the agent decomposes complex tasks into sub-steps before acting. This is the foundation of every orchestration.</span></p>
+
+<div class="orch-flow">
+<div class="orch-box"><div class="o-icon">📋</div><div class="o-name"><span class="de">Aufgabe</span><span class="en">Task</span></div><div class="o-desc"><span class="de">Komplexe Anfrage</span><span class="en">Complex request</span></div></div>
+<div class="orch-arrow">→</div>
+<div class="orch-box"><div class="o-icon">✂️</div><div class="o-name">Decompose</div><div class="o-desc"><span class="de">In Teilschritte zerlegen</span><span class="en">Break into sub-steps</span></div></div>
+<div class="orch-arrow">→</div>
+<div class="orch-box"><div class="o-icon">🚀</div><div class="o-name">Spawn</div><div class="o-desc"><span class="de">Sub-Agents starten</span><span class="en">Launch sub-agents</span></div></div>
+<div class="orch-arrow">→</div>
+<div class="orch-box"><div class="o-icon">🔄</div><div class="o-name">Synthesize</div><div class="o-desc"><span class="de">Ergebnisse zusammenführen</span><span class="en">Merge results</span></div></div>
+</div>
+
+<div class="source">📚 Ng (2024): "Agentic Design Patterns" <span class="tier-badge tier-c" style="font-size:.65rem;padding:.1rem .4rem;border-radius:6px;font-weight:700;background:rgba(210,153,34,.15);color:var(--orange)">Tier C</span></div>
+
+<!-- Orchestration Patterns Detail -->
+<h2><span class="de">Orchestration Patterns im Detail</span><span class="en">Orchestration Patterns in Detail</span></h2>
+
+<div class="phase-card">
+<span class="ph-num">1</span><span class="ph-name">Sequential (Pipeline)</span>
+<div class="ph-desc"><span class="de">Agent A → Agent B → Agent C. Jeder verarbeitet den Output des Vorgängers. <strong>Einfach, deterministisch, gut debugbar.</strong></span><span class="en">Agent A → Agent B → Agent C. Each processes the predecessor's output. <strong>Simple, deterministic, easy to debug.</strong></span></div>
+</div>
+
+<div class="ascii-diagram">Sequential Pipeline:
+  ┌───────────────┐    ┌───────────────┐    ┌───────────────┐
+  │   Researcher  │───▶│   Summarizer  │───▶│   Formatter   │
+  │  (Web Search) │    │  (Condensing) │    │  (Markdown)   │
+  └───────────────┘    └───────────────┘    └───────────────┘
+       Input                                     Output</div>
+
+<div class="phase-card">
+<span class="ph-num">2</span><span class="ph-name">Concurrent (Fan-Out / Fan-In)</span>
+<div class="ph-desc"><span class="de">Mehrere Agents parallel → Ergebnisse zusammenführen. <strong>Schneller, aber komplexere Error-Handling.</strong></span><span class="en">Multiple agents in parallel → merge results. <strong>Faster, but more complex error handling.</strong></span></div>
+</div>
+
+<div class="ascii-diagram">Concurrent Fan-Out / Fan-In:
+                    ┌──────────────────┐
+               ┌───▶│ Agent A: arxiv   │───┐
+               │    └──────────────────┘   │
+  ┌─────────┐  │    ┌──────────────────┐   │    ┌───────────┐
+  │  Main   │──┼───▶│ Agent B: web     │───┼───▶│  Merge &  │
+  │  Agent  │  │    └──────────────────┘   │    │ Synthesize│
+  └─────────┘  │    ┌──────────────────┐   │    └───────────┘
+               └───▶│ Agent C: news    │───┘
+                    └──────────────────┘</div>
+
+<div class="phase-card">
+<span class="ph-num">3</span><span class="ph-name">Handoff</span>
+<div class="ph-desc"><span class="de">Agent A erkennt: "Das kann ich nicht" → delegiert mit vollem Kontext an Agent B. <strong>Intelligent routing basierend auf Kompetenz.</strong></span><span class="en">Agent A recognizes: "I can't do this" → delegates with full context to Agent B. <strong>Intelligent routing based on competence.</strong></span></div>
+</div>
+
+<div class="phase-card">
+<span class="ph-num">4</span><span class="ph-name">Orchestrator-Worker</span>
+<div class="ph-desc"><span class="de">Ein Manager-Agent plant, verteilt und konsolidiert. Worker-Agents führen aus. <strong>Am mächtigsten, aber am komplexesten.</strong></span><span class="en">A manager agent plans, distributes, and consolidates. Worker agents execute. <strong>Most powerful, but most complex.</strong></span></div>
+</div>
+
+<div class="ascii-diagram">Orchestrator-Worker Pattern:
+  ┌─────────────────────────────────────────────┐
+  │              ORCHESTRATOR                    │
+  │  1. Decompose task into sub-tasks           │
+  │  2. Spawn workers                           │
+  │  3. Monitor progress                        │
+  │  4. Handle failures (retry/skip/escalate)   │
+  │  5. Synthesize results                      │
+  └──────────┬──────────┬──────────┬────────────┘
+             │          │          │
+             ▼          ▼          ▼
+       ┌──────────┐┌──────────┐┌──────────┐
+       │ Worker 1 ││ Worker 2 ││ Worker 3 │
+       │ (Task A) ││ (Task B) ││ (Task C) │
+       └─────┬────┘└─────┬────┘└─────┬────┘
+             │          │          │
+             └──────────┼──────────┘
+                        ▼
+               ┌────────────────┐
+               │ Result Merge   │
+               └────────────────┘</div>
+
+<!-- Task Decomposition -->
+<h2><span class="de">Task Decomposition, Spawning & Synthese</span><span class="en">Task Decomposition, Spawning & Synthesis</span></h2>
+
+<div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.5rem;margin:1rem 0">
+<h3 style="font-size:.95rem;margin-bottom:.75rem"><span class="de">Beispiel: Research-Orchestrierung</span><span class="en">Example: Research Orchestration</span></h3>
+<div style="font-family:monospace;font-size:.8rem;color:var(--muted);line-height:1.6">
+<span class="de">
+<strong style="color:var(--text)">Aufgabe:</strong> "Recherchiere AI Agents in Healthcare"<br><br>
+<strong style="color:var(--text)">1. Decompose:</strong><br>
+&nbsp;&nbsp;→ Sub-Task A: "Aktuelle Papers auf arXiv zu AI Agents Healthcare"<br>
+&nbsp;&nbsp;→ Sub-Task B: "Industriebeispiele und Startups"<br>
+&nbsp;&nbsp;→ Sub-Task C: "Regulatorische Herausforderungen (FDA, EU AI Act)"<br><br>
+<strong style="color:var(--text)">2. Spawn:</strong><br>
+&nbsp;&nbsp;sessions_spawn(task: Sub-Task A, model: "sonnet", timeout: 180)<br>
+&nbsp;&nbsp;sessions_spawn(task: Sub-Task B, model: "haiku", timeout: 120)<br>
+&nbsp;&nbsp;sessions_spawn(task: Sub-Task C, model: "sonnet", timeout: 180)<br><br>
+<strong style="color:var(--text)">3. Synthesize:</strong><br>
+&nbsp;&nbsp;→ Ergebnisse zusammenführen, Duplikate entfernen, Briefing erstellen
+</span>
+<span class="en">
+<strong style="color:var(--text)">Task:</strong> "Research AI Agents in Healthcare"<br><br>
+<strong style="color:var(--text)">1. Decompose:</strong><br>
+&nbsp;&nbsp;→ Sub-Task A: "Recent papers on arXiv about AI Agents Healthcare"<br>
+&nbsp;&nbsp;→ Sub-Task B: "Industry examples and startups"<br>
+&nbsp;&nbsp;→ Sub-Task C: "Regulatory challenges (FDA, EU AI Act)"<br><br>
+<strong style="color:var(--text)">2. Spawn:</strong><br>
+&nbsp;&nbsp;sessions_spawn(task: Sub-Task A, model: "sonnet", timeout: 180)<br>
+&nbsp;&nbsp;sessions_spawn(task: Sub-Task B, model: "haiku", timeout: 120)<br>
+&nbsp;&nbsp;sessions_spawn(task: Sub-Task C, model: "sonnet", timeout: 180)<br><br>
+<strong style="color:var(--text)">3. Synthesize:</strong><br>
+&nbsp;&nbsp;→ Merge results, remove duplicates, create briefing
+</span>
+</div>
+</div>
+
+<!-- Error Handling -->
+<h2><span class="de">Error Handling: Wenn Sub-Agents scheitern</span><span class="en">Error Handling: When Sub-Agents Fail</span></h2>
+
+<div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.5rem;margin:1rem 0">
+<p style="font-size:.9rem;margin-bottom:.5rem"><strong>🔄 Retry:</strong> <span style="color:var(--muted)"><span class="de">Sub-Agent nochmal starten (max 2x). Sinnvoll bei Timeouts.</span><span class="en">Restart sub-agent (max 2x). Makes sense for timeouts.</span></span></p>
+<p style="font-size:.9rem;margin-bottom:.5rem"><strong>⏭️ Skip:</strong> <span style="color:var(--muted)"><span class="de">Teilaufgabe überspringen, Ergebnis ohne diesen Teil zusammenbauen.</span><span class="en">Skip sub-task, build result without this part.</span></span></p>
+<p style="font-size:.9rem"><strong>🚨 Escalate:</strong> <span style="color:var(--muted)"><span class="de">An den Menschen eskalieren: "Sub-Agent C gescheitert — hier das Teilergebnis."</span><span class="en">Escalate to human: "Sub-agent C failed — here's the partial result."</span></span></p>
+</div>
+
+<!-- Track Split: Hands-on -->
+<h2><span class="de">🛠️ Hands-on</span><span class="en">🛠️ Hands-on</span></h2>
+
+<div class="step">
+<div class="step-header">
+<div class="step-num" style="background:var(--orange)">🟠</div>
+<div class="step-title">Power-User</div>
+</div>
+<p style="color:var(--muted);font-size:.9rem"><span class="de"><strong>Hinweis:</strong> Power-User können bestehende Orchestrierungen konfigurieren — nicht from scratch bauen.</span><span class="en"><strong>Note:</strong> Power users can configure existing orchestrations — not build from scratch.</span></p>
+<ol style="color:var(--muted);font-size:.9rem;margin-top:.5rem">
+<li><span class="de">Bestehende Agent-Rollen anpassen (SOUL.md, AGENTS.md)</span><span class="en">Adjust existing agent roles (SOUL.md, AGENTS.md)</span></li>
+<li><span class="de">Routing-Regeln konfigurieren: Welcher Agent bekommt welche Aufgabe?</span><span class="en">Configure routing rules: Which agent gets which task?</span></li>
+<li><span class="de">Orchestration-Pattern konzeptionell beschreiben (Diagramm)</span><span class="en">Describe orchestration pattern conceptually (diagram)</span></li>
+</ol>
+<p style="color:var(--muted);font-size:.85rem;margin-top:.75rem"><a href="#" class="btn" style="background: var(--orange);">Open in Colab →</a></p>
+</div>
+
+<div class="step">
+<div class="step-header">
+<div class="step-num" style="background:#f85149">🔴</div>
+<div class="step-title">Developer</div>
+</div>
+<p style="color:var(--muted);font-size:.9rem"><span class="de"><strong>Aufgabe:</strong> Orchestrator-Worker-Flow implementieren.</span><span class="en"><strong>Task:</strong> Implement an orchestrator-worker flow.</span></p>
+<ol style="color:var(--muted);font-size:.9rem;margin-top:.5rem">
+<li><span class="de">Haupt-Agent zerlegt Research-Frage in 2–3 Teilaufgaben</span><span class="en">Main agent decomposes research question into 2–3 sub-tasks</span></li>
+<li><span class="de">Spawnt 2 Sub-Agents parallel (<code>sessions_spawn</code>)</span><span class="en">Spawns 2 sub-agents in parallel (<code>sessions_spawn</code>)</span></li>
+<li><span class="de">Konsolidiert Ergebnisse automatisch in ein Briefing</span><span class="en">Consolidates results automatically into a briefing</span></li>
+<li><span class="de">Error-Handling: Was passiert wenn ein Sub-Agent scheitert?</span><span class="en">Error handling: What happens when a sub-agent fails?</span></li>
+</ol>
+</div>
+
+<!-- HITL Box -->
+<div style="background:rgba(63,185,80,.08);border:1px solid rgba(63,185,80,.3);border-radius:12px;padding:1.5rem;margin:2rem 0">
+<h3 style="color:var(--green);font-size:1rem;margin-bottom:.5rem">🟢 HITL <span class="de">in diesem Modul</span><span class="en">in this module</span></h3>
+<p style="color:var(--muted);font-size:.9rem"><span class="de">Mensch definiert Zerlegung, überwacht Zwischen-Ergebnisse, approved Synthese. <strong>Fahrzeugflotte managen — nicht jedes Auto selbst fahren.</strong></span><span class="en">Human defines decomposition, monitors intermediate results, approves synthesis. <strong>Managing a fleet — not driving every car yourself.</strong></span></p>
+</div>
+
+<!-- Rubric -->
+<h2><span class="de">📊 Rubrik</span><span class="en">📊 Rubric</span></h2>
+<div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.5rem">
+<p style="margin-bottom:.5rem"><span style="color:var(--green)">✅ <strong>Basis:</strong></span> <span style="color:var(--muted);font-size:.9rem"><span class="de">Orchestrator-Worker-Pattern implementiert, 2+ Agents koordiniert</span><span class="en">Orchestrator-worker pattern implemented, 2+ agents coordinated</span></span></p>
+<p style="margin-bottom:.5rem"><span style="color:var(--orange)">⭐ <strong><span class="de">Fortgeschritten:</span><span class="en">Advanced:</span></strong></span> <span style="color:var(--muted);font-size:.9rem"><span class="de">Error-Handling bei Sub-Agent-Fail, Ergebnis-Synthese dokumentiert</span><span class="en">Error handling on sub-agent failure, result synthesis documented</span></span></p>
+<p><span style="color:var(--accent)">🏆 <strong><span class="de">Experte:</span><span class="en">Expert:</span></strong></span> <span style="color:var(--muted);font-size:.9rem"><span class="de">Orchestrierung auf anderes Framework übertragen (LangGraph, CrewAI) ODER komplexes Concurrent-Pattern gebaut</span><span class="en">Orchestration transferred to another framework (LangGraph, CrewAI) OR complex concurrent pattern built</span></span></p>
+</div>
+
+<!-- Glossary Inline -->
+<h2><span class="de">📖 Begriffe in diesem Modul</span><span class="en">📖 Terms in this module</span></h2>
+<div class="glossary">
+<dl>
+<dt>Planning (Pattern)</dt><dd><span class="de">Agent zerlegt komplexe Aufgaben in Teilschritte, bevor er handelt (Ng, 2024 — Pattern 3/4).</span><span class="en">Agent decomposes complex tasks into sub-steps before acting (Ng, 2024 — Pattern 3/4).</span></dd>
+<dt>Task Decomposition</dt><dd><span class="de">Zerlegung einer komplexen Aufgabe in unabhängige, parallelisierbare Teilaufgaben.</span><span class="en">Breaking a complex task into independent, parallelizable sub-tasks.</span></dd>
+<dt>Sub-Agent Spawning</dt><dd><span class="de">Dynamisches Starten von spezialisierten Agents für Teilaufgaben.</span><span class="en">Dynamically launching specialized agents for sub-tasks.</span></dd>
+<dt><span class="de">Ergebnis-Synthese</span><span class="en">Result Synthesis</span></dt><dd><span class="de">Zusammenführung der Teilergebnisse zu einem kohärenten Gesamtergebnis.</span><span class="en">Merging partial results into a coherent final result.</span></dd>
+</dl>
+</div>
+
+<!-- Sources -->
+<h2><span class="de">📚 Quellen</span><span class="en">📚 Sources</span></h2>
+<div class="source">Ng (2024): "Agentic Design Patterns" <span class="tier-badge tier-c" style="font-size:.65rem;padding:.1rem .4rem;border-radius:6px;font-weight:700;background:rgba(210,153,34,.15);color:var(--orange)">Tier C</span></div>
+<div class="source">Microsoft (2025): Multi-Agent Orchestration Patterns Documentation <span class="tier-badge tier-c" style="font-size:.65rem;padding:.1rem .4rem;border-radius:6px;font-weight:700;background:rgba(210,153,34,.15);color:var(--orange)">Tier C</span></div>
+<div class="source">OpenAI (2025): Swarm — Orchestration Framework <span class="tier-badge tier-c" style="font-size:.65rem;padding:.1rem .4rem;border-radius:6px;font-weight:700;background:rgba(210,153,34,.15);color:var(--orange)">Tier C</span></div>
+
+<!-- Nav Footer -->
+<div class="nav-footer">
+<a href="modul11.html" class="btn" style="background:var(--surface);color:var(--text);border:1px solid var(--border)">← <span class="de">Modul 11: Sicherheit & Trust</span><span class="en">Module 11: Security & Trust</span></a>
+<a href="modul13.html" class="btn"><span class="de">Modul 13: Production Readiness →</span><span class="en">Module 13: Production Readiness →</span></a>
+</div>
+</div>
+
+<footer role="contentinfo">
+<a href="https://github.com/janrummel/agent-systems"><span class="de">Quellcode auf GitHub</span><span class="en">Source on GitHub</span></a> · Made with ❤️ <span class="de">und Neugier</span><span class="en">and curiosity</span>
+<br><span style="font-size:.7rem"><span class="de">Fragen? <a href="https://linkedin.com/in/janrummel">Schreib mir auf LinkedIn.</a> · Teil des <a href="https://janrummel.github.io/ai-learning/">AI Learning Ökosystems</a></span><span class="en">Questions? <a href="https://linkedin.com/in/janrummel">Message me on LinkedIn.</a> · Part of the <a href="https://janrummel.github.io/ai-learning/">AI Learning Ecosystem</a></span></span>
+</footer>
+
+<script src="glossary.js"></script>
+<script>
+function setLang(l){document.documentElement.lang=l;document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('active'));document.querySelector(`.lang-btn[onclick="setLang('${l}')"]`).classList.add('active');localStorage.setItem('lang',l);if(typeof initGlossary==='function')initGlossary()}
+const s=localStorage.getItem('lang');if(s)setLang(s);
+</script>
+<script src="progress.js"></script>
+</body></html>

@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Modul 7b: Skills bauen — Agent Systems</title>
+<meta name="description" content="Eigene Skills entwickeln: SKILL.md Anatomie, YAML Frontmatter, Shell-Scripts — der Developer-Pfad zur Skill-Erstellung.">
+<meta name="author" content="Jan Rummel">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>🤖</text></svg>">
+<link rel="stylesheet" href="style.css">
+<style>
+.dev-badge{display:inline-block;background:rgba(248,81,73,.15);color:#f85149;font-weight:700;font-size:.8rem;padding:.3rem .8rem;border-radius:8px;border:1px solid rgba(248,81,73,.3);margin-bottom:1rem}
+.anatomy-section{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.5rem;margin:1rem 0}
+.anatomy-section h4{font-size:.9rem;margin-bottom:.5rem}
+.anatomy-section p{font-size:.85rem;color:var(--muted)}
+.config-block{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.25rem;margin:1rem 0;font-family:'SF Mono',Monaco,Consolas,monospace;font-size:.8rem;line-height:1.6;overflow-x:auto;white-space:pre-wrap}
+.file-structure{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.25rem;margin:1rem 0;font-family:'SF Mono',Monaco,Consolas,monospace;font-size:.8rem;line-height:1.8}
+.pu-notice{background:rgba(210,153,34,.08);border:1px solid rgba(210,153,34,.3);border-radius:12px;padding:1.5rem;margin:1.5rem 0}
+.pu-notice h3{color:var(--orange);font-size:1rem;margin-bottom:.5rem}
+.build-steps{counter-reset:step-counter;list-style:none;padding:0;margin:1.5rem 0}
+.build-steps li{counter-increment:step-counter;padding:.75rem 0 .75rem 3rem;position:relative;border-bottom:1px solid var(--border);font-size:.9rem;color:var(--muted)}
+.build-steps li:last-child{border-bottom:none}
+.build-steps li::before{content:counter(step-counter);position:absolute;left:0;top:.75rem;background:var(--accent);color:#0d1117;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.75rem}
+</style>
+</head>
+<body>
+<a href="#main-content" class="skip-link"><span class="de">Zum Inhalt springen</span><span class="en">Skip to content</span></a>
+<div class="lang-switch" role="navigation" aria-label="Language">
+<button class="lang-btn active" onclick="setLang('de')">DE</button>
+<button class="lang-btn" onclick="setLang('en')">EN</button>
+</div>
+
+<div class="progress-bar"><div class="progress-fill" style="width:54%"></div></div>
+
+<div class="container" id="main-content">
+<a href="curriculum.html" class="back-link">← <span class="de">Modulübersicht</span><span class="en">Module overview</span></a>
+
+<p style="color:var(--muted);font-size:.85rem"><span class="de">Modul 7b von 13</span><span class="en">Module 7b of 13</span> · <span style="font-size:.7rem;padding:.15rem .5rem;border-radius:10px;font-weight:600;background:rgba(248,81,73,.15);color:#f85149">🔴 Developer</span> · <span style="color:var(--orange)"><span class="de">Fortgeschritten</span><span class="en">Advanced</span></span> · 60 min</p>
+
+<div class="dev-badge">🔴 Developer only</div>
+
+<h1><span class="de">Skills bauen — Eigene Fähigkeiten entwickeln</span><span class="en">Building Skills — Developing Custom Capabilities</span></h1>
+<p class="subtitle"><span class="de">Von der Idee zum eigenen Skill: SKILL.md schreiben, Shell-Script bauen, auf ClawHub publizieren.</span><span class="en">From idea to custom skill: Write SKILL.md, build shell script, publish to ClawHub.</span></p>
+
+<!-- Power-User Notice -->
+<div class="pu-notice">
+<h3>🟠 <span class="de">Power-User Hinweis</span><span class="en">Power-User Notice</span></h3>
+<p style="color:var(--muted);font-size:.9rem"><span class="de">Dieses Modul ist primär für Developer. Als Power-User: <strong>Lesen und verstehen reicht.</strong> Du kannst bestehende Skills anpassen, indem du die <code>SKILL.md</code> editierst — das ist der Power-User-Pfad. Eigenes Shell-Scripting ist nicht nötig.</span><span class="en">This module is primarily for developers. As a power user: <strong>Reading and understanding is enough.</strong> You can customize existing skills by editing the <code>SKILL.md</code> — that's the power-user path. No shell scripting needed.</span></p>
+</div>
+
+<!-- SMART Learning Goal -->
+<div class="tip">
+<strong>🎯 <span class="de">Lernziel (SMART)</span><span class="en">Learning Goal (SMART)</span></strong><br>
+<span class="de">Innerhalb von 60 min: Eigenen Skill (SKILL.md + Script) entwickeln, der korrekt aufgerufen wird.</span>
+<span class="en">Within 60 min: Develop custom skill (SKILL.md + script) that gets correctly invoked.</span>
+</div>
+
+<!-- SKILL.md Anatomy -->
+<h2><span class="de">SKILL.md Anatomie</span><span class="en">SKILL.md Anatomy</span></h2>
+
+<p style="color:var(--muted);font-size:.9rem"><span class="de">Jeder Skill besteht aus einer <code>SKILL.md</code>-Datei. Diese hat zwei Teile: <strong>YAML-Frontmatter</strong> (Metadaten) und <strong>Instructions</strong> (was der Agent tun soll).</span><span class="en">Every skill consists of a <code>SKILL.md</code> file. This has two parts: <strong>YAML frontmatter</strong> (metadata) and <strong>instructions</strong> (what the agent should do).</span></p>
+
+<div class="config-block"><span class="de">---
+name: wetter-briefing
+version: 1.0.0
+description: Tägliches Wetter-Briefing mit Empfehlung
+author: dein-name
+triggers:
+  - "Wetter"
+  - "Wie wird das Wetter?"
+  - "/wetter"
+tools_required:
+  - web_search
+  - web_fetch
+tags: [wetter, daily, briefing]
+---
+
+# Wetter-Briefing
+
+## Ablauf
+1. Lies die Zeitzone aus USER.md
+2. Suche nach dem aktuellen Wetter am Standort des Users
+3. Fasse zusammen: Temperatur, Bewölkung, Niederschlag
+4. Gib eine Empfehlung (z.B. "Regenschirm mitnehmen")
+5. Halte die Antwort unter 3 Sätzen
+
+## Format
+- Emoji am Anfang: ☀️🌤️🌧️❄️
+- Temperatur in °C
+- Empfehlung kursiv
+
+## Beispiel-Output
+☀️ Berlin: 18°C, sonnig, leichte Brise.
+*Perfektes Jogging-Wetter — ab nach draußen!*</span><span class="en">---
+name: weather-briefing
+version: 1.0.0
+description: Daily weather briefing with recommendation
+author: your-name
+triggers:
+  - "Weather"
+  - "What's the weather like?"
+  - "/weather"
+tools_required:
+  - web_search
+  - web_fetch
+tags: [weather, daily, briefing]
+---
+
+# Weather Briefing
+
+## Steps
+1. Read timezone from USER.md
+2. Search for current weather at user's location
+3. Summarize: temperature, cloud cover, precipitation
+4. Give a recommendation (e.g. "Take an umbrella")
+5. Keep the answer under 3 sentences
+
+## Format
+- Emoji at the start: ☀️🌤️🌧️❄️
+- Temperature in °C
+- Recommendation in italics
+
+## Example Output
+☀️ Berlin: 18°C, sunny, light breeze.
+*Perfect jogging weather — get outside!*</span></div>
+
+<div class="anatomy-section">
+<h4><span class="de">📋 YAML-Frontmatter (Pflichtfelder)</span><span class="en">📋 YAML Frontmatter (Required Fields)</span></h4>
+<p><span class="de"><code>name</code> — Eindeutiger Skill-Name · <code>version</code> — Semantic Versioning · <code>description</code> — Was der Skill macht · <code>triggers</code> — Wann wird er aktiviert? · <code>tools_required</code> — Welche Tools braucht er?</span><span class="en"><code>name</code> — Unique skill name · <code>version</code> — Semantic versioning · <code>description</code> — What the skill does · <code>triggers</code> — When is it activated? · <code>tools_required</code> — Which tools does it need?</span></p>
+</div>
+
+<div class="anatomy-section">
+<h4><span class="de">📝 Instructions (der Kern)</span><span class="en">📝 Instructions (the core)</span></h4>
+<p><span class="de">Klar formulierte Schritte, die der Agent befolgt. Format: Markdown mit nummerierten Schritten. Je präziser, desto konsistenter das Ergebnis. <strong>Tipp:</strong> Immer ein Beispiel-Output mitliefern — das verbessert die Qualität erheblich.</span><span class="en">Clearly formulated steps for the agent to follow. Format: Markdown with numbered steps. The more precise, the more consistent the result. <strong>Tip:</strong> Always include example output — this significantly improves quality.</span></p>
+</div>
+
+<!-- File Structure -->
+<h2><span class="de">Skill-Verzeichnisstruktur</span><span class="en">Skill Directory Structure</span></h2>
+
+<div class="file-structure">
+<span class="de">skills/
+├── wetter-briefing/
+│   ├── SKILL.md          ← Instruktionen + Metadaten
+│   ├── wetter.sh          ← Optionales Shell-Script
+│   └── README.md          ← Dokumentation für ClawHub
+├── quellen-check/
+│   ├── SKILL.md
+│   └── verify.sh
+└── create-content/
+    └── SKILL.md           ← Manche Skills brauchen kein Script</span><span class="en">skills/
+├── weather-briefing/
+│   ├── SKILL.md          ← Instructions + metadata
+│   ├── weather.sh         ← Optional shell script
+│   └── README.md          ← Documentation for ClawHub
+├── source-check/
+│   ├── SKILL.md
+│   └── verify.sh
+└── create-content/
+    └── SKILL.md           ← Some skills don't need a script</span>
+</div>
+
+<!-- Shell Script -->
+<h2><span class="de">Shell-Script erstellen</span><span class="en">Creating a Shell Script</span></h2>
+
+<p style="color:var(--muted);font-size:.9rem"><span class="de">Manche Skills brauchen ein Script für Aufgaben, die der Agent nicht direkt kann (z.B. API-Aufrufe mit speziellem Format, Datei-Verarbeitung):</span><span class="en">Some skills need a script for tasks the agent can't do directly (e.g. API calls with special format, file processing):</span></p>
+
+<div class="config-block"><span class="de">#!/bin/bash
+# wetter.sh — Wetter-Abfrage mit formatierter Ausgabe
+# Usage: wetter.sh [STADT]
+
+CITY="${1:-Berlin}"
+
+# API-Aufruf (Beispiel mit wttr.in)
+RESULT=$(curl -s "wttr.in/${CITY}?format=3" 2>/dev/null)
+
+if [ -z "$RESULT" ]; then
+    echo "❌ Wetter-Abfrage fehlgeschlagen für: $CITY"
+    exit 1
+fi
+
+echo "$RESULT"</span><span class="en">#!/bin/bash
+# weather.sh — Weather query with formatted output
+# Usage: weather.sh [CITY]
+
+CITY="${1:-Berlin}"
+
+# API call (example with wttr.in)
+RESULT=$(curl -s "wttr.in/${CITY}?format=3" 2>/dev/null)
+
+if [ -z "$RESULT" ]; then
+    echo "❌ Weather query failed for: $CITY"
+    exit 1
+fi
+
+echo "$RESULT"</span></div>
+
+<p style="color:var(--muted);font-size:.85rem"><span class="de"><strong>Wichtig:</strong> <code>chmod +x wetter.sh</code> nicht vergessen! Und immer Error-Handling einbauen.</span><span class="en"><strong>Important:</strong> Don't forget <code>chmod +x weather.sh</code>! And always include error handling.</span></p>
+
+<!-- Build Steps -->
+<h2><span class="de">Skill bauen: Schritt für Schritt</span><span class="en">Building a Skill: Step by Step</span></h2>
+
+<ol class="build-steps">
+<li><span class="de"><strong>Idee formulieren:</strong> Was soll der Skill können? Welche Trigger? Welche Tools?</span><span class="en"><strong>Formulate idea:</strong> What should the skill do? Which triggers? Which tools?</span></li>
+<li><span class="de"><strong>SKILL.md schreiben:</strong> YAML-Frontmatter + klare Schritt-für-Schritt-Instruktionen + Beispiel-Output</span><span class="en"><strong>Write SKILL.md:</strong> YAML frontmatter + clear step-by-step instructions + example output</span></li>
+<li><span class="de"><strong>Shell-Script erstellen</strong> (falls nötig): Error-Handling, Exit-Codes, <code>chmod +x</code></span><span class="en"><strong>Create shell script</strong> (if needed): Error handling, exit codes, <code>chmod +x</code></span></li>
+<li><span class="de"><strong>Routing ergänzen:</strong> Trigger in <code>AGENTS.md</code> Skill-Routing-Tabelle eintragen</span><span class="en"><strong>Add routing:</strong> Enter triggers in <code>AGENTS.md</code> skill routing table</span></li>
+<li><span class="de"><strong>Testen:</strong> 5 verschiedene Formulierungen → Wird der Skill korrekt getriggert?</span><span class="en"><strong>Test:</strong> 5 different phrasings → Is the skill correctly triggered?</span></li>
+<li><span class="de"><strong>Publizieren</strong> (optional): README.md schreiben, auf ClawHub veröffentlichen</span><span class="en"><strong>Publish</strong> (optional): Write README.md, publish to ClawHub</span></li>
+</ol>
+
+<!-- Hands-on -->
+<h2><span class="de">🛠️ Hands-on</span><span class="en">🛠️ Hands-on</span></h2>
+
+<div class="step">
+<div class="step-header">
+<div class="step-num" style="background:#f85149">🔴</div>
+<div class="step-title">Developer</div>
+</div>
+<p style="color:var(--muted);font-size:.9rem"><span class="de"><strong>Eigenen Skill from scratch bauen:</strong></span><span class="en"><strong>Build your own skill from scratch:</strong></span></p>
+<ol style="color:var(--muted);font-size:.9rem;margin-top:.5rem">
+<li><span class="de">Wähle eine Aufgabe, die dein Agent regelmäßig braucht</span><span class="en">Choose a task your agent regularly needs</span></li>
+<li><span class="de">Schreibe <code>SKILL.md</code> mit Frontmatter + Instruktionen + Beispiel</span><span class="en">Write <code>SKILL.md</code> with frontmatter + instructions + example</span></li>
+<li><span class="de">Erstelle ein Shell-Script mit Error-Handling</span><span class="en">Create a shell script with error handling</span></li>
+<li><span class="de">Füge Routing in AGENTS.md hinzu</span><span class="en">Add routing to AGENTS.md</span></li>
+<li><span class="de">Teste mit 5 verschiedenen Trigger-Formulierungen</span><span class="en">Test with 5 different trigger phrasings</span></li>
+</ol>
+
+<a href="#" class="btn" style="background: var(--orange);">Open in Colab →</a>
+</div>
+
+<div class="step">
+<div class="step-header">
+<div class="step-num" style="background:var(--orange)">🟠</div>
+<div class="step-title">Power-User</div>
+</div>
+<p style="color:var(--muted);font-size:.9rem"><span class="de"><strong>Bestehenden Skill anpassen:</strong></span><span class="en"><strong>Customize an existing skill:</strong></span></p>
+<ol style="color:var(--muted);font-size:.9rem;margin-top:.5rem">
+<li><span class="de">Wähle einen installierten Skill</span><span class="en">Choose an installed skill</span></li>
+<li><span class="de">Lies die <code>SKILL.md</code> und verstehe die Struktur</span><span class="en">Read the <code>SKILL.md</code> and understand the structure</span></li>
+<li><span class="de">Ändere die Instruktionen (z.B. Format, Sprache, Beispiel-Output)</span><span class="en">Modify the instructions (e.g. format, language, example output)</span></li>
+<li><span class="de">Teste: Wirkt sich die Änderung aus?</span><span class="en">Test: Does the change take effect?</span></li>
+</ol>
+</div>
+
+<!-- HITL Box -->
+<div style="background:rgba(63,185,80,.08);border:1px solid rgba(63,185,80,.3);border-radius:12px;padding:1.5rem;margin:2rem 0">
+<h3 style="color:var(--green);font-size:1rem;margin-bottom:.5rem">🟢 HITL <span class="de">in diesem Modul</span><span class="en">in this module</span></h3>
+<p style="color:var(--muted);font-size:.9rem"><span class="de">Skills sind von Menschen geschrieben, für Agents ausgeführt. <strong>Du schreibst das Kochrezept — der Agent kocht.</strong> Jede Instruktion in SKILL.md ist eine menschliche Entscheidung über Agent-Verhalten.</span><span class="en">Skills are written by humans, executed by agents. <strong>You write the recipe — the agent cooks.</strong> Every instruction in SKILL.md is a human decision about agent behavior.</span></p>
+</div>
+
+<!-- CLT Split Rationale -->
+<div style="background:rgba(88,166,255,.05);border:1px solid rgba(88,166,255,.2);border-radius:12px;padding:1.25rem;margin:1.5rem 0">
+<p style="font-size:.85rem;color:var(--muted)"><span class="de"><strong>Warum M7a (nutzen) und M7b (bauen) getrennt?</strong> Bloom's Taxonomy: „Anwenden" (M7a) vs. „Erstellen" (M7b) sind zwei kognitive Stufen auseinander. Cognitive Load Theory (Sweller, 2019) argumentiert: Beide in einem Modul würde Power-User überfordern und Developer ablenken. Die Trennung respektiert das.</span><span class="en"><strong>Why M7a (using) and M7b (building) separate?</strong> Bloom's Taxonomy: "Apply" (M7a) vs. "Create" (M7b) are two cognitive levels apart. Cognitive Load Theory (Sweller, 2019) argues: Both in one module would overwhelm power users and distract developers. The separation respects this.</span></p>
+</div>
+
+<!-- Rubric -->
+<h2><span class="de">📊 Rubrik</span><span class="en">📊 Rubric</span></h2>
+<div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.5rem">
+<p style="margin-bottom:.5rem"><span style="color:var(--green)">✅ <strong>Basis:</strong></span> <span style="color:var(--muted);font-size:.9rem"><span class="de">Eigener Skill (SKILL.md + Script) funktioniert, wird korrekt aufgerufen</span><span class="en">Custom skill (SKILL.md + script) works, gets correctly invoked</span></span></p>
+<p style="margin-bottom:.5rem"><span style="color:var(--orange)">⭐ <strong><span class="de">Fortgeschritten:</span><span class="en">Advanced:</span></strong></span> <span style="color:var(--muted);font-size:.9rem"><span class="de">Skill mit Parameter-Handling und Fehler-Handling, publiziert auf ClawHub</span><span class="en">Skill with parameter handling and error handling, published on ClawHub</span></span></p>
+<p><span style="color:var(--accent)">🏆 <strong><span class="de">Experte:</span><span class="en">Expert:</span></strong></span> <span style="color:var(--muted);font-size:.9rem"><span class="de">Skill framework-agnostisch formuliert (z.B. MCP-kompatibel) ODER komplexes Skill-Chaining dokumentiert</span><span class="en">Skill formulated framework-agnostically (e.g. MCP-compatible) OR complex skill chaining documented</span></span></p>
+</div>
+
+<!-- Glossary -->
+<h2><span class="de">📖 Begriffe in diesem Modul</span><span class="en">📖 Terms in this module</span></h2>
+<div class="glossary">
+<dl>
+<dt>YAML Frontmatter</dt><dd><span class="de">Metadaten-Block am Anfang einer SKILL.md-Datei — definiert Name, Version, Trigger und benötigte Tools.</span><span class="en">Metadata block at the start of a SKILL.md file — defines name, version, triggers, and required tools.</span></dd>
+<dt>Trigger</dt><dd><span class="de">Schlüsselwort oder Phrase, die einen Skill aktiviert (z.B. „/wetter", „Recherchiere").</span><span class="en">Keyword or phrase that activates a skill (e.g. "/weather", "Research").</span></dd>
+<dt>Skill-Chaining</dt><dd><span class="de">Ein Skill ruft als Teil seiner Instruktionen einen anderen Skill auf.</span><span class="en">A skill invokes another skill as part of its instructions.</span></dd>
+<dt>Semantic Versioning</dt><dd><span class="de">Versionierungsschema: MAJOR.MINOR.PATCH (z.B. 1.2.3).</span><span class="en">Versioning scheme: MAJOR.MINOR.PATCH (e.g. 1.2.3).</span></dd>
+</dl>
+</div>
+
+<!-- Sources -->
+<h2><span class="de">📚 Quellen</span><span class="en">📚 Sources</span></h2>
+<div class="source">Qin et al. (2023): "Tool Learning with Foundation Models", arXiv:2304.08354 <span class="tier-badge tier-b" style="font-size:.65rem;padding:.1rem .4rem;border-radius:6px;font-weight:700;background:rgba(88,166,255,.15);color:var(--accent)">Tier B</span></div>
+<div class="source">Schick et al. (2023): "Toolformer: Language Models Can Teach Themselves to Use Tools", <em>NeurIPS 2023</em> <span class="tier-badge tier-a" style="font-size:.65rem;padding:.1rem .4rem;border-radius:6px;font-weight:700;background:rgba(63,185,80,.2);color:var(--green)">Tier A</span></div>
+
+<!-- Nav Footer -->
+<div class="nav-footer">
+<a href="modul7a.html" class="btn" style="background:var(--surface);color:var(--text);border:1px solid var(--border)">← <span class="de">Modul 7a: Skills nutzen</span><span class="en">Module 7a: Using Skills</span></a>
+<a href="modul8.html" class="btn"><span class="de">Modul 8: Fehler & Ethik →</span><span class="en">Module 8: Failures & Ethics →</span></a>
+</div>
+</div>
+
+<footer role="contentinfo">
+<a href="https://github.com/janrummel/agent-systems"><span class="de">Quellcode auf GitHub</span><span class="en">Source on GitHub</span></a> · Made with ❤️ <span class="de">und Neugier</span><span class="en">and curiosity</span>
+<br><span style="font-size:.7rem"><span class="de">Fragen? <a href="https://linkedin.com/in/janrummel">Schreib mir auf LinkedIn.</a> · Teil des <a href="https://janrummel.github.io/ai-learning/">AI Learning Ökosystems</a></span><span class="en">Questions? <a href="https://linkedin.com/in/janrummel">Message me on LinkedIn.</a> · Part of the <a href="https://janrummel.github.io/ai-learning/">AI Learning Ecosystem</a></span></span>
+</footer>
+
+<script src="glossary.js"></script>
+<script>
+function setLang(l){document.documentElement.lang=l;document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('active'));document.querySelector(`.lang-btn[onclick="setLang('${l}')"]`).classList.add('active');localStorage.setItem('lang',l);if(typeof initGlossary==='function')initGlossary()}
+const s=localStorage.getItem('lang');if(s)setLang(s);
+</script>
+<script src="progress.js"></script>
+</body></html>

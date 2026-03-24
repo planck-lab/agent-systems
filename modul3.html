@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Modul 3: Architektur eines Orchestrators — Agent Systems</title>
+<meta name="description" content="Die 4 Schichten eines Orchestrators verstehen: Channel → Gateway → Session → Runtime. Vergleich von LangGraph, CrewAI, AutoGen und OpenClaw.">
+<meta name="author" content="Jan Rummel">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>🤖</text></svg>">
+<link rel="stylesheet" href="style.css">
+<style>
+.arch-diagram{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.5rem;margin:1.5rem 0;font-family:'SF Mono',Monaco,Consolas,monospace;font-size:.78rem;line-height:1.7;overflow-x:auto;white-space:pre}
+.layer-grid{display:grid;grid-template-columns:1fr;gap:.75rem;margin:1.5rem 0}
+.layer-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.25rem;display:flex;gap:1rem;align-items:flex-start}
+.layer-num{background:var(--accent);color:#0d1117;font-weight:700;font-size:.8rem;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.layer-card .l-name{font-weight:700;font-size:.9rem;margin-bottom:.2rem}
+.layer-card .l-desc{font-size:.8rem;color:var(--muted)}
+.fw-table{width:100%;border-collapse:collapse;margin:1.5rem 0;font-size:.85rem}
+.fw-table th,.fw-table td{padding:.6rem .8rem;text-align:left;border-bottom:1px solid var(--border)}
+.fw-table th{color:var(--accent);font-weight:700;font-size:.75rem;text-transform:uppercase;letter-spacing:.05em}
+.fw-table td{color:var(--muted)}
+.fw-table tr:hover td{background:rgba(88,166,255,.04)}
+.kc-box{background:var(--surface);border:2px solid var(--orange);border-radius:12px;padding:1.5rem;margin:2rem 0}
+.kc-box h3{color:var(--orange);margin-bottom:1rem;font-size:1rem}
+.kc-q{color:var(--muted);font-size:.9rem;padding:.5rem 0;border-bottom:1px solid var(--border)}
+.kc-q:last-child{border-bottom:none}
+.kc-num{color:var(--accent);font-weight:700;margin-right:.5rem}
+</style>
+</head>
+<body>
+<a href="#main-content" class="skip-link"><span class="de">Zum Inhalt springen</span><span class="en">Skip to content</span></a>
+<div class="lang-switch" role="navigation" aria-label="Language">
+<button class="lang-btn active" onclick="setLang('de')">DE</button>
+<button class="lang-btn" onclick="setLang('en')">EN</button>
+</div>
+
+<div class="progress-bar"><div class="progress-fill" style="width:23%"></div></div>
+
+<div class="container" id="main-content">
+<a href="curriculum.html" class="back-link">← <span class="de">Modulübersicht</span><span class="en">Module overview</span></a>
+
+<p style="color:var(--muted);font-size:.85rem"><span class="de">Modul 3 von 13</span><span class="en">Module 3 of 13</span> · <span style="font-size:.7rem;padding:.15rem .5rem;border-radius:10px;font-weight:600;background:rgba(88,166,255,.12);color:var(--accent)">🟠🔴</span> · <span style="color:var(--orange)"><span class="de">Mittel</span><span class="en">Medium</span></span> · 60 min</p>
+
+<h1><span class="de">Architektur eines Orchestrators</span><span class="en">Orchestrator Architecture</span></h1>
+<p class="subtitle"><span class="de">Schichten verstehen — vom Telegram-Chat bis zur Tool-Ausführung.</span><span class="en">Understanding layers — from Telegram chat to tool execution.</span></p>
+
+<!-- SMART Learning Goal -->
+<div class="tip">
+<strong>🎯 <span class="de">Lernziel (SMART)</span><span class="en">Learning Goal (SMART)</span></strong><br>
+<span class="de">Innerhalb von 60 min: Die 4 Schichten eines Orchestrators auf einem Diagramm zuordnen und je eine Konfiguration vornehmen.</span>
+<span class="en">Within 60 min: Map the 4 layers of an orchestrator on a diagram and configure one setting for each.</span>
+</div>
+
+<!-- Before/After -->
+<div class="comparison" style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0">
+<div class="compare-card bad" style="background:var(--surface);border:1px solid rgba(248,81,73,.4);border-radius:12px;padding:1.25rem">
+<h4 style="font-size:.9rem;margin-bottom:.5rem"><span class="de">❌ Vorher</span><span class="en">❌ Before</span></h4>
+<p style="font-size:.85rem;color:var(--muted)"><span class="de">Agent-System = monolithische App. Alles in einer Box.</span><span class="en">Agent system = monolithic app. Everything in one box.</span></p>
+</div>
+<div class="compare-card good" style="background:var(--surface);border:1px solid rgba(63,185,80,.4);border-radius:12px;padding:1.25rem">
+<h4 style="font-size:.9rem;margin-bottom:.5rem"><span class="de">✅ Nachher</span><span class="en">✅ After</span></h4>
+<p style="font-size:.85rem;color:var(--muted)"><span class="de">Du verstehst Channel → Gateway → Session → Runtime als unabhängige Schichten.</span><span class="en">You understand Channel → Gateway → Session → Runtime as independent layers.</span></p>
+</div>
+</div>
+
+<!-- 4-Layer Architecture -->
+<h2><span class="de">Die 4 Schichten</span><span class="en">The 4 Layers</span></h2>
+
+<p style="color:var(--muted);font-size:.9rem"><span class="de">Jedes Agent-System — egal ob LangGraph, CrewAI oder OpenClaw — hat diese grundlegenden Schichten. Die Namen unterscheiden sich, das Prinzip bleibt gleich:</span><span class="en">Every agent system — whether LangGraph, CrewAI, or OpenClaw — has these fundamental layers. Names differ, but the principle stays the same:</span></p>
+
+<div class="arch-diagram"><span class="de">┌─────────────────────────────────────────────────────┐
+│  <strong>Schicht 1: CHANNELS</strong> (Input/Output)                  │
+│  Telegram · WhatsApp · Web-UI · CLI · API            │
+│  → Abstrahiert die Plattform                         │
+├─────────────────────────────────────────────────────┤
+│  <strong>Schicht 2: GATEWAY</strong> (Control Plane)                  │
+│  Routing · Auth · Rate-Limiting · DM-Policy          │
+│  → Entscheidet WER mit WELCHEM Agent spricht         │
+├─────────────────────────────────────────────────────┤
+│  <strong>Schicht 3: SESSIONS</strong> (State Management)              │
+│  Kontext-History · Memory · Isolation                │
+│  → Jede Konversation ist isoliert                    │
+├─────────────────────────────────────────────────────┤
+│  <strong>Schicht 4: RUNTIME</strong> (Execution)                     │
+│  LLM · Tools · Skills · Approval-Checks             │
+│  → Hier passiert die eigentliche Arbeit              │
+└─────────────────────────────────────────────────────┘</span><span class="en">┌─────────────────────────────────────────────────────┐
+│  <strong>Layer 1: CHANNELS</strong> (Input/Output)                    │
+│  Telegram · WhatsApp · Web UI · CLI · API            │
+│  → Abstracts the platform                            │
+├─────────────────────────────────────────────────────┤
+│  <strong>Layer 2: GATEWAY</strong> (Control Plane)                    │
+│  Routing · Auth · Rate limiting · DM policy          │
+│  → Decides WHO talks to WHICH agent                  │
+├─────────────────────────────────────────────────────┤
+│  <strong>Layer 3: SESSIONS</strong> (State Management)                │
+│  Context history · Memory · Isolation                │
+│  → Each conversation is isolated                     │
+├─────────────────────────────────────────────────────┤
+│  <strong>Layer 4: RUNTIME</strong> (Execution)                       │
+│  LLM · Tools · Skills · Approval checks             │
+│  → This is where the actual work happens             │
+└─────────────────────────────────────────────────────┘</span></div>
+
+<div class="layer-grid">
+<div class="layer-card">
+<div class="layer-num">1</div>
+<div><div class="l-name"><span class="de">Channels — Die Eingangstür</span><span class="en">Channels — The Front Door</span></div>
+<div class="l-desc"><span class="de">Verschiedene Plattformen → ein Interface. Ob Telegram, WhatsApp oder CLI — der Agent bekommt immer dasselbe Format. <strong>Konfiguration:</strong> Welche Channels aktiviert? Welche Rechte?</span><span class="en">Different platforms → one interface. Whether Telegram, WhatsApp, or CLI — the agent always gets the same format. <strong>Config:</strong> Which channels enabled? What permissions?</span></div>
+</div>
+</div>
+<div class="layer-card">
+<div class="layer-num">2</div>
+<div><div class="l-name"><span class="de">Gateway — Der Türsteher</span><span class="en">Gateway — The Bouncer</span></div>
+<div class="l-desc"><span class="de">Routing, Authentifizierung, Rate-Limiting. <code>dmPolicy: "pairing"</code> bedeutet: Nur gepaarte Nutzer dürfen kommunizieren. <strong>Konfiguration:</strong> Wer darf rein? Wie viele Anfragen pro Minute?</span><span class="en">Routing, authentication, rate limiting. <code>dmPolicy: "pairing"</code> means: Only paired users can communicate. <strong>Config:</strong> Who gets in? How many requests per minute?</span></div>
+</div>
+</div>
+<div class="layer-card">
+<div class="layer-num">3</div>
+<div><div class="l-name"><span class="de">Sessions — Das Gedächtnis</span><span class="en">Sessions — The Memory</span></div>
+<div class="l-desc"><span class="de">Jede Konversation ist isoliert — Session A sieht nichts von Session B. Context-History, Memory-Dateien, Session-Timer. <strong>Konfiguration:</strong> Wie lang bleibt eine Session aktiv? Was wird gespeichert?</span><span class="en">Each conversation is isolated — Session A can't see Session B. Context history, memory files, session timer. <strong>Config:</strong> How long does a session stay active? What gets saved?</span></div>
+</div>
+</div>
+<div class="layer-card">
+<div class="layer-num">4</div>
+<div><div class="l-name"><span class="de">Runtime — Die Werkstatt</span><span class="en">Runtime — The Workshop</span></div>
+<div class="l-desc"><span class="de">LLM-Aufruf, Tool-Execution, Skill-Routing, Approval-Checks. Hier passiert die eigentliche Arbeit. <strong>Konfiguration:</strong> Welches Modell? Welche Tools erlaubt?</span><span class="en">LLM call, tool execution, skill routing, approval checks. This is where the actual work happens. <strong>Config:</strong> Which model? Which tools allowed?</span></div>
+</div>
+</div>
+</div>
+
+<div class="source">📚 Garlan & Shaw (1993): "An Introduction to Software Architecture", <em>Advances in Software Engineering</em> <span class="tier-badge tier-a" style="font-size:.65rem;padding:.1rem .4rem;border-radius:6px;font-weight:700;background:rgba(63,185,80,.2);color:var(--green)">Tier A</span></div>
+
+<!-- Framework Comparison -->
+<h2><span class="de">Vergleich: Architektur in 4 Frameworks</span><span class="en">Comparison: Architecture in 4 Frameworks</span></h2>
+
+<table class="fw-table">
+<thead>
+<tr>
+<th><span class="de">Schicht</span><span class="en">Layer</span></th>
+<th>LangGraph</th>
+<th>CrewAI</th>
+<th>AutoGen</th>
+<th>OpenClaw</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Input</strong></td>
+<td><span class="de">Graph-Input</span><span class="en">Graph input</span></td>
+<td>Task Input</td>
+<td>UserProxyAgent</td>
+<td>Channel Plugin</td>
+</tr>
+<tr>
+<td><strong>Control</strong></td>
+<td>StateGraph</td>
+<td>Crew Orchestrator</td>
+<td>GroupChatManager</td>
+<td>Gateway</td>
+</tr>
+<tr>
+<td><strong>State</strong></td>
+<td>Graph State</td>
+<td>Task Context</td>
+<td>Chat History</td>
+<td>Session</td>
+</tr>
+<tr>
+<td><strong>Execution</strong></td>
+<td>Node Functions</td>
+<td>Agent + Tools</td>
+<td>ConversableAgent</td>
+<td>Runtime (LLM + Tools)</td>
+</tr>
+<tr>
+<td><strong><span class="de">Stärke</span><span class="en">Strength</span></strong></td>
+<td><span class="de">Flexibler Graph-Flow</span><span class="en">Flexible graph flow</span></td>
+<td><span class="de">Rollen-basiert</span><span class="en">Role-based</span></td>
+<td><span class="de">Multi-Agent native</span><span class="en">Multi-agent native</span></td>
+<td><span class="de">Channel-Abstraktion</span><span class="en">Channel abstraction</span></td>
+</tr>
+</tbody>
+</table>
+
+<!-- Hands-on -->
+<h2><span class="de">🛠️ Hands-on</span><span class="en">🛠️ Hands-on</span></h2>
+
+<div class="step">
+<div class="step-header">
+<div class="step-num" style="background:var(--orange)">🟠</div>
+<div class="step-title">Power-User</div>
+</div>
+<p style="color:var(--muted);font-size:.9rem"><span class="de"><strong>openclaw.json konfigurieren und Architektur zeichnen:</strong></span><span class="en"><strong>Configure openclaw.json and draw architecture:</strong></span></p>
+<ol style="color:var(--muted);font-size:.9rem;margin-top:.5rem">
+<li><span class="de">Öffne <code>openclaw.json</code> und identifiziere die 4 Schichten</span><span class="en">Open <code>openclaw.json</code> and identify the 4 layers</span></li>
+<li><span class="de">Konfiguriere 2 Channels (z.B. Telegram + Web-UI)</span><span class="en">Configure 2 channels (e.g. Telegram + Web UI)</span></li>
+<li><span class="de">Setze <code>dmPolicy: "pairing"</code> im Gateway</span><span class="en">Set <code>dmPolicy: "pairing"</code> in the gateway</span></li>
+<li><span class="de">Zeichne ein Diagramm deiner Architektur (Papier oder Tool)</span><span class="en">Draw a diagram of your architecture (paper or tool)</span></li>
+</ol>
+
+<a href="#" class="btn" style="background: var(--orange);">Open in Colab →</a>
+</div>
+
+<div class="step">
+<div class="step-header">
+<div class="step-num" style="background:#f85149">🔴</div>
+<div class="step-title">Developer</div>
+</div>
+<p style="color:var(--muted);font-size:.9rem"><span class="de"><strong>Session-Isolation im Code nachvollziehen:</strong></span><span class="en"><strong>Trace session isolation in code:</strong></span></p>
+<ol style="color:var(--muted);font-size:.9rem;margin-top:.5rem">
+<li><span class="de">Starte 2 parallele Sessions (z.B. Telegram + CLI)</span><span class="en">Start 2 parallel sessions (e.g. Telegram + CLI)</span></li>
+<li><span class="de">Sende in Session A eine Info, frage in Session B danach</span><span class="en">Send info in Session A, ask about it in Session B</span></li>
+<li><span class="de">Dokumentiere: Sind die Sessions wirklich isoliert?</span><span class="en">Document: Are the sessions truly isolated?</span></li>
+<li><span class="de">Bonus: Wo liegt die Session-State-Datei im Filesystem?</span><span class="en">Bonus: Where is the session state file in the filesystem?</span></li>
+</ol>
+</div>
+
+<!-- HITL Box -->
+<div style="background:rgba(63,185,80,.08);border:1px solid rgba(63,185,80,.3);border-radius:12px;padding:1.5rem;margin:2rem 0">
+<h3 style="color:var(--green);font-size:1rem;margin-bottom:.5rem">🟢 HITL <span class="de">in diesem Modul</span><span class="en">in this module</span></h3>
+<p style="color:var(--muted);font-size:.9rem"><span class="de"><code>dmPolicy: "pairing"</code> — die erste Kontrollschicht. <strong>Fahrlehrer entscheidet, wer mitfahren darf.</strong> Ohne Pairing antwortet der Agent niemandem.</span><span class="en"><code>dmPolicy: "pairing"</code> — the first control layer. <strong>The instructor decides who can ride along.</strong> Without pairing, the agent doesn't respond to anyone.</span></p>
+</div>
+
+<!-- Knowledge Check 1 -->
+<div class="kc-box">
+<h3>🔖 Knowledge-Check 1</h3>
+<p style="color:var(--muted);font-size:.85rem;margin-bottom:1rem"><span class="de">5 Self-Assessment-Fragen nach Modul 1–3. Beantworte jede ehrlich — kein Score, nur Selbstreflexion.</span><span class="en">5 self-assessment questions after Modules 1–3. Answer each honestly — no score, just self-reflection.</span></p>
+
+<div class="kc-q"><span class="kc-num">1.</span> <span class="de">Nenne die 5 Kernkomponenten eines AI Agents aus dem Kopf.</span><span class="en">Name the 5 core components of an AI agent from memory.</span></div>
+<div class="kc-q"><span class="kc-num">2.</span> <span class="de">Was unterscheidet L2 (HITL-Agent) von L3 (Autonom) auf dem Autonomie-Spektrum?</span><span class="en">What distinguishes L2 (HITL agent) from L3 (autonomous) on the autonomy spectrum?</span></div>
+<div class="kc-q"><span class="kc-num">3.</span> <span class="de">Erkläre den ReAct-Loop in einem Satz. Was passiert in den 3 Phasen?</span><span class="en">Explain the ReAct loop in one sentence. What happens in the 3 phases?</span></div>
+<div class="kc-q"><span class="kc-num">4.</span> <span class="de">Welche 4 Schichten hat ein Orchestrator? Nenne für jede ein Beispiel aus OpenClaw ODER einem anderen Framework.</span><span class="en">What 4 layers does an orchestrator have? Name an example from OpenClaw OR another framework for each.</span></div>
+<div class="kc-q"><span class="kc-num">5.</span> <span class="de">Warum ist HITL kein Modul, sondern ein Design-Prinzip? Gib ein Beispiel aus den ersten 3 Modulen.</span><span class="en">Why is HITL not a module but a design principle? Give an example from the first 3 modules.</span></div>
+</div>
+
+<!-- Rubric -->
+<h2><span class="de">📊 Rubrik</span><span class="en">📊 Rubric</span></h2>
+<div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.5rem">
+<p style="margin-bottom:.5rem"><span style="color:var(--green)">✅ <strong>Basis:</strong></span> <span style="color:var(--muted);font-size:.9rem"><span class="de">4 Schichten zugeordnet, je eine Konfiguration (Channel, Gateway, Session, Runtime)</span><span class="en">4 layers assigned, one configuration each (Channel, Gateway, Session, Runtime)</span></span></p>
+<p style="margin-bottom:.5rem"><span style="color:var(--orange)">⭐ <strong><span class="de">Fortgeschritten:</span><span class="en">Advanced:</span></strong></span> <span style="color:var(--muted);font-size:.9rem"><span class="de">Architektur-Diagramm mit Datenfluss, Session-Isolation über 3 Sessions getestet</span><span class="en">Architecture diagram with data flow, session isolation tested across 3 sessions</span></span></p>
+<p><span style="color:var(--accent)">🏆 <strong><span class="de">Experte:</span><span class="en">Expert:</span></strong></span> <span style="color:var(--muted);font-size:.9rem"><span class="de">Schichtenarchitektur auf anderes Tool übertragen (AutoGen, LangGraph) ODER Architektur-Schwachstelle identifiziert</span><span class="en">Layer architecture transferred to another tool (AutoGen, LangGraph) OR architecture weakness identified</span></span></p>
+</div>
+
+<!-- Glossary -->
+<h2><span class="de">📖 Begriffe in diesem Modul</span><span class="en">📖 Terms in this module</span></h2>
+<div class="glossary">
+<dl>
+<dt>Gateway</dt><dd><span class="de">Vermittlungsschicht zwischen Channels und Agent-Runtime — der Türsteher.</span><span class="en">Mediation layer between channels and agent runtime — the bouncer.</span></dd>
+<dt>Session</dt><dd><span class="de">Isolierter Gesprächskontext mit eigener History und eigenem State.</span><span class="en">Isolated conversation context with its own history and state.</span></dd>
+<dt>Channel</dt><dd><span class="de">Plattform-Anbindung (Telegram, WhatsApp, CLI) — die Eingangstür.</span><span class="en">Platform connection (Telegram, WhatsApp, CLI) — the front door.</span></dd>
+<dt>Runtime</dt><dd><span class="de">Die Ausführungsschicht: LLM-Aufruf, Tool-Execution, Approval-Checks.</span><span class="en">The execution layer: LLM call, tool execution, approval checks.</span></dd>
+</dl>
+</div>
+
+<!-- Sources -->
+<h2><span class="de">📚 Quellen</span><span class="en">📚 Sources</span></h2>
+<div class="source">Garlan & Shaw (1993): "An Introduction to Software Architecture", <em>Advances in Software Engineering</em> <span class="tier-badge tier-a" style="font-size:.65rem;padding:.1rem .4rem;border-radius:6px;font-weight:700;background:rgba(63,185,80,.2);color:var(--green)">Tier A</span></div>
+<div class="source">OpenClaw Docs (2026): docs.openclaw.ai <span class="tier-badge tier-c" style="font-size:.65rem;padding:.1rem .4rem;border-radius:6px;font-weight:700;background:rgba(210,153,34,.15);color:var(--orange)">Tier C</span></div>
+
+<!-- Nav Footer -->
+<div class="nav-footer">
+<a href="modul2.html" class="btn" style="background:var(--surface);color:var(--text);border:1px solid var(--border)">← <span class="de">Modul 2: Der Agent Loop</span><span class="en">Module 2: The Agent Loop</span></a>
+<a href="modul4.html" class="btn"><span class="de">Modul 4: Tool Use →</span><span class="en">Module 4: Tool Use →</span></a>
+</div>
+</div>
+
+<footer role="contentinfo">
+<a href="https://github.com/janrummel/agent-systems"><span class="de">Quellcode auf GitHub</span><span class="en">Source on GitHub</span></a> · Made with ❤️ <span class="de">und Neugier</span><span class="en">and curiosity</span>
+<br><span style="font-size:.7rem"><span class="de">Fragen? <a href="https://linkedin.com/in/janrummel">Schreib mir auf LinkedIn.</a> · Teil des <a href="https://janrummel.github.io/ai-learning/">AI Learning Ökosystems</a></span><span class="en">Questions? <a href="https://linkedin.com/in/janrummel">Message me on LinkedIn.</a> · Part of the <a href="https://janrummel.github.io/ai-learning/">AI Learning Ecosystem</a></span></span>
+</footer>
+
+<script src="glossary.js"></script>
+<script>
+function setLang(l){document.documentElement.lang=l;document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('active'));document.querySelector(`.lang-btn[onclick="setLang('${l}')"]`).classList.add('active');localStorage.setItem('lang',l);if(typeof initGlossary==='function')initGlossary()}
+const s=localStorage.getItem('lang');if(s)setLang(s);
+</script>
+<script src="progress.js"></script>
+</body></html>

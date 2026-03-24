@@ -209,4 +209,5 @@ openclaw onboard</code></pre>
 function setLang(l){document.documentElement.lang=l;document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('active'));document.querySelector(`.lang-btn[onclick="setLang('${l}')"]`).classList.add('active');localStorage.setItem('lang',l);if(typeof initGlossary==='function')initGlossary()}
 const s=localStorage.getItem('lang');if(s)setLang(s);
 </script>
+<script src="progress.js"></script>
 </body></html>

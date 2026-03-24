@@ -191,7 +191,7 @@
 <!-- Nav Footer -->
 <div class="nav-footer">
 <a href="modul0.html" class="btn" style="background:var(--surface);color:var(--text);border:1px solid var(--border)">← <span class="de">Modul 0: Setup</span><span class="en">Module 0: Setup</span></a>
-<a href="curriculum.html" class="btn"><span class="de">Modul 2: Der Agent Loop →</span><span class="en">Module 2: The Agent Loop →</span></a>
+<a href="modul2.html" class="btn"><span class="de">Modul 2: Der Agent Loop →</span><span class="en">Module 2: The Agent Loop →</span></a>
 </div>
 </div>
 
@@ -205,4 +205,5 @@
 function setLang(l){document.documentElement.lang=l;document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('active'));document.querySelector(`.lang-btn[onclick="setLang('${l}')"]`).classList.add('active');localStorage.setItem('lang',l);if(typeof initGlossary==='function')initGlossary()}
 const s=localStorage.getItem('lang');if(s)setLang(s);
 </script>
+<script src="progress.js"></script>
 </body></html>

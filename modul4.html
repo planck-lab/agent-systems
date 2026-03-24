@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Modul 4: Tool Use & Kontrollierte Autonomie — Agent Systems</title>
+<meta name="description" content="MCP als Industriestandard, Tool-Taxonomy, Approval Policies: Wie AI Agents Werkzeuge nutzen — und wie du kontrollierst, was sie dürfen.">
+<meta name="author" content="Jan Rummel">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>🤖</text></svg>">
+<link rel="stylesheet" href="style.css">
+<style>
+.tool-taxonomy{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0}
+.tax-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.25rem}
+.tax-card h4{font-size:.9rem;margin-bottom:.5rem}
+.tax-card ul{list-style:none;padding:0;margin:0}
+.tax-card li{font-size:.8rem;color:var(--muted);padding:.25rem 0}
+.tax-card li::before{margin-right:.4rem}
+.tax-safe li::before{content:"🟢"}
+.tax-danger li::before{content:"🔴"}
+.policy-flow{display:flex;align-items:center;justify-content:center;gap:.5rem;flex-wrap:wrap;margin:2rem 0}
+.policy-step{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:.75rem 1rem;text-align:center;min-width:90px}
+.policy-step .p-icon{font-size:1.2rem;margin-bottom:.2rem}
+.policy-step .p-name{font-weight:700;font-size:.8rem}
+.policy-step .p-desc{font-size:.65rem;color:var(--muted);margin-top:.15rem}
+.policy-arrow{color:var(--green);font-size:1.2rem;font-weight:700}
+.mcp-box{background:var(--surface);border:2px solid var(--accent);border-radius:12px;padding:1.5rem;margin:1.5rem 0}
+.mcp-box h3{color:var(--accent);margin-bottom:.75rem}
+.config-block{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.25rem;margin:1rem 0;font-family:'SF Mono',Monaco,Consolas,monospace;font-size:.8rem;line-height:1.6;overflow-x:auto;white-space:pre-wrap}
+.fw-table{width:100%;border-collapse:collapse;margin:1.5rem 0;font-size:.85rem}
+.fw-table th,.fw-table td{padding:.6rem .8rem;text-align:left;border-bottom:1px solid var(--border)}
+.fw-table th{color:var(--accent);font-weight:700;font-size:.75rem;text-transform:uppercase;letter-spacing:.05em}
+.fw-table td{color:var(--muted)}
+.fw-table tr:hover td{background:rgba(88,166,255,.04)}
+@media(max-width:600px){.tool-taxonomy{grid-template-columns:1fr}.policy-flow{flex-direction:column}.policy-arrow{transform:rotate(90deg)}}
+</style>
+</head>
+<body>
+<a href="#main-content" class="skip-link"><span class="de">Zum Inhalt springen</span><span class="en">Skip to content</span></a>
+<div class="lang-switch" role="navigation" aria-label="Language">
+<button class="lang-btn active" onclick="setLang('de')">DE</button>
+<button class="lang-btn" onclick="setLang('en')">EN</button>
+</div>
+
+<div class="progress-bar"><div class="progress-fill" style="width:31%"></div></div>
+
+<div class="container" id="main-content">
+<a href="curriculum.html" class="back-link">← <span class="de">Modulübersicht</span><span class="en">Module overview</span></a>
+
+<p style="color:var(--muted);font-size:.85rem"><span class="de">Modul 4 von 13</span><span class="en">Module 4 of 13</span> · <span style="font-size:.7rem;padding:.15rem .5rem;border-radius:10px;font-weight:600;background:rgba(88,166,255,.12);color:var(--accent)">🟠🔴</span> · <span style="color:var(--orange)"><span class="de">Mittel</span><span class="en">Medium</span></span> · 60 min</p>
+
+<h1><span class="de">Tool Use & Kontrollierte Autonomie</span><span class="en">Tool Use & Controlled Autonomy</span></h1>
+<p class="subtitle"><span class="de">Wie Agents Werkzeuge nutzen — und wie du kontrollierst, was sie dürfen.</span><span class="en">How agents use tools — and how you control what they're allowed to do.</span></p>
+
+<!-- SMART Learning Goal -->
+<div class="tip">
+<strong>🎯 <span class="de">Lernziel (SMART)</span><span class="en">Learning Goal (SMART)</span></strong><br>
+<span class="de">Innerhalb von 60 min: 2 Tool-Policies konfigurieren und per Log-Analyse nachweisen, dass sie die Autonomie wie erwartet einschränken.</span>
+<span class="en">Within 60 min: Configure 2 tool policies and prove through log analysis that they restrict autonomy as expected.</span>
+</div>
+
+<!-- Before/After -->
+<div class="comparison" style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0">
+<div class="compare-card bad" style="background:var(--surface);border:1px solid rgba(248,81,73,.4);border-radius:12px;padding:1.25rem">
+<h4 style="font-size:.9rem;margin-bottom:.5rem"><span class="de">❌ Vorher</span><span class="en">❌ Before</span></h4>
+<p style="font-size:.85rem;color:var(--muted)"><span class="de">Tool Use ist alles oder nichts. Entweder der Agent darf alles, oder nichts.</span><span class="en">Tool Use is all or nothing. Either the agent can do everything, or nothing.</span></p>
+</div>
+<div class="compare-card good" style="background:var(--surface);border:1px solid rgba(63,185,80,.4);border-radius:12px;padding:1.25rem">
+<h4 style="font-size:.9rem;margin-bottom:.5rem"><span class="de">✅ Nachher</span><span class="en">✅ After</span></h4>
+<p style="font-size:.85rem;color:var(--muted)"><span class="de">Du steuerst granular, welche Tools frei und welche nur mit Bestätigung nutzbar sind.</span><span class="en">You control granularly which tools are free and which require approval.</span></p>
+</div>
+</div>
+
+<!-- MCP -->
+<h2><span class="de">MCP — „USB für Agents"</span><span class="en">MCP — "USB for Agents"</span></h2>
+
+<div class="mcp-box">
+<h3>Model Context Protocol (MCP)</h3>
+<p style="color:var(--muted);font-size:.9rem"><span class="de"><strong>Anthropic (2024)</strong> definiert MCP als Industriestandard für Tool-Integration. Wie USB für Peripheriegeräte einheitliche Stecker definiert, definiert MCP, wie Agents:</span><span class="en"><strong>Anthropic (2024)</strong> defines MCP as the industry standard for tool integration. Like USB defines universal connectors for peripherals, MCP defines how agents:</span></p>
+<div style="margin-top:.75rem">
+<p style="font-size:.9rem;margin-bottom:.4rem"><span class="de">🔍 <strong>Tools entdecken</strong> — welche Werkzeuge stehen zur Verfügung?</span><span class="en">🔍 <strong>Discover tools</strong> — which tools are available?</span></p>
+<p style="font-size:.9rem;margin-bottom:.4rem"><span class="de">📋 <strong>Schemas verstehen</strong> — welche Parameter braucht ein Tool?</span><span class="en">📋 <strong>Understand schemas</strong> — what parameters does a tool need?</span></p>
+<p style="font-size:.9rem"><span class="de">⚡ <strong>Tools aufrufen</strong> — wie wird ein Tool korrekt gestartet?</span><span class="en">⚡ <strong>Call tools</strong> — how is a tool correctly invoked?</span></p>
+</div>
+</div>
+
+<div class="source">📚 MCP Specification (Anthropic, 2024): modelcontextprotocol.io <span class="tier-badge tier-c" style="font-size:.65rem;padding:.1rem .4rem;border-radius:6px;font-weight:700;background:rgba(210,153,34,.15);color:var(--orange)">Tier C</span></div>
+
+<!-- Tool Taxonomy -->
+<h2><span class="de">Tool-Taxonomy: Read-only vs. Side-Effects</span><span class="en">Tool Taxonomy: Read-only vs. Side Effects</span></h2>
+
+<p style="color:var(--muted);font-size:.9rem;margin-bottom:1rem"><span class="de">Nicht alle Tools sind gleich gefährlich. Die entscheidende Frage: <strong>Verändert das Tool etwas in der Welt?</strong></span><span class="en">Not all tools are equally risky. The key question: <strong>Does the tool change anything in the world?</strong></span></p>
+
+<div class="tool-taxonomy">
+<div class="tax-card tax-safe">
+<h4 style="color:var(--green)"><span class="de">🟢 Read-only (sicher)</span><span class="en">🟢 Read-only (safe)</span></h4>
+<ul>
+<li><span class="de">Web-Suche</span><span class="en">Web search</span></li>
+<li><span class="de">Datei lesen</span><span class="en">Read file</span></li>
+<li><span class="de">Kalender lesen</span><span class="en">Read calendar</span></li>
+<li><span class="de">Wetter abfragen</span><span class="en">Check weather</span></li>
+<li><span class="de">System-Status</span><span class="en">System status</span></li>
+</ul>
+</div>
+<div class="tax-card tax-danger">
+<h4 style="color:#f85149"><span class="de">🔴 Side-Effects (gefährlich)</span><span class="en">🔴 Side effects (dangerous)</span></h4>
+<ul>
+<li><span class="de">E-Mail senden</span><span class="en">Send email</span></li>
+<li><span class="de">Datei schreiben/löschen</span><span class="en">Write/delete file</span></li>
+<li><span class="de">Kalender-Termin erstellen</span><span class="en">Create calendar event</span></li>
+<li><span class="de">Shell-Befehl ausführen</span><span class="en">Execute shell command</span></li>
+<li><span class="de">API-Aufruf mit Mutation</span><span class="en">API call with mutation</span></li>
+</ul>
+</div>
+</div>
+
+<p style="color:var(--muted);font-size:.85rem"><span class="de"><strong>Schick et al. (2023, Toolformer)</strong> zeigen: LLMs lernen selbstständig, wann Tools hilfreich sind. Das Problem: Sie unterscheiden nicht zwischen harmlosen und gefährlichen Tools. <em>Policies kanalisieren diese Fähigkeit.</em></span><span class="en"><strong>Schick et al. (2023, Toolformer)</strong> show: LLMs learn on their own when tools are helpful. The problem: They don't distinguish between harmless and dangerous tools. <em>Policies channel this capability.</em></span></p>
+
+<div class="source">📚 Schick et al. (2023): "Toolformer: Language Models Can Teach Themselves to Use Tools", <em>NeurIPS 2023</em> <span class="tier-badge tier-a" style="font-size:.65rem;padding:.1rem .4rem;border-radius:6px;font-weight:700;background:rgba(63,185,80,.2);color:var(--green)">Tier A</span></div>
+
+<!-- Approval Policies -->
+<h2><span class="de">Approval Policies: deny → allowlist → full</span><span class="en">Approval Policies: deny → allowlist → full</span></h2>
+
+<p style="color:var(--muted);font-size:.9rem;margin-bottom:1rem"><span class="de">Drei Stufen der Kontrolle — vom Paranoid-Modus bis zum Vertrauensvorschuss:</span><span class="en">Three levels of control — from paranoid mode to trust-based:</span></p>
+
+<div class="policy-flow">
+<div class="policy-step" style="border-color:rgba(248,81,73,.4)">
+<div class="p-icon">🔒</div>
+<div class="p-name">deny</div>
+<div class="p-desc"><span class="de">Alles gesperrt</span><span class="en">Everything locked</span></div>
+</div>
+<div class="policy-arrow">→</div>
+<div class="policy-step" style="border-color:rgba(210,153,34,.4)">
+<div class="p-icon">📋</div>
+<div class="p-name">allowlist</div>
+<div class="p-desc"><span class="de">Nur erlaubte Tools</span><span class="en">Only allowed tools</span></div>
+</div>
+<div class="policy-arrow">→</div>
+<div class="policy-step" style="border-color:rgba(63,185,80,.4)">
+<div class="p-icon">✅</div>
+<div class="p-name">full</div>
+<div class="p-desc"><span class="de">Alles erlaubt</span><span class="en">Everything allowed</span></div>
+</div>
+</div>
+
+<p style="color:var(--muted);font-size:.85rem"><span class="de"><strong>Best Practice:</strong> Starte immer bei <code>deny</code> und öffne schrittweise. Nicht andersherum. Wie beim Fahren: Erst Schritttempo, dann Autobahn.</span><span class="en"><strong>Best practice:</strong> Always start at <code>deny</code> and open up gradually. Not the other way around. Like driving: Walking speed first, then highway.</span></p>
+
+<!-- Example Configs -->
+<h3><span class="de">Beispiel: Zwei Policy-Profile</span><span class="en">Example: Two Policy Profiles</span></h3>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1rem 0">
+<div>
+<p style="font-size:.8rem;font-weight:700;color:#f85149;margin-bottom:.5rem"><span class="de">🔒 Paranoid-Profil</span><span class="en">🔒 Paranoid profile</span></p>
+<div class="config-block">{
+  "exec": {
+    "security": "deny"
+  },
+  "tools": {
+    "read": true,
+    "write": false,
+    "web_search": true,
+    "web_fetch": true
+  }
+}</div>
+</div>
+<div>
+<p style="font-size:.8rem;font-weight:700;color:var(--green);margin-bottom:.5rem"><span class="de">⚖️ Balanced-Profil</span><span class="en">⚖️ Balanced profile</span></p>
+<div class="config-block">{
+  "exec": {
+    "security": "allowlist",
+    "allow": ["ls", "cat", "grep",
+              "date", "uptime"]
+  },
+  "tools": {
+    "read": true,
+    "write": true,
+    "web_search": true,
+    "web_fetch": true
+  }
+}</div>
+</div>
+</div>
+
+<!-- Hands-on -->
+<h2><span class="de">🛠️ Hands-on</span><span class="en">🛠️ Hands-on</span></h2>
+
+<div class="step">
+<div class="step-header">
+<div class="step-num" style="background:var(--orange)">🟠</div>
+<div class="step-title">Power-User</div>
+</div>
+<p style="color:var(--muted);font-size:.9rem"><span class="de"><strong>2 Policy-Profile konfigurieren und vergleichen:</strong></span><span class="en"><strong>Configure 2 policy profiles and compare:</strong></span></p>
+<ol style="color:var(--muted);font-size:.9rem;margin-top:.5rem">
+<li><span class="de">Erstelle das Paranoid-Profil und teste 5 Anfragen</span><span class="en">Create the paranoid profile and test 5 requests</span></li>
+<li><span class="de">Erstelle das Balanced-Profil und teste dieselben 5 Anfragen</span><span class="en">Create the balanced profile and test the same 5 requests</span></li>
+<li><span class="de">Dokumentiere: Welche Anfragen wurden blockiert? Warum?</span><span class="en">Document: Which requests were blocked? Why?</span></li>
+<li><span class="de">Erstelle eine Vergleichstabelle: Anfrage | Paranoid | Balanced</span><span class="en">Create a comparison table: Request | Paranoid | Balanced</span></li>
+</ol>
+
+<a href="#" class="btn" style="background: var(--orange);">Open in Colab →</a>
+</div>
+
+<div class="step">
+<div class="step-header">
+<div class="step-num" style="background:#f85149">🔴</div>
+<div class="step-title">Developer</div>
+</div>
+<p style="color:var(--muted);font-size:.9rem"><span class="de"><strong>MCP-Server anbinden und Exec-Allowlist mit Pattern-Matching:</strong></span><span class="en"><strong>Connect MCP server and exec allowlist with pattern matching:</strong></span></p>
+<ol style="color:var(--muted);font-size:.9rem;margin-top:.5rem">
+<li><span class="de">Installiere einen MCP-Server (z.B. filesystem-Server)</span><span class="en">Install an MCP server (e.g. filesystem server)</span></li>
+<li><span class="de">Konfiguriere die Exec-Allowlist mit Glob-Patterns: <code>"allow": ["ls *", "cat ~/docs/*"]</code></span><span class="en">Configure the exec allowlist with glob patterns: <code>"allow": ["ls *", "cat ~/docs/*"]</code></span></li>
+<li><span class="de">Teste: Was passiert bei <code>rm -rf /</code>? Was bei <code>cat ~/.ssh/id_rsa</code>?</span><span class="en">Test: What happens with <code>rm -rf /</code>? What about <code>cat ~/.ssh/id_rsa</code>?</span></li>
+</ol>
+</div>
+
+<!-- HITL Box -->
+<div style="background:rgba(63,185,80,.08);border:1px solid rgba(63,185,80,.3);border-radius:12px;padding:1.5rem;margin:2rem 0">
+<h3 style="color:var(--green);font-size:1rem;margin-bottom:.5rem">🟢 HITL <span class="de">in diesem Modul</span><span class="en">in this module</span></h3>
+<p style="color:var(--muted);font-size:.9rem"><span class="de">Approval Policies SIND das HITL-Kernstück. <strong>Fahrlehrer: „Blinker darfst du selbst, Überholen fragen!"</strong> Read-only Tools = freie Hand. Side-Effects = Rückfrage.</span><span class="en">Approval policies ARE the core HITL mechanism. <strong>Instructor: "Turn signal is yours, overtaking — ask first!"</strong> Read-only tools = free hand. Side effects = ask first.</span></p>
+</div>
+
+<!-- Rubric -->
+<h2><span class="de">📊 Rubrik</span><span class="en">📊 Rubric</span></h2>
+<div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.5rem">
+<p style="margin-bottom:.5rem"><span style="color:var(--green)">✅ <strong>Basis:</strong></span> <span style="color:var(--muted);font-size:.9rem"><span class="de">2 Policies konfiguriert, Log-Analyse zeigt erwartetes Verhalten</span><span class="en">2 policies configured, log analysis shows expected behavior</span></span></p>
+<p style="margin-bottom:.5rem"><span style="color:var(--orange)">⭐ <strong><span class="de">Fortgeschritten:</span><span class="en">Advanced:</span></strong></span> <span style="color:var(--muted);font-size:.9rem"><span class="de">Eigene Allowlist-Patterns (z.B. Read-only Science-Tools), Policy-Vergleichstabelle dokumentiert</span><span class="en">Custom allowlist patterns (e.g. read-only science tools), policy comparison table documented</span></span></p>
+<p><span style="color:var(--accent)">🏆 <strong><span class="de">Experte:</span><span class="en">Expert:</span></strong></span> <span style="color:var(--muted);font-size:.9rem"><span class="de">MCP-Server angebunden ODER Tool-Safety-Fehler reproduziert und dokumentiert</span><span class="en">MCP server connected OR tool safety failure reproduced and documented</span></span></p>
+</div>
+
+<!-- Glossary -->
+<h2><span class="de">📖 Begriffe in diesem Modul</span><span class="en">📖 Terms in this module</span></h2>
+<div class="glossary">
+<dl>
+<dt>MCP (Model Context Protocol)</dt><dd><span class="de">Industriestandard für Tool-Integration — definiert wie Agents Tools entdecken, verstehen und aufrufen.</span><span class="en">Industry standard for tool integration — defines how agents discover, understand, and call tools.</span></dd>
+<dt>Tool Use</dt><dd><span class="de">Fähigkeit eines Agents, externe Werkzeuge aufzurufen — Pattern 2 von 4 nach Ng (2024).</span><span class="en">An agent's ability to call external tools — Pattern 2 of 4 per Ng (2024).</span></dd>
+<dt>Approval Policy</dt><dd><span class="de">Regelwerk für menschliche Freigabe von Agent-Aktionen: deny, allowlist, full.</span><span class="en">Ruleset for human approval of agent actions: deny, allowlist, full.</span></dd>
+<dt>Side-Effect</dt><dd><span class="de">Eine Aktion, die etwas in der Welt verändert (E-Mail senden, Datei löschen).</span><span class="en">An action that changes something in the world (send email, delete file).</span></dd>
+</dl>
+</div>
+
+<!-- Sources -->
+<h2><span class="de">📚 Quellen</span><span class="en">📚 Sources</span></h2>
+<div class="source">Schick et al. (2023): "Toolformer: Language Models Can Teach Themselves to Use Tools", <em>NeurIPS 2023</em> <span class="tier-badge tier-a" style="font-size:.65rem;padding:.1rem .4rem;border-radius:6px;font-weight:700;background:rgba(63,185,80,.2);color:var(--green)">Tier A</span></div>
+<div class="source">MCP Specification (Anthropic, 2024): modelcontextprotocol.io <span class="tier-badge tier-c" style="font-size:.65rem;padding:.1rem .4rem;border-radius:6px;font-weight:700;background:rgba(210,153,34,.15);color:var(--orange)">Tier C</span></div>
+<div class="source">Anthropic (2025): "Building Effective Agents" <span class="tier-badge tier-c" style="font-size:.65rem;padding:.1rem .4rem;border-radius:6px;font-weight:700;background:rgba(210,153,34,.15);color:var(--orange)">Tier C</span></div>
+
+<!-- Nav Footer -->
+<div class="nav-footer">
+<a href="modul3.html" class="btn" style="background:var(--surface);color:var(--text);border:1px solid var(--border)">← <span class="de">Modul 3: Architektur</span><span class="en">Module 3: Architecture</span></a>
+<a href="modul5.html" class="btn"><span class="de">Modul 5: Persona & Workspace →</span><span class="en">Module 5: Persona & Workspace →</span></a>
+</div>
+</div>
+
+<footer role="contentinfo">
+<a href="https://github.com/janrummel/agent-systems"><span class="de">Quellcode auf GitHub</span><span class="en">Source on GitHub</span></a> · Made with ❤️ <span class="de">und Neugier</span><span class="en">and curiosity</span>
+<br><span style="font-size:.7rem"><span class="de">Fragen? <a href="https://linkedin.com/in/janrummel">Schreib mir auf LinkedIn.</a> · Teil des <a href="https://janrummel.github.io/ai-learning/">AI Learning Ökosystems</a></span><span class="en">Questions? <a href="https://linkedin.com/in/janrummel">Message me on LinkedIn.</a> · Part of the <a href="https://janrummel.github.io/ai-learning/">AI Learning Ecosystem</a></span></span>
+</footer>
+
+<script src="glossary.js"></script>
+<script>
+function setLang(l){document.documentElement.lang=l;document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('active'));document.querySelector(`.lang-btn[onclick="setLang('${l}')"]`).classList.add('active');localStorage.setItem('lang',l);if(typeof initGlossary==='function')initGlossary()}
+const s=localStorage.getItem('lang');if(s)setLang(s);
+</script>
+<script src="progress.js"></script>
+</body></html>

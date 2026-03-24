@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Modul 6: Gedächtnis & Kontext — Agent Systems</title>
+<meta name="description" content="Von Session-Memory zu Langzeitgedächtnis: Park et al. (Generative Agents), MemGPT und das 3-stufige Memory-System.">
+<meta name="author" content="Jan Rummel">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>🤖</text></svg>">
+<link rel="stylesheet" href="style.css">
+<style>
+.memory-flow{display:flex;align-items:stretch;justify-content:center;gap:.5rem;margin:2rem 0;flex-wrap:wrap}
+.memory-tier{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.25rem;text-align:center;flex:1;min-width:140px}
+.memory-tier .m-icon{font-size:1.5rem;margin-bottom:.3rem}
+.memory-tier .m-name{font-weight:700;font-size:.85rem;margin-bottom:.2rem}
+.memory-tier .m-scope{font-size:.7rem;color:var(--accent);font-weight:600;margin-bottom:.3rem}
+.memory-tier .m-desc{font-size:.75rem;color:var(--muted)}
+.memory-arrow{color:var(--green);font-size:1.3rem;font-weight:700;display:flex;align-items:center}
+.research-box{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.5rem;margin:1.5rem 0}
+.research-box h4{font-size:.9rem;margin-bottom:.5rem}
+.research-box p{font-size:.85rem;color:var(--muted)}
+.config-block{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.25rem;margin:1rem 0;font-family:'SF Mono',Monaco,Consolas,monospace;font-size:.8rem;line-height:1.6;overflow-x:auto;white-space:pre-wrap}
+.fw-table{width:100%;border-collapse:collapse;margin:1.5rem 0;font-size:.85rem}
+.fw-table th,.fw-table td{padding:.6rem .8rem;text-align:left;border-bottom:1px solid var(--border)}
+.fw-table th{color:var(--accent);font-weight:700;font-size:.75rem;text-transform:uppercase;letter-spacing:.05em}
+.fw-table td{color:var(--muted)}
+.fw-table tr:hover td{background:rgba(88,166,255,.04)}
+.kc-box{background:var(--surface);border:2px solid var(--orange);border-radius:12px;padding:1.5rem;margin:2rem 0}
+.kc-box h3{color:var(--orange);margin-bottom:1rem;font-size:1rem}
+.kc-q{color:var(--muted);font-size:.9rem;padding:.5rem 0;border-bottom:1px solid var(--border)}
+.kc-q:last-child{border-bottom:none}
+.kc-num{color:var(--accent);font-weight:700;margin-right:.5rem}
+@media(max-width:600px){.memory-flow{flex-direction:column}.memory-arrow{transform:rotate(90deg);justify-content:center}}
+</style>
+</head>
+<body>
+<a href="#main-content" class="skip-link"><span class="de">Zum Inhalt springen</span><span class="en">Skip to content</span></a>
+<div class="lang-switch" role="navigation" aria-label="Language">
+<button class="lang-btn active" onclick="setLang('de')">DE</button>
+<button class="lang-btn" onclick="setLang('en')">EN</button>
+</div>
+
+<div class="progress-bar"><div class="progress-fill" style="width:46%"></div></div>
+
+<div class="container" id="main-content">
+<a href="curriculum.html" class="back-link">← <span class="de">Modulübersicht</span><span class="en">Module overview</span></a>
+
+<p style="color:var(--muted);font-size:.85rem"><span class="de">Modul 6 von 13</span><span class="en">Module 6 of 13</span> · <span style="font-size:.7rem;padding:.15rem .5rem;border-radius:10px;font-weight:600;background:rgba(88,166,255,.12);color:var(--accent)">🟠🔴</span> · <span style="color:var(--orange)"><span class="de">Mittel</span><span class="en">Medium</span></span> · 75 min</p>
+
+<h1><span class="de">Gedächtnis & Kontext</span><span class="en">Memory & Context</span></h1>
+<p class="subtitle"><span class="de">Von Session-Reset zu Langzeitgedächtnis — wie Agents sich erinnern.</span><span class="en">From session reset to long-term memory — how agents remember.</span></p>
+
+<!-- SMART Learning Goal -->
+<div class="tip">
+<strong>🎯 <span class="de">Lernziel (SMART)</span><span class="en">Learning Goal (SMART)</span></strong><br>
+<span class="de">Innerhalb von 75 min: 3-stufiges Memory-System implementieren, Agent ruft Infos über Sessions hinweg korrekt ab.</span>
+<span class="en">Within 75 min: Implement 3-tier memory system, agent correctly retrieves info across sessions.</span>
+</div>
+
+<!-- Before/After -->
+<div class="comparison" style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0">
+<div class="compare-card bad" style="background:var(--surface);border:1px solid rgba(248,81,73,.4);border-radius:12px;padding:1.25rem">
+<h4 style="font-size:.9rem;margin-bottom:.5rem"><span class="de">❌ Vorher</span><span class="en">❌ Before</span></h4>
+<p style="font-size:.85rem;color:var(--muted)"><span class="de">Jede Session = Reset. Der Agent vergisst alles nach dem Gespräch.</span><span class="en">Every session = reset. The agent forgets everything after the conversation.</span></p>
+</div>
+<div class="compare-card good" style="background:var(--surface);border:1px solid rgba(63,185,80,.4);border-radius:12px;padding:1.25rem">
+<h4 style="font-size:.9rem;margin-bottom:.5rem"><span class="de">✅ Nachher</span><span class="en">✅ After</span></h4>
+<p style="font-size:.85rem;color:var(--muted)"><span class="de">Session-Memory + Tagesgedächtnis + Langzeitgedächtnis funktionieren — der Agent erinnert sich.</span><span class="en">Session memory + daily memory + long-term memory work — the agent remembers.</span></p>
+</div>
+</div>
+
+<!-- Research Foundation -->
+<h2><span class="de">Wissenschaftliche Grundlage</span><span class="en">Scientific Foundation</span></h2>
+
+<div class="research-box">
+<h4>🏘️ Park et al. (2023): Generative Agents</h4>
+<p><span class="de">25 autonome Agents in einer Sandbox-Welt — jeder mit eigenem <strong>Memory-Stream</strong>. Drei Kernmechanismen: <strong>Aufzeichnen</strong> (alles wird gespeichert), <strong>Retrieval</strong> (relevante Erinnerungen abrufen), <strong>Reflection</strong> (Erinnerungen zu höheren Einsichten verdichten). Das Ergebnis: <em>Emergentes soziales Verhalten</em> — Agents organisieren selbstständig Partys, verbreiten Gerüchte, verlieben sich. Die drei Komponenten sind direkt auf unsere Systeme übertragbar.</span><span class="en">25 autonomous agents in a sandbox world — each with their own <strong>memory stream</strong>. Three core mechanisms: <strong>Recording</strong> (everything is saved), <strong>Retrieval</strong> (recall relevant memories), <strong>Reflection</strong> (distill memories into higher-level insights). The result: <em>emergent social behavior</em> — agents independently organize parties, spread rumors, fall in love. The three components are directly transferable to our systems.</span></p>
+</div>
+
+<div class="source">📚 Park et al. (2023): "Generative Agents: Interactive Simulacra of Human Behavior", <em>UIST 2023</em> <span class="tier-badge tier-a" style="font-size:.65rem;padding:.1rem .4rem;border-radius:6px;font-weight:700;background:rgba(63,185,80,.2);color:var(--green)">Tier A</span></div>
+
+<div class="research-box" style="margin-top:1rem">
+<h4>📚 Packer et al. (2023): MemGPT</h4>
+<p><span class="de"><strong>Hierarchisches Memory</strong> überwindet Kontext-Limits: Wie ein Betriebssystem den Arbeitsspeicher (RAM) und die Festplatte (Disk) verwaltet, unterscheidet MemGPT zwischen <strong>Main Context</strong> (aktiv, im Kontext-Fenster) und <strong>External Storage</strong> (archiviert, bei Bedarf abgerufen). Der Agent entscheidet selbst, wann er Informationen ein- und auslagert.</span><span class="en"><strong>Hierarchical memory</strong> overcomes context limits: Like an operating system managing RAM and disk, MemGPT distinguishes between <strong>main context</strong> (active, in context window) and <strong>external storage</strong> (archived, retrieved on demand). The agent decides on its own when to swap information in and out.</span></p>
+</div>
+
+<div class="source">📚 Packer et al. (2023): "MemGPT: Towards LLMs as Operating Systems", arXiv:2310.08560 <span class="tier-badge tier-b" style="font-size:.65rem;padding:.1rem .4rem;border-radius:6px;font-weight:700;background:rgba(88,166,255,.15);color:var(--accent)">Tier B</span></div>
+
+<!-- 3-Tier Memory -->
+<h2><span class="de">Das 3-stufige Memory-System</span><span class="en">The 3-Tier Memory System</span></h2>
+
+<p style="color:var(--muted);font-size:.9rem;margin-bottom:1rem"><span class="de">Unser Modell übersetzt die wissenschaftlichen Konzepte in eine praktische Architektur:</span><span class="en">Our model translates the scientific concepts into a practical architecture:</span></p>
+
+<div class="memory-flow">
+<div class="memory-tier" style="border-color:rgba(88,166,255,.4)">
+<div class="m-icon">💬</div>
+<div class="m-name"><span class="de">Session-Memory</span><span class="en">Session Memory</span></div>
+<div class="m-scope"><span class="de">Minuten–Stunden</span><span class="en">Minutes–Hours</span></div>
+<div class="m-desc"><span class="de">Kontext-Fenster des LLM. Automatisch, begrenzt. Geht verloren nach Session-Ende.</span><span class="en">LLM context window. Automatic, limited. Lost after session ends.</span></div>
+</div>
+<div class="memory-arrow">→</div>
+<div class="memory-tier" style="border-color:rgba(210,153,34,.4)">
+<div class="m-icon">📝</div>
+<div class="m-name"><span class="de">Tagesgedächtnis</span><span class="en">Daily Memory</span></div>
+<div class="m-scope"><span class="de">Tage–Wochen</span><span class="en">Days–Weeks</span></div>
+<div class="m-desc"><span class="de"><code>memory/YYYY-MM-DD.md</code> — Ideen, Entscheidungen, Learnings. Append-only.</span><span class="en"><code>memory/YYYY-MM-DD.md</code> — Ideas, decisions, learnings. Append-only.</span></div>
+</div>
+<div class="memory-arrow">→</div>
+<div class="memory-tier" style="border-color:rgba(63,185,80,.4)">
+<div class="m-icon">🧠</div>
+<div class="m-name"><span class="de">Langzeitgedächtnis</span><span class="en">Long-term Memory</span></div>
+<div class="m-scope"><span class="de">Wochen–Monate</span><span class="en">Weeks–Months</span></div>
+<div class="m-desc"><span class="de"><code>MEMORY.md</code> — Verdichtete Einsichten, Nutzer-Präferenzen, Grundsätzliches. Kompakt (&lt;2000 Zeichen).</span><span class="en"><code>MEMORY.md</code> — Distilled insights, user preferences, fundamentals. Compact (&lt;2000 chars).</span></div>
+</div>
+</div>
+
+<!-- Mapping to Research -->
+<table class="fw-table">
+<thead>
+<tr>
+<th><span class="de">Stufe</span><span class="en">Tier</span></th>
+<th><span class="de">Park et al.</span><span class="en">Park et al.</span></th>
+<th>MemGPT</th>
+<th><span class="de">Unser System</span><span class="en">Our System</span></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong><span class="de">Kurzzeit</span><span class="en">Short-term</span></strong></td>
+<td>Memory Stream</td>
+<td>Main Context</td>
+<td><span class="de">Session-Kontext</span><span class="en">Session context</span></td>
+</tr>
+<tr>
+<td><strong><span class="de">Mittel</span><span class="en">Mid-term</span></strong></td>
+<td>Retrieval</td>
+<td><span class="de">Ein-/Auslagerung</span><span class="en">Swap in/out</span></td>
+<td>memory/YYYY-MM-DD.md</td>
+</tr>
+<tr>
+<td><strong><span class="de">Langzeit</span><span class="en">Long-term</span></strong></td>
+<td>Reflection</td>
+<td>External Storage</td>
+<td>MEMORY.md</td>
+</tr>
+</tbody>
+</table>
+
+<!-- Example Memory Entries -->
+<h3><span class="de">Beispiel: Memory in Aktion</span><span class="en">Example: Memory in Action</span></h3>
+
+<div class="config-block"><span class="de"># memory/2026-03-24.md
+- 14:30 [IDEE] Agent soll morgens automatisch Wetter-Briefing senden
+- 15:15 [ENTSCHEIDUNG] Vault-Ordner: Research/ für Paper-Analysen
+- 16:00 [LEARNING] Reflection-Prompt in AGENTS.md verbessert Qualität um ~20%
+- 17:45 [NOTIZ] Jan bevorzugt Zusammenfassungen unter 5 Sätzen</span><span class="en"># memory/2026-03-24.md
+- 14:30 [IDEA] Agent should send automatic weather briefing in the morning
+- 15:15 [DECISION] Vault folder: Research/ for paper analyses
+- 16:00 [LEARNING] Reflection prompt in AGENTS.md improves quality by ~20%
+- 17:45 [NOTE] Jan prefers summaries under 5 sentences</span></div>
+
+<div class="config-block"><span class="de"># MEMORY.md (Langzeit — kompakt)
+- Sprache: Deutsch, Fachbegriffe auf Englisch OK
+- Antworten kurz (1-3 Sätze)
+- Lieblingsformat für Research: Bullet-Points mit Quellen
+- Kein Arbeitsbezug — rein privat
+- Memory-Kategorien: IDEE, ENTSCHEIDUNG, LEARNING, TODO, FAKT</span><span class="en"># MEMORY.md (Long-term — compact)
+- Language: German, technical terms in English OK
+- Answers short (1-3 sentences)
+- Preferred research format: Bullet points with sources
+- No work context — private only
+- Memory categories: IDEA, DECISION, LEARNING, TODO, FACT</span></div>
+
+<!-- Hands-on -->
+<h2><span class="de">🛠️ Hands-on</span><span class="en">🛠️ Hands-on</span></h2>
+
+<div class="step">
+<div class="step-header">
+<div class="step-num" style="background:var(--orange)">🟠</div>
+<div class="step-title">Power-User</div>
+</div>
+<p style="color:var(--muted);font-size:.9rem"><span class="de"><strong>3-stufiges Memory einrichten und Recall testen:</strong></span><span class="en"><strong>Set up 3-tier memory and test recall:</strong></span></p>
+<ol style="color:var(--muted);font-size:.9rem;margin-top:.5rem">
+<li><span class="de">Erstelle <code>memory/</code>-Ordner und <code>MEMORY.md</code></span><span class="en">Create <code>memory/</code> folder and <code>MEMORY.md</code></span></li>
+<li><span class="de">Sage dem Agent 3 Dinge zum Merken (z.B. Idee, Entscheidung, Fakt)</span><span class="en">Tell the agent 3 things to remember (e.g. idea, decision, fact)</span></li>
+<li><span class="de">Starte eine <strong>neue Session</strong></span><span class="en">Start a <strong>new session</strong></span></li>
+<li><span class="de">Frage: „Was hatte ich dir zu X gesagt?" — Recall über Sessions hinweg testen</span><span class="en">Ask: "What did I tell you about X?" — Test recall across sessions</span></li>
+<li><span class="de">Wiederhole über 3 Sessions: Funktioniert das Memory?</span><span class="en">Repeat over 3 sessions: Does the memory work?</span></li>
+</ol>
+
+<a href="#" class="btn" style="background: var(--orange);">Open in Colab →</a>
+</div>
+
+<div class="step">
+<div class="step-header">
+<div class="step-num" style="background:#f85149">🔴</div>
+<div class="step-title">Developer</div>
+</div>
+<p style="color:var(--muted);font-size:.9rem"><span class="de"><strong>Vector Search und Konsolidierungs-Script:</strong></span><span class="en"><strong>Vector search and consolidation script:</strong></span></p>
+<ol style="color:var(--muted);font-size:.9rem;margin-top:.5rem">
+<li><span class="de">Konfiguriere Vector Search für den Memory-Ordner</span><span class="en">Configure vector search for the memory folder</span></li>
+<li><span class="de">Schreibe ein Konsolidierungs-Script: Tagesnotizen → MEMORY.md (wöchentlich)</span><span class="en">Write a consolidation script: Daily notes → MEMORY.md (weekly)</span></li>
+<li><span class="de">Teste Precision/Recall über 10+ Memory-Einträge</span><span class="en">Test precision/recall over 10+ memory entries</span></li>
+</ol>
+</div>
+
+<!-- HITL Box -->
+<div style="background:rgba(63,185,80,.08);border:1px solid rgba(63,185,80,.3);border-radius:12px;padding:1.5rem;margin:2rem 0">
+<h3 style="color:var(--green);font-size:1rem;margin-bottom:.5rem">🟢 HITL <span class="de">in diesem Modul</span><span class="en">in this module</span></h3>
+<p style="color:var(--muted);font-size:.9rem"><span class="de">Mensch entscheidet was gemerkt wird. <strong>Fahrschüler führt Fahrtenbuch — Fahrlehrer prüft.</strong> Der Agent speichert proaktiv, aber du bestimmst die Kategorien und was in die Langzeit kommt.</span><span class="en">Human decides what gets remembered. <strong>Student keeps the driving log — instructor checks.</strong> The agent saves proactively, but you determine the categories and what goes into long-term memory.</span></p>
+</div>
+
+<!-- Knowledge Check 2 -->
+<div class="kc-box">
+<h3>🔖 Knowledge-Check 2</h3>
+<p style="color:var(--muted);font-size:.85rem;margin-bottom:1rem"><span class="de">5 Self-Assessment-Fragen nach Modul 4–6. Beantworte jede ehrlich.</span><span class="en">5 self-assessment questions after Modules 4–6. Answer each honestly.</span></p>
+
+<div class="kc-q"><span class="kc-num">1.</span> <span class="de">Was ist der Unterschied zwischen Read-only und Side-Effect Tools? Nenne je 2 Beispiele.</span><span class="en">What's the difference between read-only and side-effect tools? Name 2 examples each.</span></div>
+<div class="kc-q"><span class="kc-num">2.</span> <span class="de">Erkläre MCP in einem Satz. Welche 3 Funktionen definiert es?</span><span class="en">Explain MCP in one sentence. What 3 functions does it define?</span></div>
+<div class="kc-q"><span class="kc-num">3.</span> <span class="de">Welche 4 Bootstrap-Dateien hat ein Workspace? Was definiert jede?</span><span class="en">What 4 bootstrap files does a workspace have? What does each define?</span></div>
+<div class="kc-q"><span class="kc-num">4.</span> <span class="de">Nenne die 3 Stufen des Memory-Systems. Welche Stufe entspricht dem „Reflection"-Mechanismus bei Park et al.?</span><span class="en">Name the 3 tiers of the memory system. Which tier corresponds to the "reflection" mechanism in Park et al.?</span></div>
+<div class="kc-q"><span class="kc-num">5.</span> <span class="de">Was passiert bei einer Prompt Injection? Wie schützt die Persona dagegen?</span><span class="en">What happens in a prompt injection? How does the persona protect against it?</span></div>
+</div>
+
+<!-- Rubric -->
+<h2><span class="de">📊 Rubrik</span><span class="en">📊 Rubric</span></h2>
+<div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.5rem">
+<p style="margin-bottom:.5rem"><span style="color:var(--green)">✅ <strong>Basis:</strong></span> <span style="color:var(--muted);font-size:.9rem"><span class="de">3-stufiges Memory funktioniert, Recall über 3 Sessions erfolgreich</span><span class="en">3-tier memory works, recall across 3 sessions successful</span></span></p>
+<p style="margin-bottom:.5rem"><span style="color:var(--orange)">⭐ <strong><span class="de">Fortgeschritten:</span><span class="en">Advanced:</span></strong></span> <span style="color:var(--muted);font-size:.9rem"><span class="de">Konsolidierungs-Script gebaut, Memory-Retrieval-Test über 10+ Einträge</span><span class="en">Consolidation script built, memory retrieval test over 10+ entries</span></span></p>
+<p><span style="color:var(--accent)">🏆 <strong><span class="de">Experte:</span><span class="en">Expert:</span></strong></span> <span style="color:var(--muted);font-size:.9rem"><span class="de">Memory-System auf anderes Framework übertragen (LangChain Memory, MemGPT) ODER Memory-Fehlerfall dokumentiert</span><span class="en">Memory system transferred to another framework (LangChain Memory, MemGPT) OR memory failure case documented</span></span></p>
+</div>
+
+<!-- Glossary -->
+<h2><span class="de">📖 Begriffe in diesem Modul</span><span class="en">📖 Terms in this module</span></h2>
+<div class="glossary">
+<dl>
+<dt>Memory Stream</dt><dd><span class="de">Chronologische Aufzeichnung aller Beobachtungen eines Agents (Park et al., 2023).</span><span class="en">Chronological record of all observations of an agent (Park et al., 2023).</span></dd>
+<dt>Context Window</dt><dd><span class="de">Maximale Textmenge, die ein LLM gleichzeitig „sehen" kann — der Arbeitsspeicher.</span><span class="en">Maximum amount of text an LLM can "see" at once — the working memory.</span></dd>
+<dt><span class="de">Konsolidierung</span><span class="en">Consolidation</span></dt><dd><span class="de">Verdichtung von Tagesnotizen zu Langzeit-Einsichten — wie Schlaf beim Menschen.</span><span class="en">Distilling daily notes into long-term insights — like sleep for humans.</span></dd>
+<dt>Vector Search</dt><dd><span class="de">Semantische Suche über Embeddings — findet thematisch ähnliche Einträge, nicht nur exakte Wörter.</span><span class="en">Semantic search via embeddings — finds thematically similar entries, not just exact words.</span></dd>
+</dl>
+</div>
+
+<!-- Sources -->
+<h2><span class="de">📚 Quellen</span><span class="en">📚 Sources</span></h2>
+<div class="source">Park et al. (2023): "Generative Agents: Interactive Simulacra of Human Behavior", <em>UIST 2023</em> <span class="tier-badge tier-a" style="font-size:.65rem;padding:.1rem .4rem;border-radius:6px;font-weight:700;background:rgba(63,185,80,.2);color:var(--green)">Tier A</span></div>
+<div class="source">Packer et al. (2023): "MemGPT: Towards LLMs as Operating Systems", arXiv:2310.08560 <span class="tier-badge tier-b" style="font-size:.65rem;padding:.1rem .4rem;border-radius:6px;font-weight:700;background:rgba(88,166,255,.15);color:var(--accent)">Tier B</span></div>
+
+<!-- Nav Footer -->
+<div class="nav-footer">
+<a href="modul5.html" class="btn" style="background:var(--surface);color:var(--text);border:1px solid var(--border)">← <span class="de">Modul 5: Persona & Workspace</span><span class="en">Module 5: Persona & Workspace</span></a>
+<a href="modul7a.html" class="btn"><span class="de">Modul 7a: Skills nutzen →</span><span class="en">Module 7a: Using Skills →</span></a>
+</div>
+</div>
+
+<footer role="contentinfo">
+<a href="https://github.com/janrummel/agent-systems"><span class="de">Quellcode auf GitHub</span><span class="en">Source on GitHub</span></a> · Made with ❤️ <span class="de">und Neugier</span><span class="en">and curiosity</span>
+<br><span style="font-size:.7rem"><span class="de">Fragen? <a href="https://linkedin.com/in/janrummel">Schreib mir auf LinkedIn.</a> · Teil des <a href="https://janrummel.github.io/ai-learning/">AI Learning Ökosystems</a></span><span class="en">Questions? <a href="https://linkedin.com/in/janrummel">Message me on LinkedIn.</a> · Part of the <a href="https://janrummel.github.io/ai-learning/">AI Learning Ecosystem</a></span></span>
+</footer>
+
+<script src="glossary.js"></script>
+<script>
+function setLang(l){document.documentElement.lang=l;document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('active'));document.querySelector(`.lang-btn[onclick="setLang('${l}')"]`).classList.add('active');localStorage.setItem('lang',l);if(typeof initGlossary==='function')initGlossary()}
+const s=localStorage.getItem('lang');if(s)setLang(s);
+</script>
+<script src="progress.js"></script>
+</body></html>
