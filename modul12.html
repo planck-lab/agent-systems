@@ -16,7 +16,7 @@
 .orch-box .o-name{font-weight:700;font-size:.8rem}
 .orch-box .o-desc{font-size:.65rem;color:var(--muted);margin-top:.15rem}
 .orch-arrow{color:var(--accent);font-size:1.2rem;font-weight:700}
-.ascii-diagram{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.25rem;margin:1rem 0;font-family:monospace;font-size:.8rem;line-height:1.5;color:var(--muted);white-space:pre;overflow-x:auto}
+
 .phase-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1rem;margin-bottom:.75rem}
 .phase-card .ph-num{display:inline-block;width:28px;height:28px;line-height:28px;text-align:center;border-radius:50%;background:#f85149;color:white;font-weight:700;font-size:.8rem;margin-right:.5rem}
 .phase-card .ph-name{font-weight:700;font-size:.9rem}
@@ -34,31 +34,24 @@
 <div class="progress-bar"><div class="progress-fill" style="width:92%"></div></div>
 
 <div class="container" id="main-content">
-<a href="curriculum.html" class="back-link">← <span class="de">Modulübersicht</span><span class="en">Module overview</span></a>
-
-<p style="color:var(--muted);font-size:.85rem"><span class="de">Modul 12 von 13</span><span class="en">Module 12 of 13</span> · <span class="dev-badge">🔴 Developer only</span> · <span style="color:#f85149"><span class="de">Experte</span><span class="en">Expert</span></span> · 90 min</p>
-
+<div class="module-header">
+<span class="module-id">M12</span>
+<div class="meta-row">
+<span><span class="de">Modul 12 von 13</span><span class="en">Module 12 of 13</span></span>
+<span class="meta-pill track">🔴</span>
+<span class="meta-pill level-adv"><span class="de">Fortgeschritten</span><span class="en">Advanced</span></span>
+<span class="meta-pill time">⏱ 90 min</span>
+</div>
 <h1><span class="de">Eigene Orchestrierung</span><span class="en">Building Your Own Orchestration</span></h1>
 <p class="subtitle"><span class="de">Patterns & Implementierung — Aufgaben zerlegen, Agents koordinieren, Ergebnisse zusammenführen.</span><span class="en">Patterns & implementation — decompose tasks, coordinate agents, synthesize results.</span></p>
-
-<div class="nav-footer" style="margin:-0.5rem 0 1.5rem">
-<a href="modul11.html" style="color:var(--muted);font-size:.85rem;text-decoration:none">← <span class="de">Modul 11</span><span class="en">Module 11</span></a>
-<span style="color:var(--accent);font-size:.85rem;font-weight:700">M12</span>
-<a href="modul13.html" style="color:var(--muted);font-size:.85rem;text-decoration:none"><span class="de">Modul 13</span><span class="en">Module 13</span> →</a>
+<div style="display:flex;justify-content:space-between;margin-top:.75rem;padding-top:.5rem;border-top:1px solid var(--border)">
+<a href="modul11.html" style="color:var(--muted);font-size:.8rem;text-decoration:none">← <span class="de">Modul 11</span><span class="en">Module 11</span></a>
+<a href="curriculum.html" style="color:var(--muted);font-size:.8rem;text-decoration:none">📋 <span class="de">Übersicht</span><span class="en">Overview</span></a>
+<a href="modul13.html" style="color:var(--muted);font-size:.8rem;text-decoration:none"><span class="de">Modul 13</span><span class="en">Module 13</span> →</a>
 </div>
-
-
-<!-- Developer Badge prominent -->
-<div style="background:rgba(248,81,73,.08);border:2px solid rgba(248,81,73,.4);border-radius:12px;padding:1.5rem;margin:1rem 0">
-<h3 style="color:#f85149;font-size:1rem;margin-bottom:.5rem">🔴 <span class="de">Developer-Modul</span><span class="en">Developer Module</span></h3>
-<p style="color:var(--muted);font-size:.9rem"><span class="de">Dieses Modul ist primär Developer-Territorium. <strong>Power-User</strong> können die Patterns konzeptionell verstehen und bestehende Orchestrierungen <strong>konfigurieren/anpassen</strong> — aber nicht from scratch bauen.</span><span class="en">This module is primarily developer territory. <strong>Power users</strong> can understand the patterns conceptually and <strong>configure/adjust</strong> existing orchestrations — but not build from scratch.</span></p>
+<div class="goal-row">
+<strong>🎯 <span class="de">Lernziel</span><span class="en">Learning Goal</span>:</strong> <span class="de">Innerhalb von 90 min: Orchestrator-Worker-Pattern implementieren, das 2+ Agents über eine gemeinsame Aufgabe koordiniert.</span><span class="en">Within 90 min: Implement an orchestrator-worker pattern that coordinates 2+ agents on a shared task.</span>
 </div>
-
-<!-- SMART Learning Goal -->
-<div class="tip">
-<strong>🎯 <span class="de">Lernziel (SMART)</span><span class="en">Learning Goal (SMART)</span></strong><br>
-<span class="de">Innerhalb von 90 min: Orchestrator-Worker-Pattern implementieren, das 2+ Agents über eine gemeinsame Aufgabe koordiniert.</span>
-<span class="en">Within 90 min: Implement an orchestrator-worker pattern that coordinates 2+ agents on a shared task.</span>
 </div>
 
 <!-- Before/After -->
@@ -98,28 +91,48 @@
 <div class="ph-desc"><span class="de">Agent A → Agent B → Agent C. Jeder verarbeitet den Output des Vorgängers. <strong>Einfach, deterministisch, gut debugbar.</strong></span><span class="en">Agent A → Agent B → Agent C. Each processes the predecessor's output. <strong>Simple, deterministic, easy to debug.</strong></span></div>
 </div>
 
-<div class="ascii-diagram">Sequential Pipeline:
-  ┌───────────────┐    ┌───────────────┐    ┌───────────────┐
-  │   Researcher  │───▶│   Summarizer  │───▶│   Formatter   │
-  │  (Web Search) │    │  (Condensing) │    │  (Markdown)   │
-  └───────────────┘    └───────────────┘    └───────────────┘
-       Input                                     Output</div>
+<div style="margin:1rem 0">
+<div style="display:flex;align-items:center;gap:.25rem;flex-wrap:wrap">
+<div style="font-size:.7rem;color:var(--muted);margin-right:.25rem">Input →</div>
+<div style="background:rgba(88,166,255,.12);border:1px solid rgba(88,166,255,.3);border-radius:8px;padding:.5rem .75rem;text-align:center">
+<div style="font-size:.8rem;font-weight:700">Researcher</div>
+<div style="font-size:.7rem;color:var(--muted)">Web Search</div>
+</div>
+<span style="color:var(--accent);font-weight:700">→</span>
+<div style="background:rgba(63,185,80,.1);border:1px solid rgba(63,185,80,.25);border-radius:8px;padding:.5rem .75rem;text-align:center">
+<div style="font-size:.8rem;font-weight:700">Summarizer</div>
+<div style="font-size:.7rem;color:var(--muted)">Condensing</div>
+</div>
+<span style="color:var(--accent);font-weight:700">→</span>
+<div style="background:rgba(210,153,34,.1);border:1px solid rgba(210,153,34,.25);border-radius:8px;padding:.5rem .75rem;text-align:center">
+<div style="font-size:.8rem;font-weight:700">Formatter</div>
+<div style="font-size:.7rem;color:var(--muted)">Markdown</div>
+</div>
+<div style="font-size:.7rem;color:var(--muted);margin-left:.25rem">→ Output</div>
+</div>
+</div>
 
 <div class="phase-card">
 <span class="ph-num">2</span><span class="ph-name">Concurrent (Fan-Out / Fan-In)</span>
 <div class="ph-desc"><span class="de">Mehrere Agents parallel → Ergebnisse zusammenführen. <strong>Schneller, aber komplexere Error-Handling.</strong></span><span class="en">Multiple agents in parallel → merge results. <strong>Faster, but more complex error handling.</strong></span></div>
 </div>
 
-<div class="ascii-diagram">Concurrent Fan-Out / Fan-In:
-                    ┌──────────────────┐
-               ┌───▶│ Agent A: arxiv   │───┐
-               │    └──────────────────┘   │
-  ┌─────────┐  │    ┌──────────────────┐   │    ┌───────────┐
-  │  Main   │──┼───▶│ Agent B: web     │───┼───▶│  Merge &  │
-  │  Agent  │  │    └──────────────────┘   │    │ Synthesize│
-  └─────────┘  │    ┌──────────────────┐   │    └───────────┘
-               └───▶│ Agent C: news    │───┘
-                    └──────────────────┘</div>
+<div style="margin:1rem 0;display:flex;align-items:center;gap:1rem;flex-wrap:wrap">
+<div style="background:rgba(137,87,229,.12);border:1px solid rgba(137,87,229,.3);border-radius:8px;padding:.6rem 1rem;text-align:center">
+<div style="font-size:.8rem;font-weight:700">Main Agent</div>
+</div>
+<span style="color:var(--accent);font-weight:700;font-size:1.2rem">⟩</span>
+<div style="display:flex;flex-direction:column;gap:.4rem">
+<div style="background:rgba(88,166,255,.12);border:1px solid rgba(88,166,255,.3);border-radius:8px;padding:.4rem .75rem;font-size:.8rem;font-weight:600">Agent A: arxiv</div>
+<div style="background:rgba(63,185,80,.1);border:1px solid rgba(63,185,80,.25);border-radius:8px;padding:.4rem .75rem;font-size:.8rem;font-weight:600">Agent B: web</div>
+<div style="background:rgba(210,153,34,.1);border:1px solid rgba(210,153,34,.25);border-radius:8px;padding:.4rem .75rem;font-size:.8rem;font-weight:600">Agent C: news</div>
+</div>
+<span style="color:var(--accent);font-weight:700;font-size:1.2rem">⟩</span>
+<div style="background:rgba(137,87,229,.1);border:1px solid rgba(137,87,229,.25);border-radius:8px;padding:.6rem 1rem;text-align:center">
+<div style="font-size:.8rem;font-weight:700">Merge &</div>
+<div style="font-size:.7rem;color:var(--muted)">Synthesize</div>
+</div>
+</div>
 
 <div class="phase-card">
 <span class="ph-num">3</span><span class="ph-name">Handoff</span>
@@ -131,27 +144,31 @@
 <div class="ph-desc"><span class="de">Ein Manager-Agent plant, verteilt und konsolidiert. Worker-Agents führen aus. <strong>Am mächtigsten, aber am komplexesten.</strong></span><span class="en">A manager agent plans, distributes, and consolidates. Worker agents execute. <strong>Most powerful, but most complex.</strong></span></div>
 </div>
 
-<div class="ascii-diagram">Orchestrator-Worker Pattern:
-  ┌─────────────────────────────────────────────┐
-  │              ORCHESTRATOR                    │
-  │  1. Decompose task into sub-tasks           │
-  │  2. Spawn workers                           │
-  │  3. Monitor progress                        │
-  │  4. Handle failures (retry/skip/escalate)   │
-  │  5. Synthesize results                      │
-  └──────────┬──────────┬──────────┬────────────┘
-             │          │          │
-             ▼          ▼          ▼
-       ┌──────────┐┌──────────┐┌──────────┐
-       │ Worker 1 ││ Worker 2 ││ Worker 3 │
-       │ (Task A) ││ (Task B) ││ (Task C) │
-       └─────┬────┘└─────┬────┘└─────┬────┘
-             │          │          │
-             └──────────┼──────────┘
-                        ▼
-               ┌────────────────┐
-               │ Result Merge   │
-               └────────────────┘</div>
+<div style="margin:1rem 0;display:flex;flex-direction:column;align-items:center;gap:.25rem">
+<div style="background:rgba(137,87,229,.15);border:1px solid rgba(137,87,229,.35);border-radius:10px;padding:.75rem 1.5rem;text-align:center;max-width:340px;width:100%">
+<div style="font-size:.9rem;font-weight:700;margin-bottom:.5rem">ORCHESTRATOR</div>
+<div style="font-size:.7rem;color:var(--muted);line-height:1.5;text-align:left">
+1. Decompose task<br>2. Spawn workers<br>3. Monitor progress<br>4. Handle failures<br>5. Synthesize results
+</div>
+</div>
+<span style="color:var(--border);font-size:.8rem">▼ ▼ ▼</span>
+<div style="display:flex;gap:.5rem;flex-wrap:wrap;justify-content:center">
+<div style="background:rgba(88,166,255,.12);border:1px solid rgba(88,166,255,.3);border-radius:8px;padding:.5rem .75rem;text-align:center">
+<div style="font-size:.8rem;font-weight:700">Worker 1</div>
+<div style="font-size:.7rem;color:var(--muted)">Task A</div>
+</div>
+<div style="background:rgba(63,185,80,.1);border:1px solid rgba(63,185,80,.25);border-radius:8px;padding:.5rem .75rem;text-align:center">
+<div style="font-size:.8rem;font-weight:700">Worker 2</div>
+<div style="font-size:.7rem;color:var(--muted)">Task B</div>
+</div>
+<div style="background:rgba(210,153,34,.1);border:1px solid rgba(210,153,34,.25);border-radius:8px;padding:.5rem .75rem;text-align:center">
+<div style="font-size:.8rem;font-weight:700">Worker 3</div>
+<div style="font-size:.7rem;color:var(--muted)">Task C</div>
+</div>
+</div>
+<span style="color:var(--border);font-size:.8rem">▼ ▼ ▼</span>
+<div style="background:rgba(137,87,229,.1);border:1px solid rgba(137,87,229,.25);border-radius:8px;padding:.5rem 1.25rem;font-size:.85rem;font-weight:700">Result Merge</div>
+</div>
 
 <!-- Task Decomposition -->
 <h2><span class="de">Task Decomposition, Spawning & Synthese</span><span class="en">Task Decomposition, Spawning & Synthesis</span></h2>
@@ -286,6 +303,8 @@
 <div class="source">Ng (2024): "Agentic Design Patterns" <span class="tier-badge tier-c" style="font-size:.65rem;padding:.1rem .4rem;border-radius:6px;font-weight:700;background:rgba(210,153,34,.15);color:var(--orange)">Tier C</span></div>
 <div class="source">Microsoft (2025): Multi-Agent Orchestration Patterns Documentation <span class="tier-badge tier-c" style="font-size:.65rem;padding:.1rem .4rem;border-radius:6px;font-weight:700;background:rgba(210,153,34,.15);color:var(--orange)">Tier C</span></div>
 <div class="source">OpenAI (2025): Swarm — Orchestration Framework <span class="tier-badge tier-c" style="font-size:.65rem;padding:.1rem .4rem;border-radius:6px;font-weight:700;background:rgba(210,153,34,.15);color:var(--orange)">Tier C</span></div>
+
+</details>
 
 <div class="tip" style="border-left-color: var(--orange);">
 <strong>💰 <span class="de">Geschätzte API-Kosten für dieses Modul</span><span class="en">Estimated API costs for this module</span></strong>

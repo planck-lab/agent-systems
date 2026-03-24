@@ -37,25 +37,24 @@
 <div class="progress-bar"><div class="progress-fill" style="width:77%"></div></div>
 
 <div class="container" id="main-content">
-<a href="curriculum.html" class="back-link">← <span class="de">Modulübersicht</span><span class="en">Module overview</span></a>
-
-<p style="color:var(--muted);font-size:.85rem"><span class="de">Modul 10 von 13</span><span class="en">Module 10 of 13</span> · <span style="font-size:.7rem;padding:.15rem .5rem;border-radius:10px;font-weight:600;background:rgba(88,166,255,.12);color:var(--accent)">🟠🔴</span> · <span style="color:var(--orange)"><span class="de">Fortgeschritten</span><span class="en">Advanced</span></span> · 75 min</p>
-
+<div class="module-header">
+<span class="module-id">M10</span>
+<div class="meta-row">
+<span><span class="de">Modul 10 von 13</span><span class="en">Module 10 of 13</span></span>
+<span class="meta-pill track">🟠🔴</span>
+<span class="meta-pill level-adv"><span class="de">Fortgeschritten</span><span class="en">Advanced</span></span>
+<span class="meta-pill time">⏱ 75 min</span>
+</div>
 <h1><span class="de">Automatisierung: Cron, Hooks & Events</span><span class="en">Automation: Cron, Hooks & Events</span></h1>
 <p class="subtitle"><span class="de">Vom reaktiven zum proaktiven Agent — zeitgesteuert, event-getrieben, kontrolliert.</span><span class="en">From reactive to proactive agent — time-triggered, event-driven, controlled.</span></p>
-
-<div class="nav-footer" style="margin:-0.5rem 0 1.5rem">
-<a href="modul9.html" style="color:var(--muted);font-size:.85rem;text-decoration:none">← <span class="de">Modul 9</span><span class="en">Module 9</span></a>
-<span style="color:var(--accent);font-size:.85rem;font-weight:700">M10</span>
-<a href="modul11.html" style="color:var(--muted);font-size:.85rem;text-decoration:none"><span class="de">Modul 11</span><span class="en">Module 11</span> →</a>
+<div style="display:flex;justify-content:space-between;margin-top:.75rem;padding-top:.5rem;border-top:1px solid var(--border)">
+<a href="modul9.html" style="color:var(--muted);font-size:.8rem;text-decoration:none">← <span class="de">Modul 9</span><span class="en">Module 9</span></a>
+<a href="curriculum.html" style="color:var(--muted);font-size:.8rem;text-decoration:none">📋 <span class="de">Übersicht</span><span class="en">Overview</span></a>
+<a href="modul11.html" style="color:var(--muted);font-size:.8rem;text-decoration:none"><span class="de">Modul 11</span><span class="en">Module 11</span> →</a>
 </div>
-
-
-<!-- SMART Learning Goal -->
-<div class="tip">
-<strong>🎯 <span class="de">Lernziel (SMART)</span><span class="en">Learning Goal (SMART)</span></strong><br>
-<span class="de">Innerhalb von 75 min: 2 Automatisierungen konfigurieren (1 Cron, 1 Hook) und eine HITL-Eskalation implementieren.</span>
-<span class="en">Within 75 min: Configure 2 automations (1 cron, 1 hook) and implement a HITL escalation.</span>
+<div class="goal-row">
+<strong>🎯 <span class="de">Lernziel</span><span class="en">Learning Goal</span>:</strong> <span class="de">Innerhalb von 75 min: 2 Automatisierungen konfigurieren (1 Cron, 1 Hook) und eine HITL-Eskalation implementieren.</span><span class="en">Within 75 min: Configure 2 automations (1 cron, 1 hook) and implement a HITL escalation.</span>
+</div>
 </div>
 
 <!-- Before/After -->
@@ -119,8 +118,26 @@
 
 <!-- API Cost Warning -->
 <div style="background:rgba(248,81,73,.08);border:1px solid rgba(248,81,73,.3);border-radius:12px;padding:1.5rem;margin:1.5rem 0">
-<h3 style="color:#f85149;font-size:1rem;margin-bottom:.5rem">⚠️ <span class="de">API-Kosten-Warnung für Cron-Jobs</span><span class="en">API Cost Warning for Cron Jobs</span></h3>
-<p style="color:var(--muted);font-size:.9rem"><span class="de">Cron-Jobs generieren <strong>laufende Kosten</strong>! Ein täglicher Digest kostet $0.05–0.30/Tag je nach Modell. Das sind $1.50–$9.00/Monat — nur für einen einzigen Cron-Job. <strong>Rechne die Kosten VORHER durch.</strong></span><span class="en">Cron jobs generate <strong>ongoing costs</strong>! A daily digest costs $0.05–0.30/day depending on the model. That's $1.50–$9.00/month — for a single cron job. <strong>Calculate costs BEFOREHAND.</strong></span></p>
+<h3 style="color:#f85149;font-size:1rem;margin-bottom:.75rem">⚠️ <span class="de">API-Kosten-Warnung für Cron-Jobs</span><span class="en">API Cost Warning for Cron Jobs</span></h3>
+<p style="color:var(--muted);font-size:.9rem;margin-bottom:1rem"><span class="de">Cron-Jobs laufen automatisch — und jeder Lauf kostet Geld. Das summiert sich schnell, weil du die Kosten nicht aktiv siehst.</span><span class="en">Cron jobs run automatically — and every run costs money. It adds up fast because you don't actively see the costs.</span></p>
+<div style="overflow-x:auto">
+<table style="font-size:.85rem;width:100%">
+<thead><tr>
+<th><span class="de">Beispiel-Job</span><span class="en">Example Job</span></th>
+<th><span class="de">Frequenz</span><span class="en">Frequency</span></th>
+<th><span class="de">Kosten/Lauf</span><span class="en">Cost/Run</span></th>
+<th><span class="de">Monat</span><span class="en">Month</span></th>
+<th><span class="de">Jahr</span><span class="en">Year</span></th>
+</tr></thead>
+<tbody>
+<tr><td><span class="de">News Digest (Haiku)</span><span class="en">News Digest (Haiku)</span></td><td><span class="de">Täglich</span><span class="en">Daily</span></td><td>~$0.05</td><td>~$1.50</td><td>~$18</td></tr>
+<tr><td><span class="de">Research Report (Sonnet)</span><span class="en">Research Report (Sonnet)</span></td><td><span class="de">Täglich</span><span class="en">Daily</span></td><td>~$0.30</td><td>~$9.00</td><td>~$108</td></tr>
+<tr><td><span class="de">Repo Review (Sonnet)</span><span class="en">Repo Review (Sonnet)</span></td><td><span class="de">Wöchentlich</span><span class="en">Weekly</span></td><td>~$0.50</td><td>~$2.00</td><td>~$24</td></tr>
+<tr><td><span class="de">3 Jobs kombiniert</span><span class="en">3 Jobs combined</span></td><td>—</td><td>—</td><td><strong>~$12.50</strong></td><td><strong>~$150</strong></td></tr>
+</tbody>
+</table>
+</div>
+<p style="color:var(--muted);font-size:.85rem;margin-top:.75rem"><span class="de"><strong>Warum das wichtig ist:</strong> Anders als manuelle API-Calls siehst du die Kosten von Cron-Jobs nicht im Moment der Nutzung. Du merkst sie erst auf der Monatsrechnung. Deshalb: <strong>Richte Spending Limits beim API-Provider ein</strong> und aktiviere Budgetwarnungen (z.B. bei 80% des Monatsbudgets). Starte mit einem Job, miss die echten Kosten, und skaliere erst dann.</span><span class="en"><strong>Why this matters:</strong> Unlike manual API calls, you don't see cron job costs at the moment of use. You notice them on the monthly bill. Therefore: <strong>Set spending limits with your API provider</strong> and enable budget alerts (e.g., at 80% of monthly budget). Start with one job, measure actual costs, then scale.</span></p>
 <table class="compare-table" style="margin-top:.75rem">
 <thead><tr><th><span class="de">Modell</span><span class="en">Model</span></th><th><span class="de">Pro Aufruf (Ø)</span><span class="en">Per call (avg)</span></th><th><span class="de">Täglich</span><span class="en">Daily</span></th><th><span class="de">Monatlich</span><span class="en">Monthly</span></th></tr></thead>
 <tbody>
@@ -259,6 +276,8 @@
 <summary><span class="de">📚 Quellen</span><span class="en">📚 Sources</span></summary>
 <div class="source">OpenClaw Docs (2026): Automation — <a href="https://docs.openclaw.ai" style="color:var(--accent)">docs.openclaw.ai</a> <span class="tier-badge tier-c" style="font-size:.65rem;padding:.1rem .4rem;border-radius:6px;font-weight:700;background:rgba(210,153,34,.15);color:var(--orange)">Tier C</span></div>
 <div class="source">Anthropic (2025): "Building Effective Agents" <span class="tier-badge tier-c" style="font-size:.65rem;padding:.1rem .4rem;border-radius:6px;font-weight:700;background:rgba(210,153,34,.15);color:var(--orange)">Tier C</span></div>
+
+</details>
 
 <div class="tip" style="border-left-color: var(--orange);">
 <strong>💰 <span class="de">Geschätzte API-Kosten für dieses Modul</span><span class="en">Estimated API costs for this module</span></strong>
