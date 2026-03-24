@@ -268,9 +268,10 @@ echo "$RESULT"</span></div>
 <div style="background:rgba(63,185,80,.08);border:1px solid rgba(63,185,80,.3);border-radius:12px;padding:1.5rem;margin:2rem 0">
 <h3 style="color:var(--green);font-size:1rem;margin-bottom:.5rem">🟠 HITL <span class="de">in diesem Modul</span><span class="en">in this module</span></h3>
 <p style="color:var(--muted);font-size:.9rem"><span class="de">Du schreibst das Rezept, der Agent kocht. <strong>Fährt allein — Veröffentlichung nur mit Review.</strong></span><span class="en">You write the recipe, the agent cooks. <strong>Driving alone — publishing only with review.</strong></span></p>
-<pre style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:.75rem;font-size:.85rem;overflow-x:auto;margin-top:.75rem"><code># HITL-Config für dieses Modul / HITL config for this module
-skills: { publish: { approval: "always" } }
-# → Veröffentlichung immer mit Review / Publishing always with review</code></pre>
+<div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:.75rem 1rem;margin-top:.75rem">
+<code style="font-size:.8rem;color:var(--accent)">skills: { publish: { approval: "always" } }</code>
+<p style="font-size:.78rem;color:var(--muted);margin:.4rem 0 0"><span class="de">↳ Selbst gebaute Skills werden nie automatisch veröffentlicht. Review + Freigabe vor jeder Veröffentlichung.</span><span class="en">↳ Custom-built skills are never auto-published. Review + approval before every publication.</span></p>
+</div>
 <p style="margin-top:.75rem;font-size:.8rem;color:var(--muted)"><span class="de">📍 <strong>Autonomie-Stufe:</strong> 🟠 Fährt allein, App trackt Route — Monitoring + Eskalation bei Anomalien</span><span class="en">📍 <strong>Autonomy level:</strong> 🟠 Driving alone, app tracks route — Monitoring + escalation on anomalies</span></p>
 </div>
 

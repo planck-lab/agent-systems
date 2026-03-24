@@ -210,9 +210,10 @@
 <div style="background:rgba(63,185,80,.08);border:1px solid rgba(63,185,80,.3);border-radius:12px;padding:1.5rem;margin:2rem 0">
 <h3 style="color:var(--green);font-size:1rem;margin-bottom:.5rem">🟠 HITL <span class="de">in diesem Modul</span><span class="en">in this module</span></h3>
 <p style="color:var(--muted);font-size:.9rem"><span class="de">Debugging IST HITL. <strong>Fährt allein, aber bei Fehler sofort stoppen.</strong> Ethik-Regeln definieren die Grenzen.</span><span class="en">Debugging IS HITL. <strong>Driving alone, but stop immediately on error.</strong> Ethics rules define the boundaries.</span></p>
-<pre style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:.75rem;font-size:.85rem;overflow-x:auto;margin-top:.75rem"><code># HITL-Config für dieses Modul / HITL config for this module
-debug: { verbose: true, pauseOnError: true }
-# → Bei Fehler sofort stoppen / Stop immediately on error</code></pre>
+<div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:.75rem 1rem;margin-top:.75rem">
+<code style="font-size:.8rem;color:var(--accent)">debug: { verbose: true, pauseOnError: true }</code>
+<p style="font-size:.78rem;color:var(--muted);margin:.4rem 0 0"><span class="de">↳ Ausführliche Logs aktiviert. Bei jedem Fehler stoppt der Agent sofort und wartet auf deine Entscheidung.</span><span class="en">↳ Verbose logging enabled. On every error, the agent stops immediately and waits for your decision.</span></p>
+</div>
 <p style="margin-top:.75rem;font-size:.8rem;color:var(--muted)"><span class="de">📍 <strong>Autonomie-Stufe:</strong> 🟠 Fährt allein, App trackt Route — Monitoring + Eskalation bei Anomalien</span><span class="en">📍 <strong>Autonomy level:</strong> 🟠 Driving alone, app tracks route — Monitoring + escalation on anomalies</span></p>
 </div>
 

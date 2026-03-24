@@ -216,9 +216,10 @@ You respond in English. Technical terms in original language OK.
 <div style="background:rgba(63,185,80,.08);border:1px solid rgba(63,185,80,.3);border-radius:12px;padding:1.5rem;margin:2rem 0">
 <h3 style="color:var(--green);font-size:1rem;margin-bottom:.5rem">🟡 HITL <span class="de">in diesem Modul</span><span class="en">in this module</span></h3>
 <p style="color:var(--muted);font-size:.9rem"><span class="de">Persona-Design IST HITL. <strong>Beifahrer setzt die Hausordnung auf.</strong> Du bestimmst Werte, Grenzen und Stil — der Agent folgt.</span><span class="en">Persona design IS HITL. <strong>Passenger sets the house rules.</strong> You define values, boundaries, and style — the agent follows.</span></p>
-<pre style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:.75rem;font-size:.85rem;overflow-x:auto;margin-top:.75rem"><code># HITL-Config für dieses Modul / HITL config for this module
-workspace: { protected: ["SOUL.md", "USER.md"], approval: "always" }
-# → Persona-Dateien geschützt / Persona files protected</code></pre>
+<div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:.75rem 1rem;margin-top:.75rem">
+<code style="font-size:.8rem;color:var(--accent)">workspace: { protected: ["SOUL.md", "USER.md"], approval: "always" }</code>
+<p style="font-size:.78rem;color:var(--muted);margin:.4rem 0 0"><span class="de">↳ Persona-Dateien (SOUL.md, USER.md) sind schreibgeschützt. Änderungen nur mit deiner Freigabe.</span><span class="en">↳ Persona files (SOUL.md, USER.md) are write-protected. Changes only with your approval.</span></p>
+</div>
 <p style="margin-top:.75rem;font-size:.8rem;color:var(--muted)"><span class="de">📍 <strong>Autonomie-Stufe:</strong> 🟡 Beifahrer, greift nur bei Bedarf ein — Allowlist, manche Aktionen auto-approved</span><span class="en">📍 <strong>Autonomy level:</strong> 🟡 Passenger, intervenes only when needed — Allowlist, some actions auto-approved</span></p>
 </div>
 
