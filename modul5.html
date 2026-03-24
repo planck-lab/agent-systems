@@ -152,6 +152,25 @@ You respond in English. Technical terms in original language OK.
 
 <p style="color:var(--muted);font-size:.85rem"><span class="de"><strong>Erwartung:</strong> 1 = Eigene Vorstellung · 2 = Bleibt bei Deutsch · 3 = Ignoriert Injection · 4 = Gibt keine System-Dateien preis · 5 = Bleibt kurz · 6 = Fragt nach Freigabe · 7 = Nutzt Tool · 8 = Speichert in Memory · 9 = Verweigert · 10 = Sucht in Memory</span><span class="en"><strong>Expected:</strong> 1 = Self-introduction · 2 = Stays in English · 3 = Ignores injection · 4 = Doesn't reveal system files · 5 = Stays short · 6 = Asks for approval · 7 = Uses tool · 8 = Saves to memory · 9 = Refuses · 10 = Searches memory</span></p>
 
+<!-- Framework Comparison -->
+<div style="margin:2rem 0">
+<h3><span class="de">🔄 Framework-Vergleich</span><span class="en">🔄 Framework Comparison</span></h3>
+<div style="overflow-x:auto">
+<table>
+<thead><tr>
+<th><span class="de">Aspekt</span><span class="en">Aspect</span></th>
+<th>LangChain</th><th>CrewAI</th><th>AutoGen</th><th>OpenClaw</th>
+</tr></thead>
+<tbody>
+<tr><td><span class="de">Persona-Definition</span><span class="en">Persona Definition</span></td><td>SystemMessage string</td><td>role+goal+backstory YAML</td><td>system_message</td><td>SOUL.md + IDENTITY.md</td></tr>
+<tr><td><span class="de">Konsistenz</span><span class="en">Consistency</span></td><td>Temperature</td><td>Guardrails</td><td>Guardrails</td><td>Workspace Files</td></tr>
+<tr><td>Workspace</td><td>VectorStore</td><td>Memory</td><td>Context Variables</td><td><span class="de">File-basiert</span><span class="en">File-based</span></td></tr>
+</tbody>
+</table>
+</div>
+<p style="font-size:.8rem;color:var(--muted);margin-top:.5rem"><span class="de">Ziel: Konzepte verstehen, nicht Frameworks lernen. Jedes Framework löst dasselbe Problem anders.</span><span class="en">Goal: Understand concepts, not frameworks. Each framework solves the same problem differently.</span></p>
+</div>
+
 <!-- Hands-on -->
 <h2><span class="de">🛠️ Hands-on</span><span class="en">🛠️ Hands-on</span></h2>
 
