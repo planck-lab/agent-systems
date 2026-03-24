@@ -44,7 +44,7 @@
 
 <div class="nav-footer" style="margin:-0.5rem 0 1.5rem">
 <a href="modul8.html" style="color:var(--muted);font-size:.85rem;text-decoration:none">← <span class="de">Modul 8</span><span class="en">Module 8</span></a>
-<a href="curriculum.html" style="color:var(--muted);font-size:.85rem;text-decoration:none"><span class="de">Übersicht</span><span class="en">Overview</span></a>
+<span style="color:var(--accent);font-size:.85rem;font-weight:700">M9</span>
 <a href="modul10.html" style="color:var(--muted);font-size:.85rem;text-decoration:none"><span class="de">Modul 10</span><span class="en">Module 10</span> →</a>
 </div>
 
@@ -138,36 +138,47 @@
 </div>
 </div>
 
-<div class="ascii-diagram"><span class="de"><strong>Sequential:</strong></span><span class="en"><strong>Sequential:</strong></span>
-  ┌─────────┐    ┌─────────┐    ┌─────────┐
-  │ Agent A │───▶│ Agent B │───▶│ Agent C │
-  └─────────┘    └─────────┘    └─────────┘
+<!-- Visual: Sequential -->
+<div style="margin:1.5rem 0">
+<p style="font-weight:700;font-size:.9rem;margin-bottom:.5rem">Sequential</p>
+<div style="display:flex;align-items:center;gap:.25rem;flex-wrap:wrap">
+<div style="background:rgba(88,166,255,.12);border:1px solid rgba(88,166,255,.3);border-radius:8px;padding:.5rem .75rem;font-size:.8rem;font-weight:600;text-align:center">Agent A</div>
+<span style="color:var(--accent);font-weight:700">→</span>
+<div style="background:rgba(63,185,80,.1);border:1px solid rgba(63,185,80,.25);border-radius:8px;padding:.5rem .75rem;font-size:.8rem;font-weight:600;text-align:center">Agent B</div>
+<span style="color:var(--accent);font-weight:700">→</span>
+<div style="background:rgba(210,153,34,.1);border:1px solid rgba(210,153,34,.25);border-radius:8px;padding:.5rem .75rem;font-size:.8rem;font-weight:600;text-align:center">Agent C</div>
+</div>
+</div>
 
-<span class="de"><strong>Concurrent:</strong></span><span class="en"><strong>Concurrent:</strong></span>
-  ┌─────────┐
-  │ Agent A │──┐
-  └─────────┘  │   ┌─────────┐
-  ┌─────────┐  ├──▶│  Merge  │
-  │ Agent B │──┤   └─────────┘
-  └─────────┘  │
-  ┌─────────┐  │
-  │ Agent C │──┘
-  └─────────┘
+<!-- Visual: Concurrent -->
+<div style="margin:1.5rem 0">
+<p style="font-weight:700;font-size:.9rem;margin-bottom:.5rem">Concurrent</p>
+<div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap">
+<div style="display:flex;flex-direction:column;gap:.4rem">
+<div style="background:rgba(88,166,255,.12);border:1px solid rgba(88,166,255,.3);border-radius:8px;padding:.4rem .75rem;font-size:.8rem;font-weight:600">Agent A</div>
+<div style="background:rgba(63,185,80,.1);border:1px solid rgba(63,185,80,.25);border-radius:8px;padding:.4rem .75rem;font-size:.8rem;font-weight:600">Agent B</div>
+<div style="background:rgba(210,153,34,.1);border:1px solid rgba(210,153,34,.25);border-radius:8px;padding:.4rem .75rem;font-size:.8rem;font-weight:600">Agent C</div>
+</div>
+<span style="color:var(--accent);font-weight:700;font-size:1.2rem">⟩</span>
+<div style="background:rgba(137,87,229,.1);border:1px solid rgba(137,87,229,.25);border-radius:8px;padding:.6rem 1rem;font-size:.8rem;font-weight:700;text-align:center">Merge</div>
+</div>
+</div>
 
-<span class="de"><strong>Orchestrator-Worker:</strong></span><span class="en"><strong>Orchestrator-Worker:</strong></span>
-               ┌──────────────┐
-               │ Orchestrator │
-               └──────┬───────┘
-            ┌─────────┼─────────┐
-            ▼         ▼         ▼
-       ┌────────┐┌────────┐┌────────┐
-       │Worker 1││Worker 2││Worker 3│
-       └────┬───┘└────┬───┘└────┬───┘
-            └─────────┼─────────┘
-                      ▼
-               ┌──────────────┐
-               │   Synthese   │
-               └──────────────┘</div>
+<!-- Visual: Orchestrator-Worker -->
+<div style="margin:1.5rem 0">
+<p style="font-weight:700;font-size:.9rem;margin-bottom:.5rem">Orchestrator-Worker</p>
+<div style="display:flex;flex-direction:column;align-items:center;gap:.25rem">
+<div style="background:rgba(137,87,229,.12);border:1px solid rgba(137,87,229,.3);border-radius:8px;padding:.5rem 1.25rem;font-size:.85rem;font-weight:700">Orchestrator</div>
+<span style="color:var(--border);font-size:.8rem">▼ ▼ ▼</span>
+<div style="display:flex;gap:.5rem;flex-wrap:wrap;justify-content:center">
+<div style="background:rgba(88,166,255,.12);border:1px solid rgba(88,166,255,.3);border-radius:8px;padding:.4rem .75rem;font-size:.75rem;font-weight:600">Worker 1</div>
+<div style="background:rgba(63,185,80,.1);border:1px solid rgba(63,185,80,.25);border-radius:8px;padding:.4rem .75rem;font-size:.75rem;font-weight:600">Worker 2</div>
+<div style="background:rgba(210,153,34,.1);border:1px solid rgba(210,153,34,.25);border-radius:8px;padding:.4rem .75rem;font-size:.75rem;font-weight:600">Worker 3</div>
+</div>
+<span style="color:var(--border);font-size:.8rem">▼ ▼ ▼</span>
+<div style="background:rgba(137,87,229,.1);border:1px solid rgba(137,87,229,.25);border-radius:8px;padding:.5rem 1.25rem;font-size:.85rem;font-weight:700"><span class="de">Synthese</span><span class="en">Synthesis</span></div>
+</div>
+</div>
 
 <!-- Framework Comparison -->
 <div style="margin:2rem 0">
