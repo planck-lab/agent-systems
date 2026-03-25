@@ -85,13 +85,13 @@
 <body>
 <a href="#main-content" class="skip-link"><span class="de">Zum Inhalt springen</span><span class="en">Skip to content</span></a>
 <div class="lang-switch" role="navigation" aria-label="Language">
-<button class="lang-btn active" onclick="setLang('de')">DE</button>
-<button class="lang-btn" onclick="setLang('en')">EN</button>
+<button class="lang-btn active" onclick="setLang('de')" aria-label="Deutsch" aria-pressed="true">DE</button>
+<button class="lang-btn" onclick="setLang('en')" aria-label="English" aria-pressed="false">EN</button>
 </div>
 
 <div class="container" style="max-width:760px;margin:0 auto;padding:3rem 2rem 2rem">
 
-<div class="breadcrumb"><span class="de"><a href="index.html">🧭 Agent Literacy</a> › Modul 2: Vertrauen & Delegation</span><span class="en"><a href="index.html">🧭 Agent Literacy</a> › Module 2: Trust & Delegation</span></div>
+<nav class="breadcrumb" aria-label="Breadcrumb"><span class="de"><a href="index.html">🧭 Agent Literacy</a> › Modul 2: Vertrauen & Delegation</span><span class="en"><a href="index.html">🧭 Agent Literacy</a> › Module 2: Trust & Delegation</span></nav>
 <div class="header-nav">
 <a href="modul1.html"><span class="de">← Modul 1</span><span class="en">← Module 1</span></a>
 <a href="modul3.html"><span class="de">Modul 3 →</span><span class="en">Module 3 →</span></a>
@@ -408,6 +408,7 @@
 </div>
 
 <!-- ===== Lernziel-Check ===== -->
+<!-- a11y: self-check -->
 <section>
 <div style="background:rgba(63,185,80,.06);border:1px solid rgba(63,185,80,.15);border-radius:12px;padding:1.25rem;margin:1.5rem 0">
 <p style="font-size:.82rem;font-weight:700;color:var(--green);margin-bottom:.75rem"><span class="de">✅ Kannst du jetzt...</span><span class="en">✅ Can you now...</span></p>
@@ -422,7 +423,7 @@
 <!-- ===== Quellen ===== -->
 <a id="quellen-m2"></a>
 <section>
-<details>
+<details aria-label="Quellen und Referenzen">
 <summary style="font-size:1rem;font-weight:700;cursor:pointer"><span class="de">📚 Quellen & Referenzen</span><span class="en">📚 Sources & References</span></summary>
 <ol style="font-size:.8rem;color:var(--muted);line-height:1.8;margin-top:1rem;padding-left:1.25rem">
 <li>Bansal, G. et al. (2021). <em>Does the Whole Exceed its Parts? The Effect of AI Explanations on Complementary Team Performance.</em> CHI 2021. <span style="color:var(--accent)">[Tier A]</span></li>
@@ -443,7 +444,7 @@
 </footer>
 
 <script>
-function setLang(l){document.documentElement.lang=l;document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('active'));document.querySelector(`.lang-btn[onclick="setLang('${l}')"]`).classList.add('active');localStorage.setItem('lang',l)}
+function setLang(l){document.documentElement.lang=l;document.querySelectorAll('.lang-btn').forEach(b=>{b.classList.remove('active');b.setAttribute('aria-pressed','false')});var a=document.querySelector(`.lang-btn[onclick="setLang('${l}')"]`);a.classList.add('active');a.setAttribute('aria-pressed','true');localStorage.setItem('lang',l)}
 const s=localStorage.getItem('lang');if(s)setLang(s);
 </script>
 <button class="back-to-top" onclick="scrollTo({top:0,behavior:'smooth'})">↑</button>
