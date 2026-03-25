@@ -260,6 +260,54 @@
 </div>
 </section>
 
+<!-- ===== TEIL 3b: Enforcement vs. Rules ===== -->
+<section>
+<h2><span class="de">🔒 Regeln vs. Enforcement: Die wichtigste Erkenntnis</span><span class="en">🔒 Rules vs. Enforcement: The Most Important Insight</span></h2>
+
+<p><span class="de">Hier wird es unbequem. Denn diese Erkenntnis betrifft nicht nur Agents — sie betrifft jeden der Agent-Systeme betreibt.</span><span class="en">This is where it gets uncomfortable. Because this insight doesn't just affect agents — it affects everyone operating agent systems.</span></p>
+
+<div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.25rem;margin:1rem 0">
+<p style="font-size:.88rem;line-height:1.6"><span class="de">Ein Agent kann 15 Regeln haben. Er kann sie auflisten. Er kann erklären warum sie wichtig sind. <strong>Und er kann sie trotzdem ignorieren.</strong></span><span class="en">An agent can have 15 rules. It can list them. It can explain why they're important. <strong>And it can still ignore them.</strong></span></p>
+<p style="font-size:.88rem;line-height:1.6;margin-top:.5rem"><span class="de">Das ist kein Bug. Es ist eine fundamentale Eigenschaft von LLM-Agents: Skills, Workflows, System-Prompts sind <strong>Empfehlungen</strong>. Der Agent interpretiert sie — und unter Zeitdruck oder in langen Sessions erodiert die Einhaltung.</span><span class="en">This isn't a bug. It's a fundamental property of LLM agents: Skills, workflows, system prompts are <strong>suggestions</strong>. The agent interprets them — and under pressure or in long sessions, compliance erodes.</span></p>
+</div>
+
+<p><span class="de">Ein AWS-Artikel (März 2026) bringt es auf den Punkt:</span><span class="en">An AWS article (March 2026) puts it precisely:</span></p>
+
+<blockquote style="border-left:3px solid var(--accent);padding-left:1rem;margin:1rem 0;font-style:italic;color:var(--muted)">
+"Prompts are suggestions. The LLM can hallucinate compliance with any instruction. Hooks are enforcement."
+<br><span style="font-size:.75rem;font-style:normal"><span class="de">— AWS / DEV.to: "AI Agent Guardrails: Rules That LLMs Cannot Bypass" (März 2026)</span><span class="en">— AWS / DEV.to: "AI Agent Guardrails: Rules That LLMs Cannot Bypass" (March 2026)</span></span>
+</blockquote>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0">
+<div style="background:rgba(248,81,73,.06);border:1px solid rgba(248,81,73,.15);border-radius:10px;padding:1rem">
+<p style="font-size:.78rem;font-weight:700;color:#f85149;margin-bottom:.5rem">❌ <span class="de">Regeln (Empfehlungen)</span><span class="en">Rules (Suggestions)</span></p>
+<ul style="font-size:.82rem;color:var(--muted);padding-left:1rem;line-height:1.6">
+<li><span class="de">System-Prompt: "Prüfe Quellen"</span><span class="en">System prompt: "Verify sources"</span></li>
+<li><span class="de">Learned Rule: "Review vor Deploy"</span><span class="en">Learned rule: "Review before deploy"</span></li>
+<li><span class="de">Skill-Datei: "Mindestens 3 Quellen"</span><span class="en">Skill file: "At least 3 sources"</span></li>
+</ul>
+<p style="font-size:.78rem;color:#f85149;margin-top:.5rem"><span class="de">→ Agent kann sie lesen und trotzdem übergehen</span><span class="en">→ Agent can read and still skip them</span></p>
+</div>
+<div style="background:rgba(63,185,80,.06);border:1px solid rgba(63,185,80,.15);border-radius:10px;padding:1rem">
+<p style="font-size:.78rem;font-weight:700;color:var(--green);margin-bottom:.5rem">✅ <span class="de">Enforcement (Infrastruktur)</span><span class="en">Enforcement (Infrastructure)</span></p>
+<ul style="font-size:.82rem;color:var(--muted);padding-left:1rem;line-height:1.6">
+<li><span class="de">Git Pre-Push Hook: Blockiert ohne Quellen</span><span class="en">Git pre-push hook: Blocks without sources</span></li>
+<li><span class="de">Cron-Job: Prüft ob Learnings persistiert sind</span><span class="en">Cron job: Checks if learnings were persisted</span></li>
+<li><span class="de">Tool-Policy: Verweigert gefährliche Befehle</span><span class="en">Tool policy: Denies dangerous commands</span></li>
+</ul>
+<p style="font-size:.78rem;color:var(--green);margin-top:.5rem"><span class="de">→ Agent kann nicht weitermachen ohne Check</span><span class="en">→ Agent cannot proceed without check</span></p>
+</div>
+</div>
+
+<div class="callout blue">
+<strong><span class="de">Das Prinzip:</span><span class="en">The principle:</span></strong>
+<span class="de">Regeln im Prompt = Empfehlungen. Regeln in der Infrastruktur = Enforcement. Beides braucht man — aber nur das zweite ist verlässlich.</span>
+<span class="en">Rules in the prompt = suggestions. Rules in the infrastructure = enforcement. You need both — but only the latter is reliable.</span>
+</div>
+
+<p><span class="de">Wenn du ein Agent-System einführst, frag nicht nur "Welche Regeln geben wir dem Agent?" — frag: <strong>"Was passiert wenn der Agent die Regeln ignoriert? Und welche Checks laufen außerhalb des Agents?"</strong></span><span class="en">When introducing an agent system, don't just ask "What rules do we give the agent?" — ask: <strong>"What happens when the agent ignores the rules? And what checks run outside the agent?"</strong></span></p>
+</section>
+
 <!-- ===== TEIL 4: Die Zukunft ===== -->
 <section>
 <h2><span class="de">🔮 Wohin entwickelt sich das Feld?</span><span class="en">🔮 Where Is the Field Heading?</span></h2>

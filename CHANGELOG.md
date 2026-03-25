@@ -49,3 +49,17 @@ This is not a polished process. It's an honest one.
 ---
 
 *Every commit in this repository's git log is part of the story.*
+
+## 2026-03-25 — Learnings einpflegen
+
+### Supply Chain + Context Injection (Modul 4)
+- **Reales Beispiel hinzugefügt:** LiteLLM Supply-Chain-Angriff (März 2026)
+- **Neuer Angriffsvektor:** Context Injection (Manipulation von Config-Dateien die der Agent lädt)
+- **Jim Fan Zitat** zur erweiterten Angriffsfläche
+- Grundregel erweitert: "...und alles was er liest"
+
+### Enforcement vs. Rules (Modul 5)
+- **Neue Sektion:** "Regeln vs. Enforcement: Die wichtigste Erkenntnis"
+- AWS-Quelle zitiert: "Prompts are suggestions. Hooks are enforcement."
+- Vergleichstabelle: Regeln (Empfehlungen) vs. Enforcement (Infrastruktur)
+- Basiert auf eigener Erfahrung: 4/10 Regeln in einer Session ignoriert

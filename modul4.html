@@ -161,6 +161,10 @@
 <h4><span class="de">2. Supply-Chain-Risiko</span><span class="en">2. Supply Chain Risk</span></h4>
 <div class="attack"><span class="de">Ein MCP-Server aus einer Registry enthält versteckten Code der Daten abgreift.</span><span class="en">An MCP server from a registry contains hidden code that exfiltrates data.</span></div>
 <p><span class="de">Agent-Systeme nutzen externe Tools (MCP-Server, Plugins, Skills). Jedes externe Tool ist ein Vertrauenspunkt. Wie bei npm/pip: Ein kompromittiertes Paket betrifft alle die es nutzen.</span><span class="en">Agent systems use external tools (MCP servers, plugins, skills). Every external tool is a trust point. Like npm/pip: One compromised package affects everyone who uses it.</span></p>
+<div style="background:rgba(248,81,73,.06);border:1px solid rgba(248,81,73,.2);border-radius:8px;padding:1rem;margin-top:.75rem">
+<p style="font-size:.82rem;font-weight:700;color:#f85149;margin-bottom:.4rem"><span class="de">🔴 Reales Beispiel (März 2026): LiteLLM Supply-Chain-Angriff</span><span class="en">🔴 Real Example (March 2026): LiteLLM Supply Chain Attack</span></p>
+<p style="font-size:.82rem;color:var(--muted);line-height:1.5"><span class="de">Ein kompromittiertes Python-Paket (LiteLLM, ein beliebter LLM-Proxy) enthielt Malware die gezielt <code>.env</code>-Dateien, SSH-Keys, <code>.gitconfig</code> und Shell-History harvested hat. Betroffen: Tausende Entwickler die das Paket routinemäßig installierten. Die Angriffsfläche eines Agent-Systems ist das gesamte Dateisystem — nicht nur der Agent selbst.</span><span class="en">A compromised Python package (LiteLLM, a popular LLM proxy) contained malware that specifically harvested <code>.env</code> files, SSH keys, <code>.gitconfig</code>, and shell history. Affected: Thousands of developers who routinely installed the package. The attack surface of an agent system is the entire filesystem — not just the agent itself.</span></p>
+</div>
 </div>
 
 <div class="security-box">
@@ -169,10 +173,16 @@
 <p><span class="de">Ein Agent mit Dateizugriff UND Internet-Zugang kann theoretisch Daten nach außen schleusen. Deshalb ist das Prinzip "Least Privilege" so wichtig: Gib dem Agent nur die Rechte die er braucht.</span><span class="en">An agent with file access AND internet access can theoretically exfiltrate data. That's why "least privilege" is so important: Give the agent only the permissions it needs.</span></p>
 </div>
 
+<div class="security-box">
+<h4><span class="de">4. Context Injection</span><span class="en">4. Context Injection</span></h4>
+<div class="attack"><span class="de">Ein Angreifer manipuliert Dateien die der Agent bei jedem Start automatisch lädt.</span><span class="en">An attacker manipulates files that the agent automatically loads at every startup.</span></div>
+<p><span class="de">Agents lesen Config-Dateien, Memory, Skills — automatisch und ohne Rückfrage. Wenn ein Angreifer eine dieser Dateien ändern kann, kontrolliert er das Verhalten des Agents. Jim Fan (NVIDIA) formuliert es so: <em>"Your entire filesystem is the new distributed codebase. Every file that could go into context adds to the attack vector."</em></span><span class="en">Agents read config files, memory, skills — automatically and without asking. If an attacker can modify any of these files, they control the agent's behavior. Jim Fan (NVIDIA) puts it this way: <em>"Your entire filesystem is the new distributed codebase. Every file that could go into context adds to the attack vector."</em></span></p>
+</div>
+
 <div class="callout red">
 <strong><span class="de">Grundregel:</span><span class="en">Ground rule:</span></strong>
-<span class="de">Jeder Agent ist so sicher wie sein schwächstes Tool. Prüfe nicht nur den Agent — prüfe alles was er aufrufen kann.</span>
-<span class="en">Every agent is as secure as its weakest tool. Don't just check the agent — check everything it can call.</span>
+<span class="de">Jeder Agent ist so sicher wie sein schwächstes Tool. Prüfe nicht nur den Agent — prüfe alles was er aufrufen kann. Und alles was er liest.</span>
+<span class="en">Every agent is as secure as its weakest tool. Don't just check the agent — check everything it can call. And everything it reads.</span>
 </div>
 </section>
 
