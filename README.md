@@ -56,7 +56,7 @@ For every task: **Can the agent do it?** And **what happens if it's wrong?**
 ## Tech Stack
 
 - Static HTML + CSS (no build step, no framework)
-- GitHub Pages
+- GitHub Pages, served straight from branch `main`, folder `/`
 - Dark theme with CSS custom properties
 - Vanilla JS for language toggle
 
